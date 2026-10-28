@@ -111,7 +111,15 @@ test('company, candidate and admin pages render with real data', async () => {
     await expectPage(path, owner);
   }
   const chat = await get(`${c}/chat`, owner);
-  assert.ok([302, 303, 307, 308].includes(chat.status) && chat.location.includes('/chat/'), `chat index should open a room, got ${chat.status}`);
+  const roomUrl = new RegExp(`/c/${companyId}/chat/(${rooms.map((r) => r.room_id).join('|')})`);
+  // พื้นที่บริษัทมี loading.tsx หน้าจึงถูกส่งแบบ streaming (สถานะ 200 ออกไปก่อน)
+  // Next.js เลยสั่งเปลี่ยนหน้าผ่าน HTML (meta refresh + ข้อมูล RSC) แทน HTTP 307
+  const streamedRedirect = chat.status === 200 && /__next-page-redirect|NEXT_REDIRECT/.test(chat.body) && roomUrl.test(chat.body);
+  const httpRedirect = [302, 303, 307, 308].includes(chat.status) && roomUrl.test(chat.location);
+  assert.ok(
+    httpRedirect || streamedRedirect,
+    `chat index should open a room, got ${chat.status} ${chat.location} ${(chat.body.match(/.{0,120}(__next-page-redirect|NEXT_REDIRECT).{0,200}/) || [''])[0]}`
+  );
 
   // พื้นที่บริษัทเปิดไม่ได้สำหรับคนนอก
   const outsider = await get(c, cand);
