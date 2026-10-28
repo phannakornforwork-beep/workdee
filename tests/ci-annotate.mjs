@@ -10,10 +10,11 @@ for (let i = 0; i < lines.length && count < 8; i++) {
   if (!m) continue;
   const block = [];
   for (let j = i + 1; j < lines.length && j < i + 60; j++) {
-    if (/^\s*(ok|not ok) \d+ - /.test(lines[j])) break;
+    if (/^\s*(ok|not ok) \d+ - /.test(lines[j]) || /# Subtest/.test(lines[j])) break;
     block.push(lines[j]);
   }
-  if (block.some((l) => /# Subtest/.test(l))) continue;
+  // skip parent tests whose only failure is a failing subtest
+  if (block.some((l) => /failureType: 'subtestsFailed'/.test(l))) continue;
   console.log(`::error title=${m[1].replace(/[:,]/g, ' ')}::${enc(block.join('\n'))}`);
   count++;
 }

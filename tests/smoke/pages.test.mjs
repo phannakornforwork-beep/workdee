@@ -110,8 +110,12 @@ test('company, candidate and admin pages render with real data', async () => {
   ]) {
     await expectPage(path, owner);
   }
+  // หน้ารวมแชตพาไปห้องแรก (Next.js อาจตอบ 307 หรือส่งหน้า 200 ที่สั่งเปลี่ยนหน้าในเบราว์เซอร์)
   const chat = await get(`${c}/chat`, owner);
-  assert.ok([302, 303, 307, 308].includes(chat.status) && chat.location.includes('/chat/'), `chat index should open a room, got ${chat.status}`);
+  assert.ok(
+    ([302, 303, 307, 308].includes(chat.status) && chat.location.includes('/chat/')) || (chat.status === 200 && chat.body.includes(`/c/${companyId}/chat/`)),
+    `chat index should open a room, got ${chat.status}`
+  );
 
   // พื้นที่บริษัทเปิดไม่ได้สำหรับคนนอก
   const outsider = await get(c, cand);
