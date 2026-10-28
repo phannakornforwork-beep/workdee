@@ -1,0 +1,85 @@
+# Temporary debugging workflow (branch ci-debug only): same steps as CI, output posted as check runs.
+name: CI debug
+
+on:
+  push:
+    branches: [ci-debug]
+
+permissions:
+  contents: read
+  checks: write
+
+jobs:
+  types:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - name: Typecheck (captured)
+        run: |
+          {
+            npm ls --depth=0 || true
+            npm ls @supabase/supabase-js @supabase/ssr @supabase/postgrest-js || true
+            echo '--- tsc'
+            npx tsc --noEmit; echo "tsc exit=$?"
+            echo '--- ssr types'
+            ls node_modules/@supabase/ssr/dist/main/ || true
+            sed -n 1,80p node_modules/@supabase/ssr/dist/main/createServerClient.d.ts || true
+          } > types.txt 2>&1
+      - name: Report
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 .github/debug/report.py "debug: typecheck" types.txt:55000
+
+  web:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ['54322:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      DB_URL: postgres://postgres:postgres@127.0.0.1:54322/postgres
+      NEXT_TELEMETRY_DISABLED: '1'
+      CRON_SECRET: ci-cron-secret
+      NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
+      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
+      - name: Start Supabase-compatible stack
+        run: |
+          bash tests/stack/start.sh
+          . .stack/keys.env
+          echo "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$SUPABASE_ANON_KEY" >> "$GITHUB_ENV"
+          echo "SUPABASE_SECRET_KEY=$SUPABASE_SERVICE_ROLE_KEY" >> "$GITHUB_ENV"
+      - name: Build
+        run: npm run build > build.txt 2>&1 || (cat build.txt; exit 1)
+      - name: Start the site
+        run: |
+          nohup npx next start -p 3000 > next.log 2>&1 &
+          node tests/stack/wait-for.mjs http://127.0.0.1:3000/login 90
+      - name: Smoke test (captured)
+        env:
+          WEB_URL: http://127.0.0.1:3000
+        run: |
+          npm run test:smoke > smoke.txt 2>&1; echo "smoke exit=$?" >> smoke.txt
+          grep -E "^(not ok|ok|# (pass|fail))" smoke.txt > smoke-summary.txt || true
+          cat .stack/logs/*.log > stack.txt 2>/dev/null || true
+      - name: Report
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 .github/debug/report.py "debug: smoke" smoke-summary.txt:3000 smoke.txt:30000 next.log:15000 stack.txt:6000 build.txt:5000

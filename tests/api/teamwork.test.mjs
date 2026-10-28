@@ -32,7 +32,8 @@ test('tasks and leave follow the team hierarchy', async () => {
   assert.equal(seenByOwner.tasks.length, 1);
   assert.equal((await select(s2, `tasks?company_id=eq.${companyId}&select=id`)).length, 0);
 
-  const today = new Date().toISOString().slice(0, 10);
+  // "วันนี้" ตามเวลาไทย เหมือนที่ระบบใช้ (UTC จะเป็นเมื่อวานในช่วง 00:00–07:00 น.)
+  const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });
   const leave = await ok(s2, 'request_leave', { p_company: companyId, p_type: 'sick', p_start: today, p_end: today, p_reason: 'ไม่สบาย' });
   const view = await ok(h2, 'team_overview', { p_company: companyId });
   const req = view.approvals.find((a) => a.kind === 'leave');

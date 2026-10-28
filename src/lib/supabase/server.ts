@@ -1,6 +1,8 @@
-import { createServerClient } from '@supabase/ssr';
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { SUPABASE_PUBLIC_KEY, SUPABASE_URL } from '@/lib/env';
+
+type CookieToSet = { name: string; value: string; options: CookieOptions };
 
 // ใช้ใน Server Components, Server Actions และ Route Handlers (สิทธิ์ตามผู้ใช้ที่ล็อกอิน + RLS)
 export async function createClient() {
@@ -10,7 +12,7 @@ export async function createClient() {
       getAll() {
         return cookieStore.getAll();
       },
-      setAll(cookiesToSet) {
+      setAll(cookiesToSet: CookieToSet[]) {
         try {
           cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
         } catch {

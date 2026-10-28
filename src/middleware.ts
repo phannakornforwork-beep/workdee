@@ -1,6 +1,9 @@
-import { createServerClient } from '@supabase/ssr';
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import { SUPABASE_PUBLIC_KEY, SUPABASE_URL } from '@/lib/env';
+
+// ระบุชนิดเอง: เมื่อเวอร์ชัน @supabase/ssr กับ supabase-js ไม่ตรงกัน ชนิดของ options จะกลายเป็น any
+type CookieToSet = { name: string; value: string; options: CookieOptions };
 
 const PROTECTED = ['/me', '/c/', '/spaces', '/admin', '/companies/new'];
 
@@ -14,7 +17,7 @@ export async function middleware(request: NextRequest) {
       getAll() {
         return request.cookies.getAll();
       },
-      setAll(cookiesToSet) {
+      setAll(cookiesToSet: CookieToSet[]) {
         cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
         response = NextResponse.next({ request });
         cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
