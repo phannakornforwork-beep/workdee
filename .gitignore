@@ -6,3 +6,7 @@ node_modules/
 *.log
 test-results/
 playwright-report/
+.vercel/
+supabase/.temp/
+supabase/.branches/
+*.tsbuildinfo

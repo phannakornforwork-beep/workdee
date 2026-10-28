@@ -85,6 +85,13 @@ export async function upsert(who, table, body) {
   return { status: res.status, data: text ? JSON.parse(text) : null };
 }
 
+export async function insert(who, table, body, prefer = 'return=minimal') {
+  const token = typeof who === 'string' ? who : who?.token;
+  const res = await fetch(`${BASE}/rest/v1/${table}`, { method: 'POST', headers: headers(token, { Prefer: prefer }), body: JSON.stringify(body) });
+  const text = await res.text();
+  return { status: res.status, data: text ? JSON.parse(text) : null };
+}
+
 export async function upload(who, bucket, objectPath, content = 'file') {
   const token = typeof who === 'string' ? who : who?.token;
   const res = await fetch(`${BASE}/storage/v1/object/${bucket}/${objectPath}`, {

@@ -1,0 +1,2 @@
+# ตั้งค่าขั้นต่ำสำหรับ Supabase CLI (ใช้กับ `supabase db push`)
+project_id = "workdee"

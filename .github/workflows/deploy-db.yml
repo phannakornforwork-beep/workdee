@@ -1,0 +1,30 @@
+# กดรันเองจากแท็บ Actions: ส่ง migration ทั้งหมดขึ้นฐานข้อมูล Supabase จริง
+# ต้องตั้ง secret SUPABASE_DB_URL ก่อน (ใช้ Session pooler connection string ดู docs/SETUP.md)
+name: Deploy database
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'ดูก่อนว่าจะรันอะไร (ไม่แก้ฐานข้อมูล)'
+        type: boolean
+        default: true
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Push migrations
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          if [ -z "$SUPABASE_DB_URL" ]; then echo "ยังไม่ได้ตั้ง secret SUPABASE_DB_URL"; exit 1; fi
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            supabase db push --db-url "$SUPABASE_DB_URL" --dry-run
+          else
+            supabase db push --db-url "$SUPABASE_DB_URL"
+          fi

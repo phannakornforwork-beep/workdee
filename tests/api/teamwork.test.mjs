@@ -1,7 +1,7 @@
 // ทดสอบงานของทีม: มองเห็นตามสิทธิ์ team มอบหมายงานในขอบเขต และการลาที่หัวหน้าอนุมัติ
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { signUp, ok, fails, select, rootPosition, join, verifiedCompany } from './helpers.mjs';
+import { signUp, ok, fails, select, insert, rootPosition, join, verifiedCompany } from './helpers.mjs';
 
 test('tasks and leave follow the team hierarchy', async () => {
   const owner = await signUp('เจ้าของ');
@@ -48,4 +48,54 @@ test('tasks and leave follow the team hierarchy', async () => {
   await ok(h2, 'request_leave', { p_company: companyId, p_type: 'personal', p_start: today, p_end: today });
   const ownerView = await ok(owner, 'team_overview', { p_company: companyId });
   assert.ok(ownerView.approvals.some((a) => a.kind === 'leave' && a.status === 'pending' && a.can_decide));
+});
+
+test('task followers and creators hear about blocked and finished work', async () => {
+  const owner = await signUp('เจ้าของร้าน');
+  const companyId = await verifiedCompany(owner, 'บริษัท ติดตามงาน จำกัด');
+  const root = rootPosition(companyId);
+  const mktHead = await ok(owner, 'create_position', { p_company: companyId, p_parent: root, p_title: 'หัวหน้าการตลาด', p_is_department: true, p_grants: { team: 1 } });
+  const mktStaff = await ok(owner, 'create_position', { p_company: companyId, p_parent: mktHead, p_title: 'กราฟิก', p_grants: {} });
+  const whHead = await ok(owner, 'create_position', { p_company: companyId, p_parent: root, p_title: 'หัวหน้าคลัง', p_is_department: true, p_grants: { team: 1 } });
+  const [head, staff, other] = [await signUp('ศิริ'), await signUp('ต้น'), await signUp('สมใจ')];
+  await join(head, owner, companyId, mktHead);
+  await join(staff, owner, companyId, mktStaff);
+  await join(other, owner, companyId, whHead);
+
+  const task = await ok(head, 'save_task', { p_company: companyId, p_task: null, p_fields: { title: 'ออกแบบป้ายหน้าร้าน', assignee_id: staff.id } });
+  const ownerFollow = await insert(owner, 'task_follows', { task_id: task, user_id: owner.id });
+  assert.equal(ownerFollow.status, 201, 'owner can follow a task they can see');
+  const outsiderFollow = await insert(other, 'task_follows', { task_id: task, user_id: other.id });
+  assert.notEqual(outsiderFollow.status, 201, 'another department cannot follow a task it cannot see');
+
+  await ok(staff, 'save_task', { p_company: companyId, p_task: task, p_fields: { status: 'blocked', blocked_note: 'รอโลโก้ไฟล์ใหญ่' } });
+  const headNotes = await select(head, `notifications?company_id=eq.${companyId}&kind=eq.team_update&select=title,body`);
+  assert.ok(headNotes.some((n) => n.title.includes('งานติดปัญหา') && n.body.includes('รอโลโก้')), 'creator is told the task is blocked');
+  const ownerNotes = await select(owner, `notifications?company_id=eq.${companyId}&kind=eq.team_update&select=title`);
+  assert.ok(ownerNotes.some((n) => n.title.includes('งานติดปัญหา')), 'follower is told the task is blocked');
+  const staffNotes = await select(staff, `notifications?company_id=eq.${companyId}&title=like.*ติดปัญหา*&select=title`);
+  assert.equal(staffNotes.length, 0, 'the person who changed the status is not notified');
+  const otherNotes = await select(other, `notifications?company_id=eq.${companyId}&title=like.*ป้ายหน้าร้าน*&select=title`);
+  assert.equal(otherNotes.length, 0);
+
+  await ok(staff, 'save_task', { p_company: companyId, p_task: task, p_fields: { status: 'done' } });
+  const done = await select(head, `notifications?company_id=eq.${companyId}&title=like.*งานเสร็จแล้ว*&select=title`);
+  assert.equal(done.length, 1);
+});
+
+test('cancelling a leave approval request cancels the leave', async () => {
+  const owner = await signUp('เจ้าของร้านลา');
+  const companyId = await verifiedCompany(owner, 'บริษัท ยกเลิกลา จำกัด');
+  const root = rootPosition(companyId);
+  const headPos = await ok(owner, 'create_position', { p_company: companyId, p_parent: root, p_title: 'หัวหน้าร้าน', p_is_department: true, p_grants: { team: 1, leave: 1 } });
+  const staffPos = await ok(owner, 'create_position', { p_company: companyId, p_parent: headPos, p_title: 'พนักงานหน้าร้าน', p_grants: {} });
+  const staff = await signUp('น้ำ');
+  await join(staff, owner, companyId, staffPos);
+  const day = new Date(Date.now() + 5 * 86400e3).toISOString().slice(0, 10);
+  const leave = await ok(staff, 'request_leave', { p_company: companyId, p_type: 'personal', p_start: day, p_end: day });
+  const view = await ok(staff, 'team_overview', { p_company: companyId });
+  const req = view.approvals.find((a) => a.kind === 'leave' && a.mine);
+  await ok(staff, 'cancel_approval', { p_request: req.id });
+  const rows = await select(staff, `leave_requests?id=eq.${leave}&select=status`);
+  assert.equal(rows[0].status, 'cancelled');
 });

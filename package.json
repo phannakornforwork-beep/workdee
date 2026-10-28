@@ -1,0 +1,32 @@
+{
+  "name": "workdee",
+  "version": "0.1.0",
+  "private": true,
+  "description": "WorkDee — แพลตฟอร์มให้เด็กจบใหม่พิสูจน์ฝีมือกับบริษัทก่อนสัมภาษณ์ พร้อมระบบบริหารทีมสำหรับ SME",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "stack:up": "bash tests/stack/up.sh",
+    "db:reset": "bash tests/stack/reset-db.sh",
+    "test:api": "node --test --test-concurrency=1 tests/api/*.test.mjs",
+    "test:smoke": "node --test tests/smoke/*.test.mjs"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.6.1",
+    "@supabase/supabase-js": "^2.50.0",
+    "next": "^15.5.7",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=20.9"
+  }
+}
