@@ -27,8 +27,8 @@ jobs:
     env:
       DB_URL: postgres://postgres:postgres@127.0.0.1:54322/postgres
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
       - name: Install psql
@@ -36,17 +36,19 @@ jobs:
       - name: Start Supabase-compatible stack (Auth + REST + Storage stub)
         run: bash tests/stack/start.sh
       - name: API tests
-        run: npm run test:api
-      - name: Stack logs
+        run: node --test --test-concurrency=1 --test-reporter=tap tests/api/*.test.mjs | tee api.tap; test ${PIPESTATUS[0]} -eq 0
+      - name: Explain failures
         if: failure()
-        run: tail -n 120 .stack/logs/*.log
+        run: |
+          cat .stack/logs/*.log > stack.log 2>/dev/null || true
+          node tests/ci-annotate.mjs api.tap stack.log
 
   types:
     name: Typecheck
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
       - name: Install dependencies
@@ -73,8 +75,8 @@ jobs:
       NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
       NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
       - name: Install dependencies
@@ -94,11 +96,9 @@ jobs:
           nohup npx next start -p 3000 > next.log 2>&1 &
           node tests/stack/wait-for.mjs http://127.0.0.1:3000/login 90
       - name: Smoke test every main page
-        run: npm run test:smoke
+        run: node --test --test-reporter=tap tests/smoke/*.test.mjs | tee smoke.tap; test ${PIPESTATUS[0]} -eq 0
         env:
           WEB_URL: http://127.0.0.1:3000
-      - name: Logs
+      - name: Explain failures
         if: failure()
-        run: |
-          tail -n 200 next.log || true
-          tail -n 80 .stack/logs/*.log || true
+        run: node tests/ci-annotate.mjs smoke.tap next.log
