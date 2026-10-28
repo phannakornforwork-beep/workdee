@@ -33,7 +33,8 @@ jobs:
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
-        run: python3 .github/debug/report.py "debug: typecheck" types.txt:55000
+        run: |
+          python3 .github/debug/report.py "debug - typecheck" types.txt:55000
 
   web:
     runs-on: ubuntu-latest
@@ -82,4 +83,5 @@ jobs:
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
-        run: python3 .github/debug/report.py "debug: smoke" smoke-summary.txt:3000 smoke.txt:30000 next.log:15000 stack.txt:6000 build.txt:5000
+        run: |
+          python3 .github/debug/report.py "debug - smoke" smoke-summary.txt:3000 smoke.txt:30000 next.log:15000 stack.txt:6000 build.txt:5000
