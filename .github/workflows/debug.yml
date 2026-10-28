@@ -24,7 +24,7 @@ jobs:
             npm ls --depth=0 || true
             npm ls @supabase/supabase-js @supabase/ssr @supabase/postgrest-js || true
             echo '--- tsc'
-            npx tsc --noEmit; echo "tsc exit=$?"
+            npx tsc --noEmit && echo "tsc ok" || echo "tsc failed"
             echo '--- ssr types'
             ls node_modules/@supabase/ssr/dist/main/ || true
             sed -n 1,80p node_modules/@supabase/ssr/dist/main/createServerClient.d.ts || true
@@ -76,7 +76,7 @@ jobs:
         env:
           WEB_URL: http://127.0.0.1:3000
         run: |
-          npm run test:smoke > smoke.txt 2>&1; echo "smoke exit=$?" >> smoke.txt
+          npm run test:smoke > smoke.txt 2>&1 && echo "smoke ok" >> smoke.txt || echo "smoke failed" >> smoke.txt
           grep -E "^(not ok|ok|# (pass|fail))" smoke.txt > smoke-summary.txt || true
           cat .stack/logs/*.log > stack.txt 2>/dev/null || true
       - name: Report
