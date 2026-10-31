@@ -13,7 +13,8 @@ const DOMAIN = process.env.DEMO_EMAIL_DOMAIN || 'example.com';
 const sizes = {
   'ipad-portrait': { ...devices['iPad (gen 7)'], viewport: { width: 820, height: 1180 } },
   'ipad-landscape': { ...devices['iPad (gen 7) landscape'], viewport: { width: 1180, height: 820 } },
-  phone: devices['iPhone 13']
+  phone: devices['iPhone 13'],
+  'ipad-dark': { ...devices['iPad (gen 7)'], viewport: { width: 820, height: 1180 }, colorScheme: 'dark' }
 };
 
 async function login(page, who) {

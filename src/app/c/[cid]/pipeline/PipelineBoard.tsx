@@ -479,7 +479,7 @@ export function PipelineBoard({
                 <span className="muted small">{cards.length} คน</span>
               </h3>
               {selectMode && cards.length ? (
-                <button type="button" className="btn small ghost" style={{ alignSelf: 'flex-start', background: '#fff' }} onClick={() => setSelected((s) => Array.from(new Set([...s, ...cards.map((c) => c.id)])))}>
+                <button type="button" className="btn small ghost" style={{ alignSelf: 'flex-start' }} onClick={() => setSelected((s) => Array.from(new Set([...s, ...cards.map((c) => c.id)])))}>
                   เลือกทั้งคอลัมน์
                 </button>
               ) : null}

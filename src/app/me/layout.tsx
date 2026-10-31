@@ -4,6 +4,7 @@ import { Avatar, BellIcon, Logo } from '@/components/ui';
 import { mediaUrl } from '@/lib/env';
 import { NavLinks } from '@/components/NavLinks';
 import { signOutAction } from '@/lib/actions/auth';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 // พื้นที่ส่วนตัว: ไม่มีบริษัทใดเห็นข้อมูลในส่วนนี้ รวมถึงบริษัทที่คุณทำงานอยู่
 export default async function PersonalLayout({ children }: { children: React.ReactNode }) {
@@ -21,6 +22,7 @@ export default async function PersonalLayout({ children }: { children: React.Rea
           <Logo href="/me" />
           <span className="space-pill personal">พื้นที่ส่วนตัว</span>
           <span className="right" />
+          <ThemeToggle />
           <Link href="/me/notifications" className="icon-btn" aria-label={`การแจ้งเตือน ${unread || 0} รายการใหม่`}>
             <BellIcon />
             {unread ? <span className="count-dot">{unread > 99 ? '99+' : unread}</span> : null}
@@ -30,7 +32,7 @@ export default async function PersonalLayout({ children }: { children: React.Rea
             สลับพื้นที่
           </Link>
           <form action={signOutAction}>
-            <button type="submit" className="btn small ghost" style={{ color: '#fff', borderColor: '#4a5057' }}>
+            <button type="submit" className="btn small ghost">
               ออกจากระบบ
             </button>
           </form>

@@ -3,6 +3,7 @@ import { can, requireCompany } from '@/lib/auth';
 import { Avatar, BellIcon, Logo } from '@/components/ui';
 import { mediaUrl } from '@/lib/env';
 import { NavLinks } from '@/components/NavLinks';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default async function CompanyLayout({ children, params }: { children: React.ReactNode; params: Promise<{ cid: string }> }) {
   const { cid } = await params;
@@ -32,6 +33,7 @@ export default async function CompanyLayout({ children, params }: { children: Re
           <Logo href={base} />
           <span className="space-pill">พื้นที่บริษัท · {access.company.name}</span>
           <span className="right" />
+          <ThemeToggle />
           <Link href={`${base}/help`} className="tlink">
             ช่วยเหลือ
           </Link>

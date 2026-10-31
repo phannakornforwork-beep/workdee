@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { requireUser } from '@/lib/auth';
 import { Logo, Badge } from '@/components/ui';
 import { signOutAction } from '@/lib/actions/auth';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export const metadata: Metadata = { title: 'เลือกพื้นที่ใช้งาน' };
 
@@ -21,8 +22,9 @@ export default async function SpacesPage() {
         <div className="inner">
           <Logo href="/spaces" />
           <span className="right" />
+          <ThemeToggle />
           <form action={signOutAction}>
-            <button type="submit" className="btn small ghost" style={{ color: '#fff', borderColor: '#4a5057' }}>
+            <button type="submit" className="btn small ghost">
               ออกจากระบบ
             </button>
           </form>

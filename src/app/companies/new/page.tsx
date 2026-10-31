@@ -5,6 +5,7 @@ import { Logo } from '@/components/ui';
 import { ActionForm, SubmitButton } from '@/components/forms';
 import { createCompanyAction } from '@/lib/actions/company';
 import { PROVINCES } from '@/lib/format';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export const metadata: Metadata = { title: 'สร้างพื้นที่บริษัท' };
 
@@ -16,6 +17,7 @@ export default async function NewCompanyPage() {
         <div className="inner">
           <Logo href="/spaces" />
           <span className="right" />
+          <ThemeToggle />
           <Link href="/spaces" className="tlink">
             กลับไปเลือกพื้นที่
           </Link>

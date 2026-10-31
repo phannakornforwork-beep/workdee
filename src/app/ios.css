@@ -1,0 +1,412 @@
+/* WorkDee · ธีมแรงบันดาลใจจาก iOS
+   พื้นหลังเทาอ่อนแบบ grouped, การ์ดขาวมุมโค้ง, แถบหัวโปร่งแสงเบลอ, เมนูแบบ segmented control,
+   ปุ่มเต็มสีมุมโค้ง และฟอนต์ระบบของ Apple (บนอุปกรณ์อื่นใช้ IBM Plex Sans Thai แทน)
+   ไฟล์นี้โหลดหลัง globals.css จึงทับเฉพาะหน้าตา ลบการ import ใน layout.tsx เพื่อกลับไปธีมเดิมได้ทันที */
+
+:root {
+  --ink: #1c1c1e;
+  --ink-2: #3a3a3c;
+  --muted: #636366;
+  --line: rgba(60, 60, 67, 0.14);
+  --line-2: rgba(60, 60, 67, 0.24);
+  --bg: #f2f2f7;
+  --bg-2: #e9e9ee;
+  --fill: rgba(118, 118, 128, 0.12);
+  --fill-2: rgba(118, 118, 128, 0.2);
+  --card: #ffffff;
+  --brand: #0f7a6e;
+  --brand-ink: #0b5f56;
+  --brand-soft: #e1f3ef;
+  --accent: #c2410c;
+  --accent-ink: #8a2c07;
+  --accent-soft: #fff1e6;
+  --blue: #0a5cc2;
+  --blue-soft: #e6f0fd;
+  --danger: #c62828;
+  --danger-soft: #fdecec;
+  --radius: 18px;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.04);
+  --glass: rgba(249, 249, 251, 0.78);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', var(--font-thai), 'IBM Plex Sans Thai', system-ui, 'Segoe UI', sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-tap-highlight-color: transparent;
+}
+h1 { font-size: 32px; font-weight: 700; }
+h2 { font-size: 20px; font-weight: 700; }
+h3 { font-size: 17px; font-weight: 600; }
+a { color: var(--brand); }
+a:hover { color: var(--brand-ink); }
+:focus-visible { outline: 3px solid rgba(15, 122, 110, 0.45); outline-offset: 2px; }
+.page { padding-top: 24px; gap: 22px; }
+
+/* แถบหัว: กระจกฝ้าลอยอยู่ด้านบน */
+.topbar {
+  position: sticky; top: 0; z-index: 30;
+  background: var(--glass);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  color: var(--ink);
+  border-bottom: 0.5px solid var(--line-2);
+}
+.topbar .inner { padding: 10px 20px; }
+.brand, .brand:hover { color: var(--ink); font-size: 19px; letter-spacing: -0.01em; }
+.brand-mark { border-radius: 9px; box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.08); }
+.topbar a.tlink { color: var(--ink); font-weight: 500; }
+.topbar a.tlink:hover { background: var(--fill); }
+.icon-btn { border: none; background: var(--fill); color: var(--ink); }
+.icon-btn:hover { background: var(--fill-2); color: var(--ink); }
+.count-dot { background: #ff3b30; border: 2px solid #f9f9fb; top: -3px; right: -3px; }
+.switch-btn { border: none; background: var(--fill); color: var(--ink); font-weight: 500; }
+.switch-btn:hover { background: var(--fill-2); color: var(--ink); }
+.topbar .btn.ghost { color: var(--ink); background: var(--fill); }
+.space-pill { background: var(--accent-soft); }
+
+/* เมนูหลัก: segmented control */
+.navbar { background: transparent; border-bottom: none; padding-top: 12px; }
+.navbar nav {
+  gap: 2px; padding: 3px; margin: 0 auto; width: max-content; max-width: calc(100% - 32px);
+  background: var(--fill); border-radius: 12px; scrollbar-width: none;
+}
+.navbar nav::-webkit-scrollbar { display: none; }
+.navbar a {
+  padding: 7px 14px; border: none; border-radius: 9px; color: var(--ink-2); font-size: 14px; font-weight: 500;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+.navbar a:hover { color: var(--ink); }
+.navbar a[aria-current='page'] {
+  background: #fff; color: var(--ink); font-weight: 600; border-radius: 9px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04);
+}
+
+/* การ์ด: ขาว มุมโค้งใหญ่ ไม่มีเส้นขอบ */
+.card { border: none; box-shadow: var(--shadow); padding: 20px 22px; }
+.card.soft { background: var(--fill); }
+.card.warn { background: var(--accent-soft); border: none; }
+.card.highlight { box-shadow: 0 0 0 2px var(--brand), var(--shadow); border: none; }
+a.card, .app-card { transition: transform 0.15s ease, box-shadow 0.15s ease; }
+a.card:hover { border: none; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08); transform: translateY(-1px); }
+a.card:active, .app-card:active { transform: scale(0.985); }
+.stat .value { font-size: 30px; letter-spacing: -0.01em; }
+
+/* ปุ่ม */
+.btn { min-height: 46px; padding: 0 20px; border-radius: 12px; border: none; font-weight: 600; font-size: 16px; transition: opacity 0.15s ease, background 0.15s ease, transform 0.1s ease; }
+.btn:active { transform: scale(0.97); }
+.btn:disabled, .btn[aria-disabled='true'] { background: var(--fill); color: rgba(60, 60, 67, 0.45); }
+.btn.outline { background: var(--brand-soft); color: var(--brand-ink); border: none; }
+.btn.outline:hover { background: #cdebe5; }
+.btn.ghost { background: var(--fill); color: var(--ink); border: none; }
+.btn.ghost:hover { background: var(--fill-2); color: var(--ink); }
+.btn.danger { background: #ff3b30; }
+.btn.danger:hover { background: #d70015; }
+.btn.soft-danger { background: var(--danger-soft); color: var(--danger); }
+.btn.small { min-height: 36px; padding: 0 14px; font-size: 14px; border-radius: 999px; }
+.btn.link { background: transparent; color: var(--brand); }
+.google-btn { background: #fff; box-shadow: inset 0 0 0 1px var(--line-2); color: var(--ink); }
+
+/* ชิป แท็บ ป้าย */
+.chip { border: none; background: var(--fill); color: var(--ink); font-weight: 500; }
+.chip:hover { background: var(--fill-2); color: var(--ink); }
+.chip[aria-pressed='true'], .chip.on, label.chip:has(input:checked) { background: var(--brand); color: #fff; }
+.tabs { background: var(--fill); padding: 3px; border-radius: 12px; gap: 2px; width: fit-content; max-width: 100%; }
+.tabs a { border: none; background: transparent; color: var(--ink-2); border-radius: 9px; padding: 7px 14px; font-weight: 500; }
+.tabs a[aria-current='page'] { background: #fff; color: var(--ink); box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12); }
+.badge { border-radius: 8px; padding: 3px 9px; font-weight: 600; background: var(--fill); color: var(--ink-2); }
+.badge.gray { background: var(--fill); color: var(--ink-2); }
+.badge.dark { background: var(--ink); color: #fff; }
+
+/* ฟอร์ม: ช่องกรอกพื้นเทาแบบ iOS */
+.field > label, .label { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: none; letter-spacing: 0.01em; }
+.input, .textarea, .select {
+  background: #f2f2f7; border: 1px solid transparent; border-radius: 12px; min-height: 46px; padding: 11px 14px; font-size: 16px;
+}
+.input:focus, .textarea:focus, .select:focus { background: #fff; border-color: var(--brand); box-shadow: 0 0 0 4px rgba(15, 122, 110, 0.15); }
+.select { -webkit-appearance: none; appearance: none; padding-right: 36px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23636366' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center; }
+.check input { accent-color: var(--brand); }
+fieldset { border: none; background: #f7f7fa; border-radius: 14px; }
+
+/* แจ้งเตือนในหน้า */
+.alert { border: none; border-radius: 14px; padding: 13px 16px; }
+.alert.info { background: var(--blue-soft); color: #0b3f86; }
+.alert.success { background: var(--brand-soft); color: var(--brand-ink); }
+.alert.warn { background: var(--accent-soft); color: var(--accent-ink); }
+.alert.error { background: var(--danger-soft); color: #9b1c1c; }
+.alert.privacy { background: #fff; box-shadow: inset 0 0 0 1px var(--line-2); border: none; }
+
+/* รายการและตาราง: เส้นคั่นบางแบบ iOS */
+.list > .item { border-top: 0.5px solid var(--line-2); }
+table.table th, table.table td { border-bottom: 0.5px solid var(--line-2); }
+.divider { height: 0.5px; background: var(--line-2); }
+details.disclosure { border-top: 0.5px solid var(--line-2); }
+details.disclosure summary::after { content: '›'; transform: rotate(90deg); font-size: 20px; line-height: 1; color: var(--muted); }
+details.disclosure[open] summary::after { content: '›'; transform: rotate(-90deg); }
+
+/* กระดานผู้สมัคร */
+.column { background: var(--fill); border-radius: 20px; }
+.app-card { border: none; border-radius: 14px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06); }
+.app-card:hover { box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08); }
+.app-card.selected { border: none; box-shadow: 0 0 0 2px var(--brand); }
+.bulkbar { background: rgba(28, 28, 30, 0.86); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border-radius: 16px; top: 72px; }
+.bulkbar .btn.ghost { background: rgba(255, 255, 255, 0.16); color: #fff; }
+
+/* แชต: ฟองข้อความแบบ iMessage */
+.chat { border: none; box-shadow: var(--shadow); border-radius: var(--radius); }
+.bubble .text { border-radius: 20px; padding: 9px 14px; background: #e9e9eb; }
+.bubble.me .text { background: var(--brand); }
+.bubble.announce .text { border: none; }
+
+.progress { background: var(--fill); }
+.empty { border: none; background: #fff; box-shadow: var(--shadow); border-radius: var(--radius); }
+.dashed { border: 1.5px dashed var(--line-2); }
+
+/* หน้าแรก: hero สว่างแบบหน้าเว็บ Apple */
+.hero { background: linear-gradient(180deg, #ffffff 0%, #f2f2f7 100%); color: var(--ink); }
+.hero .container { padding-top: 64px; padding-bottom: 56px; }
+.hero h1 { font-size: clamp(32px, 6vw, 52px); letter-spacing: -0.01em; line-height: 1.2; }
+.hero p { color: var(--muted); font-size: 19px; }
+.hero .space-pill { background: var(--brand-soft); color: var(--brand-ink); }
+.footer { border-top: 0.5px solid var(--line-2); }
+
+@media (max-width: 640px) {
+  h1 { font-size: 28px; }
+  .card { padding: 18px; }
+  .topbar .inner { padding: 8px 16px; }
+  .navbar nav { max-width: calc(100% - 24px); }
+}
+
+/* ===================================================================
+   Liquid Glass: พื้นผิวกระจกใสแบบ iOS รุ่นใหม่
+   พื้นหลังไล่สีอ่อนอยู่ใต้ทุกอย่าง ส่วนการ์ด แถบหัว เมนู ปุ่ม เป็นกระจกเบลอ
+   มีแสงสะท้อนที่ขอบบน (inset highlight) และเงานุ่มด้านล่างให้ดูลอย
+   =================================================================== */
+:root {
+  --glass-bg: linear-gradient(160deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.52) 100%);
+  --glass-strong: linear-gradient(160deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+  --glass-edge: rgba(255, 255, 255, 0.75);
+  --glass-shine: inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(255, 255, 255, 0.35);
+  --glass-drop: 0 10px 30px rgba(31, 45, 61, 0.1), 0 2px 6px rgba(31, 45, 61, 0.05);
+  --glass-blur: saturate(180%) blur(22px);
+  --fill: rgba(255, 255, 255, 0.55);
+  --fill-2: rgba(255, 255, 255, 0.8);
+}
+
+body { background: #eef2f6; }
+/* พื้นหลังไล่สีแบบ mesh (ติดอยู่กับจอ ไม่เลื่อนตามหน้า) */
+body::before {
+  content: ''; position: fixed; inset: -10%; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(38% 42% at 12% 8%, rgba(94, 214, 190, 0.45), transparent 70%),
+    radial-gradient(40% 40% at 92% 12%, rgba(125, 175, 255, 0.42), transparent 70%),
+    radial-gradient(45% 45% at 78% 88%, rgba(200, 160, 255, 0.35), transparent 70%),
+    radial-gradient(40% 40% at 8% 92%, rgba(255, 196, 150, 0.4), transparent 70%),
+    #eef2f6;
+}
+
+.glass, .topbar, .navbar nav, .card, .app-card, .column, .empty, .chat, .tabs, .bulkbar {
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+/* แถบหัวและเมนู: แคปซูลกระจกลอย */
+.topbar {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.5));
+  border-bottom: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-shine), 0 6px 20px rgba(31, 45, 61, 0.06);
+}
+.navbar nav, .tabs {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-edge);
+  border-radius: 999px; padding: 4px;
+  box-shadow: var(--glass-shine), var(--glass-drop);
+}
+.navbar a, .tabs a { border-radius: 999px; }
+.navbar a[aria-current='page'], .tabs a[aria-current='page'] {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.82));
+  box-shadow: inset 0 1px 0 #fff, 0 4px 14px rgba(15, 122, 110, 0.18), 0 0 0 0.5px rgba(15, 122, 110, 0.25);
+  color: var(--brand-ink);
+}
+
+/* การ์ด: กระจกใสมีแสงขอบบน */
+.card, .empty, .chat {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-shine), var(--glass-drop);
+  border-radius: 24px;
+}
+.card.soft { background: rgba(255, 255, 255, 0.35); }
+.card.warn { background: linear-gradient(160deg, rgba(255, 241, 230, 0.85), rgba(255, 241, 230, 0.6)); }
+.card.dark { background: linear-gradient(160deg, rgba(28, 28, 30, 0.82), rgba(28, 28, 30, 0.68)); border-color: rgba(255, 255, 255, 0.18); }
+.card.highlight { box-shadow: 0 0 0 2px var(--brand), var(--glass-shine), var(--glass-drop); }
+a.card:hover { box-shadow: var(--glass-shine), 0 16px 40px rgba(31, 45, 61, 0.14); }
+
+/* กระดานผู้สมัคร: คอลัมน์กระจกบาง การ์ดกระจกหนา */
+.column { background: rgba(255, 255, 255, 0.32); border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 26px; box-shadow: var(--glass-shine); }
+.app-card { background: var(--glass-strong); border: 1px solid var(--glass-edge); border-radius: 18px; box-shadow: var(--glass-shine), 0 4px 14px rgba(31, 45, 61, 0.07); }
+
+/* ปุ่ม: ปุ่มหลักเป็นกระจกสี ปุ่มรองเป็นกระจกใส */
+.btn {
+  background: linear-gradient(180deg, #1a9585 0%, #0f7a6e 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0 -1px 0 rgba(0, 0, 0, 0.12), 0 6px 16px rgba(15, 122, 110, 0.3);
+  border-radius: 999px;
+}
+.btn:hover { background: linear-gradient(180deg, #17897a 0%, #0b6a60 100%); }
+.btn.ghost, .topbar .btn.ghost, .btn.outline {
+  background: var(--glass-bg); color: var(--ink);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-shine), 0 4px 12px rgba(31, 45, 61, 0.08);
+  -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
+}
+.btn.outline { color: var(--brand-ink); }
+.btn.ghost:hover, .btn.outline:hover { background: var(--glass-strong); }
+.btn.link, .btn.link:hover { background: transparent; box-shadow: none; }
+.btn.danger { background: linear-gradient(180deg, #ff5a4f, #e0291e); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 6px 16px rgba(224, 41, 30, 0.28); }
+.btn:disabled, .btn[aria-disabled='true'] { background: rgba(255, 255, 255, 0.45); box-shadow: none; color: rgba(60, 60, 67, 0.45); }
+.icon-btn, .switch-btn {
+  background: var(--glass-bg); border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-shine), 0 3px 10px rgba(31, 45, 61, 0.08);
+}
+.chip { background: var(--glass-bg); border: 1px solid var(--glass-edge); box-shadow: var(--glass-shine); }
+.chip[aria-pressed='true'], .chip.on, label.chip:has(input:checked) { background: linear-gradient(180deg, #1a9585, #0f7a6e); border-color: transparent; }
+
+/* ช่องกรอก: กระจกเว้าลงเล็กน้อย */
+.input, .textarea, .select {
+  background-color: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: inset 0 1px 3px rgba(31, 45, 61, 0.08);
+}
+.input:focus, .textarea:focus, .select:focus { background-color: rgba(255, 255, 255, 0.95); }
+
+/* ป้ายและแจ้งเตือน: สีอ่อนแบบใส */
+.badge { background: rgba(255, 255, 255, 0.6); box-shadow: inset 0 0 0 0.5px rgba(60, 60, 67, 0.12); }
+.alert { -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); box-shadow: var(--glass-shine); }
+.alert.info { background: rgba(230, 240, 253, 0.75); }
+.alert.success { background: rgba(225, 243, 239, 0.8); }
+.alert.warn { background: rgba(255, 241, 230, 0.8); }
+.alert.error { background: rgba(253, 236, 236, 0.8); }
+.bubble .text { background: rgba(255, 255, 255, 0.8); box-shadow: var(--glass-shine), 0 2px 6px rgba(31, 45, 61, 0.06); }
+.bubble.me .text { background: linear-gradient(180deg, #1a9585, #0f7a6e); }
+
+.hero { background: transparent; }
+.footer { border-top: 1px solid var(--glass-edge); }
+
+/* อุปกรณ์ที่ไม่รองรับเบลอ หรือผู้ใช้ตั้งค่าลดความโปร่งใส: ใช้พื้นทึบแทน อ่านง่ายเหมือนเดิม */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .card, .empty, .chat, .app-card, .navbar nav, .tabs, .topbar { background: #fff; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  body::before { display: none; }
+  .card, .empty, .chat, .app-card, .navbar nav, .tabs, .topbar, .btn.ghost, .btn.outline, .chip { background: #fff; -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+
+/* ===================================================================
+   ธีมมืด: ใช้เมื่อเครื่องตั้งโหมดมืด (อัตโนมัติ) หรือผู้ใช้เลือก "มืด" จากปุ่มบนแถบหัว
+   กติกา: data-theme="light" บังคับสว่าง, data-theme="dark" บังคับมืด, ไม่มีค่า = ตามเครื่อง
+   =================================================================== */
+.theme-btn { cursor: pointer; font: inherit; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --ink: #f2f2f7; --ink-2: #d1d1d6; --muted: #a1a1aa;
+    --line: rgba(255, 255, 255, 0.1); --line-2: rgba(255, 255, 255, 0.18);
+    --bg: #0b0d12; --bg-2: #1c1c22; --card: #1c1c22;
+    --brand: #3cc4b0; --brand-ink: #7fe0d1; --brand-soft: rgba(60, 196, 176, 0.16);
+    --accent: #ff9f5a; --accent-ink: #ffc49a; --accent-soft: rgba(255, 159, 90, 0.16);
+    --blue: #7fb2ff; --blue-soft: rgba(80, 140, 255, 0.18);
+    --danger: #ff6b6b; --danger-soft: rgba(255, 90, 90, 0.16);
+    --glass-bg: linear-gradient(160deg, rgba(44, 46, 56, 0.72) 0%, rgba(28, 30, 38, 0.55) 100%);
+    --glass-strong: linear-gradient(160deg, rgba(52, 54, 66, 0.86) 0%, rgba(36, 38, 48, 0.72) 100%);
+    --glass-edge: rgba(255, 255, 255, 0.12);
+    --glass-shine: inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+    --glass-drop: 0 12px 34px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.3);
+    --fill: rgba(255, 255, 255, 0.08); --fill-2: rgba(255, 255, 255, 0.14);
+    color-scheme: dark;
+  }
+}
+:root[data-theme='dark'] {
+  --ink: #f2f2f7; --ink-2: #d1d1d6; --muted: #a1a1aa;
+  --line: rgba(255, 255, 255, 0.1); --line-2: rgba(255, 255, 255, 0.18);
+  --bg: #0b0d12; --bg-2: #1c1c22; --card: #1c1c22;
+  --brand: #3cc4b0; --brand-ink: #7fe0d1; --brand-soft: rgba(60, 196, 176, 0.16);
+  --accent: #ff9f5a; --accent-ink: #ffc49a; --accent-soft: rgba(255, 159, 90, 0.16);
+  --blue: #7fb2ff; --blue-soft: rgba(80, 140, 255, 0.18);
+  --danger: #ff6b6b; --danger-soft: rgba(255, 90, 90, 0.16);
+  --glass-bg: linear-gradient(160deg, rgba(44, 46, 56, 0.72) 0%, rgba(28, 30, 38, 0.55) 100%);
+  --glass-strong: linear-gradient(160deg, rgba(52, 54, 66, 0.86) 0%, rgba(36, 38, 48, 0.72) 100%);
+  --glass-edge: rgba(255, 255, 255, 0.12);
+  --glass-shine: inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+  --glass-drop: 0 12px 34px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.3);
+  --fill: rgba(255, 255, 255, 0.08); --fill-2: rgba(255, 255, 255, 0.14);
+  color-scheme: dark;
+}
+:root[data-theme='light'] { color-scheme: light; }
+
+/* ส่วนที่ต้องปรับเพิ่มในโหมดมืด (ใช้ selector เดียวกันทั้งแบบอัตโนมัติและแบบเลือกเอง) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) body { background: #0b0d12; }
+  :root:not([data-theme='light']) body::before {
+    background:
+      radial-gradient(38% 42% at 12% 8%, rgba(32, 160, 140, 0.35), transparent 70%),
+      radial-gradient(40% 40% at 92% 12%, rgba(60, 100, 220, 0.32), transparent 70%),
+      radial-gradient(45% 45% at 78% 88%, rgba(130, 80, 220, 0.3), transparent 70%),
+      radial-gradient(40% 40% at 8% 92%, rgba(220, 120, 60, 0.22), transparent 70%),
+      #0b0d12;
+  }
+  :root:not([data-theme='light']) .topbar { background: linear-gradient(180deg, rgba(22, 24, 30, 0.78), rgba(22, 24, 30, 0.6)); box-shadow: var(--glass-shine), 0 6px 20px rgba(0, 0, 0, 0.35); }
+  :root:not([data-theme='light']) .navbar a[aria-current='page'], :root:not([data-theme='light']) .tabs a[aria-current='page'] { background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1)); color: #fff; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 4px 14px rgba(0, 0, 0, 0.35); }
+  :root:not([data-theme='light']) .column { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.08); }
+  :root:not([data-theme='light']) .card.soft { background: rgba(255, 255, 255, 0.05); }
+  :root:not([data-theme='light']) .input, :root:not([data-theme='light']) .textarea, :root:not([data-theme='light']) .select { background-color: rgba(255, 255, 255, 0.07); border-color: rgba(255, 255, 255, 0.1); color: var(--ink); box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3); }
+  :root:not([data-theme='light']) .input:focus, :root:not([data-theme='light']) .textarea:focus, :root:not([data-theme='light']) .select:focus { background-color: rgba(255, 255, 255, 0.12); }
+  :root:not([data-theme='light']) .select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23a1a1aa' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+  :root:not([data-theme='light']) .badge { background: rgba(255, 255, 255, 0.1); color: var(--ink-2); box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.1); }
+  :root:not([data-theme='light']) .badge.dark { background: #f2f2f7; color: #1c1c1e; }
+  :root:not([data-theme='light']) .alert.info { background: rgba(80, 140, 255, 0.16); color: #b9d3ff; }
+  :root:not([data-theme='light']) .alert.success { background: rgba(60, 196, 176, 0.16); color: #9ae8da; }
+  :root:not([data-theme='light']) .alert.warn { background: rgba(255, 159, 90, 0.16); color: #ffc49a; }
+  :root:not([data-theme='light']) .alert.error { background: rgba(255, 90, 90, 0.16); color: #ffb3b3; }
+  :root:not([data-theme='light']) .alert.privacy { background: rgba(255, 255, 255, 0.05); }
+  :root:not([data-theme='light']) .bubble .text { background: rgba(255, 255, 255, 0.1); color: var(--ink); }
+  :root:not([data-theme='light']) .btn:disabled, :root:not([data-theme='light']) .btn[aria-disabled='true'] { background: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.35); }
+  :root:not([data-theme='light']) .count-dot { border-color: #16181e; }
+  :root:not([data-theme='light']) fieldset { background: rgba(255, 255, 255, 0.04); }
+  :root:not([data-theme='light']) .space-pill.personal { background: var(--brand-soft); color: var(--brand-ink); }
+  :root:not([data-theme='light']) img.avatar.has-img { background: #2a2c34; border-color: rgba(255, 255, 255, 0.12); }
+  :root:not([data-theme='light']) .card.warn { background: rgba(255, 159, 90, 0.14); }
+  :root:not([data-theme='light']) .card.dark { background: rgba(255, 255, 255, 0.1); }
+}
+:root[data-theme='dark'] body { background: #0b0d12; }
+:root[data-theme='dark'] body::before {
+  background:
+    radial-gradient(38% 42% at 12% 8%, rgba(32, 160, 140, 0.35), transparent 70%),
+    radial-gradient(40% 40% at 92% 12%, rgba(60, 100, 220, 0.32), transparent 70%),
+    radial-gradient(45% 45% at 78% 88%, rgba(130, 80, 220, 0.3), transparent 70%),
+    radial-gradient(40% 40% at 8% 92%, rgba(220, 120, 60, 0.22), transparent 70%),
+    #0b0d12;
+}
+:root[data-theme='dark'] .topbar { background: linear-gradient(180deg, rgba(22, 24, 30, 0.78), rgba(22, 24, 30, 0.6)); box-shadow: var(--glass-shine), 0 6px 20px rgba(0, 0, 0, 0.35); }
+:root[data-theme='dark'] .navbar a[aria-current='page'], :root[data-theme='dark'] .tabs a[aria-current='page'] { background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1)); color: #fff; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 4px 14px rgba(0, 0, 0, 0.35); }
+:root[data-theme='dark'] .column { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.08); }
+:root[data-theme='dark'] .card.soft { background: rgba(255, 255, 255, 0.05); }
+:root[data-theme='dark'] .input, :root[data-theme='dark'] .textarea, :root[data-theme='dark'] .select { background-color: rgba(255, 255, 255, 0.07); border-color: rgba(255, 255, 255, 0.1); color: var(--ink); box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3); }
+:root[data-theme='dark'] .input:focus, :root[data-theme='dark'] .textarea:focus, :root[data-theme='dark'] .select:focus { background-color: rgba(255, 255, 255, 0.12); }
+:root[data-theme='dark'] .select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23a1a1aa' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+:root[data-theme='dark'] .badge { background: rgba(255, 255, 255, 0.1); color: var(--ink-2); box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.1); }
+:root[data-theme='dark'] .badge.dark { background: #f2f2f7; color: #1c1c1e; }
+:root[data-theme='dark'] .alert.info { background: rgba(80, 140, 255, 0.16); color: #b9d3ff; }
+:root[data-theme='dark'] .alert.success { background: rgba(60, 196, 176, 0.16); color: #9ae8da; }
+:root[data-theme='dark'] .alert.warn { background: rgba(255, 159, 90, 0.16); color: #ffc49a; }
+:root[data-theme='dark'] .alert.error { background: rgba(255, 90, 90, 0.16); color: #ffb3b3; }
+:root[data-theme='dark'] .alert.privacy { background: rgba(255, 255, 255, 0.05); }
+:root[data-theme='dark'] .bubble .text { background: rgba(255, 255, 255, 0.1); color: var(--ink); }
+:root[data-theme='dark'] .btn:disabled, :root[data-theme='dark'] .btn[aria-disabled='true'] { background: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.35); }
+:root[data-theme='dark'] .count-dot { border-color: #16181e; }
+:root[data-theme='dark'] fieldset { background: rgba(255, 255, 255, 0.04); }
+:root[data-theme='dark'] .space-pill.personal { background: var(--brand-soft); color: var(--brand-ink); }
+:root[data-theme='dark'] img.avatar.has-img { background: #2a2c34; border-color: rgba(255, 255, 255, 0.12); }
+:root[data-theme='dark'] .card.warn { background: rgba(255, 159, 90, 0.14); }
+:root[data-theme='dark'] .card.dark { background: rgba(255, 255, 255, 0.1); }

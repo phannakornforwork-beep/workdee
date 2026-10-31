@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Logo } from '@/components/ui';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export function AuthShell({ title, sub, children }: { title: string; sub?: string; children: React.ReactNode }) {
   return (
@@ -8,6 +9,7 @@ export function AuthShell({ title, sub, children }: { title: string; sub?: strin
         <div className="inner">
           <Logo />
           <span className="right" />
+          <ThemeToggle />
           <Link href="/jobs" className="tlink">
             ดูประกาศงาน
           </Link>
