@@ -18,7 +18,7 @@ export default function Home() {
             <Link href="/signup" className="btn">
               เริ่มสร้างโปรไฟล์ฟรี
             </Link>
-            <Link href="/jobs" className="btn ghost" style={{ color: '#fff', borderColor: '#4a5057' }}>
+            <Link href="/jobs" className="btn ghost">
               ดูประกาศงาน
             </Link>
           </div>

@@ -22,7 +22,7 @@ export default async function SpacesPage() {
           <Logo href="/spaces" />
           <span className="right" />
           <form action={signOutAction}>
-            <button type="submit" className="btn small ghost" style={{ color: '#fff', borderColor: '#4a5057' }}>
+            <button type="submit" className="btn small ghost">
               ออกจากระบบ
             </button>
           </form>

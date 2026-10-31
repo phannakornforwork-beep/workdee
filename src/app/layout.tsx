@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { IBM_Plex_Sans_Thai } from 'next/font/google';
 import './globals.css';
+import './ios.css';
 import { SITE_URL } from '@/lib/env';
 
 const font = IBM_Plex_Sans_Thai({
@@ -19,7 +20,7 @@ export const metadata: Metadata = {
   openGraph: { siteName: 'WorkDee', locale: 'th_TH', type: 'website' }
 };
 
-export const viewport: Viewport = { themeColor: '#1C1F23', width: 'device-width', initialScale: 1 };
+export const viewport: Viewport = { themeColor: '#F2F2F7', width: 'device-width', initialScale: 1 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

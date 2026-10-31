@@ -30,7 +30,7 @@ export default async function PersonalLayout({ children }: { children: React.Rea
             สลับพื้นที่
           </Link>
           <form action={signOutAction}>
-            <button type="submit" className="btn small ghost" style={{ color: '#fff', borderColor: '#4a5057' }}>
+            <button type="submit" className="btn small ghost">
               ออกจากระบบ
             </button>
           </form>
