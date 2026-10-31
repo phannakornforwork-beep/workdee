@@ -107,7 +107,7 @@ async function join(user, owner, companyId, positionId) {
 async function candidate(slug, name, profile, education) {
   const u = await account(slug, name);
   await upsertAs(u, 'candidate_profiles', {
-    user_id: u.id, full_name: name, province: 'กรุงเทพมหานคร', pref_job_types: ['full_time', 'part_time'], ...profile
+    user_id: u.id, full_name: name, province: 'กรุงเทพมหานคร', pref_job_types: ['full_time', 'part_time'], discoverable: true, ...profile
   });
   if (education) {
     await call('POST', '/rest/v1/educations', { token: u.token, body: { level: 'bachelor', status: 'graduated', ...education }, prefer: 'return=minimal' });
@@ -283,6 +283,19 @@ async function main() {
   });
   const c4 = await candidate('c4', 'วรเมธ ทองดี', {
     headline: 'ช่างภาพและตัดต่อวิดีโอ', intro: 'รับงานถ่ายภาพอาหารฟรีแลนซ์', skills: ['Video', 'Photography'], tools: ['Premiere Pro']
+  });
+
+  // ผู้หางานที่ยังไม่ได้สมัคร (บริษัทค้นเจอและเชิญได้)
+  await candidate(
+    'c5', 'กานต์ธีรา ศรีวงศ์',
+    { headline: 'จบนิเทศฯ ถนัดถ่ายและตัดต่อคลิปสั้นสายอาหาร', intro: 'ทำช่อง TikTok สอนทำอาหาร 15,000 ผู้ติดตาม', skills: ['TikTok', 'Video', 'Content Writing'], tools: ['CapCut', 'Canva'] },
+    { institution_name: 'มหาวิทยาลัยเชียงใหม่', faculty: 'การสื่อสารมวลชน', major: 'วารสารศาสตร์', year_label: '2568' }
+  );
+  await candidate('c6', 'ภูริ อินทร์แก้ว', {
+    headline: 'นักวิเคราะห์ข้อมูลการตลาดจบใหม่', province: 'นนทบุรี', skills: ['Google Analytics', 'Excel', 'Facebook Ads'], tools: ['Looker Studio']
+  });
+  await candidate('c7', 'ศิริพร มั่นคง', {
+    headline: 'ประสานงานคลังสินค้า 1 ปี อยากย้ายสายมาการตลาด', province: 'สมุทรปราการ', skills: ['Excel', 'Communication', 'Logistics'], pref_job_types: ['full_time']
   });
 
   const apps = {};

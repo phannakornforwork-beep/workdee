@@ -233,3 +233,10 @@ details.disclosure[open] summary::after { content: '▴'; }
 .google-btn:hover { background: var(--bg-2); color: var(--ink); }
 .or-divider { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 13px; margin: 6px 0 2px; }
 .or-divider::before, .or-divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+
+/* ค้นหาผู้หางาน */
+.talent-filters { display: grid; gap: 12px; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto; align-items: end; }
+@media (max-width: 640px) { .talent-filters { grid-template-columns: 1fr; } }
+.talent-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+@media (max-width: 400px) { .talent-grid { grid-template-columns: 1fr; } }
+.talent-headline { font-size: 17px; margin: 0; }

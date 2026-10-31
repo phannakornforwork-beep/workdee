@@ -104,7 +104,7 @@ test('company, candidate and admin pages render with real data', async () => {
   const c = `/c/${companyId}`;
   for (const path of [
     c, `${c}/work`, `${c}/work?tab=team`, `${c}/work?tab=projects`, `${c}/work?tab=leave`,
-    `${c}/jobs`, `${c}/jobs/new`, `${c}/jobs/${jobId}`, `${c}/pipeline`, `${c}/applications/${appId}`, `${c}/interviews`,
+    `${c}/jobs`, `${c}/jobs/new`, `${c}/jobs/${jobId}`, `${c}/pipeline`, `${c}/applications/${appId}`, `${c}/interviews`, `${c}/talent`,
     `${c}/team`, `${c}/team?tab=positions`, `${c}/team?tab=invite`, `${c}/team?tab=approvals`, `${c}/team?tab=log`,
     `${c}/chat?list=1`, `${c}/chat/${rooms[0].room_id}`, `${c}/notifications`, `${c}/settings`, `${c}/settings?new=1`, `${c}/help`
   ]) {

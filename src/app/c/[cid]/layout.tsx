@@ -12,7 +12,11 @@ export default async function CompanyLayout({ children, params }: { children: Re
     { href: base, label: 'หน้าแรก', exact: true },
     { href: `${base}/work`, label: 'งานของทีม' },
     ...(can(access, 'post') || can(access, 'screen') ? [{ href: `${base}/jobs`, label: 'ประกาศงาน' }] : []),
-    ...(can(access, 'screen') ? [{ href: `${base}/pipeline`, label: 'ผู้สมัคร' }, { href: `${base}/interviews`, label: 'สัมภาษณ์' }] : []),
+    ...(can(access, 'screen') ? [
+          { href: `${base}/pipeline`, label: 'ผู้สมัคร' },
+          { href: `${base}/interviews`, label: 'สัมภาษณ์' },
+          { href: `${base}/talent`, label: 'ค้นหาผู้หางาน' }
+        ] : []),
     { href: `${base}/team`, label: 'ทีมและตำแหน่ง' },
     { href: `${base}/chat`, label: 'แชต' },
     { href: `${base}/settings`, label: 'ตั้งค่า' }
