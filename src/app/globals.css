@@ -45,7 +45,7 @@ img { max-width: 100%; }
 
 /* layout */
 .container { max-width: 1160px; margin: 0 auto; padding: 0 20px; }
-.page { padding: 28px 0 72px; display: flex; flex-direction: column; gap: 20px; }
+.page { padding-top: 28px; padding-bottom: 72px; display: flex; flex-direction: column; gap: 20px; }
 .stack { display: flex; flex-direction: column; gap: 12px; }
 .stack-sm { display: flex; flex-direction: column; gap: 6px; }
 .stack-lg { display: flex; flex-direction: column; gap: 20px; }
@@ -240,3 +240,4 @@ details.disclosure[open] summary::after { content: '▴'; }
 .talent-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
 @media (max-width: 400px) { .talent-grid { grid-template-columns: 1fr; } }
 .talent-headline { font-size: 17px; margin: 0; }
+.badge.wrap { white-space: normal; line-height: 1.4; padding-top: 4px; padding-bottom: 4px; }

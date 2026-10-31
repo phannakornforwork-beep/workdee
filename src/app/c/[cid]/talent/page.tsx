@@ -120,14 +120,14 @@ export default async function TalentPage({
               {t.results.length ? (
                 <div className="chips">
                   {t.results.map((r) => (
-                    <Badge key={r.skill} tone="dark">
+                    <Badge key={r.skill} tone="dark wrap">
                       ผลโจทย์ {r.title} · {r.total}/100
                     </Badge>
                   ))}
                 </div>
               ) : null}
               <div className="chips">
-                {[...t.skills, ...t.tools].slice(0, 10).map((s) => (
+                {Array.from(new Set([...t.skills, ...t.tools])).slice(0, 10).map((s) => (
                   <Badge key={s}>{s}</Badge>
                 ))}
               </div>
