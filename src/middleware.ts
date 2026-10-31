@@ -22,9 +22,10 @@ export async function middleware(request: NextRequest) {
     }
   });
 
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
+  // getClaims ตรวจลายเซ็น JWT ในเครื่อง (คีย์แบบ asymmetric) และรีเฟรช session ที่หมดอายุให้
+  // เร็วกว่า getUser ที่ต้องถาม Auth server ทุกคำขอ
+  const { data } = await supabase.auth.getClaims();
+  const user = data?.claims?.sub ? data.claims : null;
 
   const path = request.nextUrl.pathname;
   if (!user && PROTECTED.some((p) => path === p.replace(/\/$/, '') || path.startsWith(p))) {

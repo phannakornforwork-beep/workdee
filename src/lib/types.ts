@@ -8,7 +8,8 @@ export type CompanyAccess = {
   department_id: string;
   is_owner: boolean;
   perms: Record<string, number>;
-  company: { id: string; name: string; status: 'pending' | 'verified' | 'rejected' | 'suspended'; quiet_start: string; quiet_end: string };
+  company: { id: string; name: string; status: 'pending' | 'verified' | 'rejected' | 'suspended'; quiet_start: string; quiet_end: string; logo_path?: string | null };
+  unread?: number;
 };
 
 export type JobCard = {
