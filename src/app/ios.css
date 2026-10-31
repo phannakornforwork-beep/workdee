@@ -178,3 +178,127 @@ details.disclosure[open] summary::after { content: '›'; transform: rotate(-90d
   .topbar .inner { padding: 8px 16px; }
   .navbar nav { max-width: calc(100% - 24px); }
 }
+
+/* ===================================================================
+   Liquid Glass: พื้นผิวกระจกใสแบบ iOS รุ่นใหม่
+   พื้นหลังไล่สีอ่อนอยู่ใต้ทุกอย่าง ส่วนการ์ด แถบหัว เมนู ปุ่ม เป็นกระจกเบลอ
+   มีแสงสะท้อนที่ขอบบน (inset highlight) และเงานุ่มด้านล่างให้ดูลอย
+   =================================================================== */
+:root {
+  --glass-bg: linear-gradient(160deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.52) 100%);
+  --glass-strong: linear-gradient(160deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+  --glass-edge: rgba(255, 255, 255, 0.75);
+  --glass-shine: inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(255, 255, 255, 0.35);
+  --glass-drop: 0 10px 30px rgba(31, 45, 61, 0.1), 0 2px 6px rgba(31, 45, 61, 0.05);
+  --glass-blur: saturate(180%) blur(22px);
+  --fill: rgba(255, 255, 255, 0.55);
+  --fill-2: rgba(255, 255, 255, 0.8);
+}
+
+body { background: #eef2f6; }
+/* พื้นหลังไล่สีแบบ mesh (ติดอยู่กับจอ ไม่เลื่อนตามหน้า) */
+body::before {
+  content: ''; position: fixed; inset: -10%; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(38% 42% at 12% 8%, rgba(94, 214, 190, 0.45), transparent 70%),
+    radial-gradient(40% 40% at 92% 12%, rgba(125, 175, 255, 0.42), transparent 70%),
+    radial-gradient(45% 45% at 78% 88%, rgba(200, 160, 255, 0.35), transparent 70%),
+    radial-gradient(40% 40% at 8% 92%, rgba(255, 196, 150, 0.4), transparent 70%),
+    #eef2f6;
+}
+
+.glass, .topbar, .navbar nav, .card, .app-card, .column, .empty, .chat, .tabs, .bulkbar {
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+/* แถบหัวและเมนู: แคปซูลกระจกลอย */
+.topbar {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.5));
+  border-bottom: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-shine), 0 6px 20px rgba(31, 45, 61, 0.06);
+}
+.navbar nav, .tabs {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-edge);
+  border-radius: 999px; padding: 4px;
+  box-shadow: var(--glass-shine), var(--glass-drop);
+}
+.navbar a, .tabs a { border-radius: 999px; }
+.navbar a[aria-current='page'], .tabs a[aria-current='page'] {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.82));
+  box-shadow: inset 0 1px 0 #fff, 0 4px 14px rgba(15, 122, 110, 0.18), 0 0 0 0.5px rgba(15, 122, 110, 0.25);
+  color: var(--brand-ink);
+}
+
+/* การ์ด: กระจกใสมีแสงขอบบน */
+.card, .empty, .chat {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-shine), var(--glass-drop);
+  border-radius: 24px;
+}
+.card.soft { background: rgba(255, 255, 255, 0.35); }
+.card.warn { background: linear-gradient(160deg, rgba(255, 241, 230, 0.85), rgba(255, 241, 230, 0.6)); }
+.card.dark { background: linear-gradient(160deg, rgba(28, 28, 30, 0.82), rgba(28, 28, 30, 0.68)); border-color: rgba(255, 255, 255, 0.18); }
+.card.highlight { box-shadow: 0 0 0 2px var(--brand), var(--glass-shine), var(--glass-drop); }
+a.card:hover { box-shadow: var(--glass-shine), 0 16px 40px rgba(31, 45, 61, 0.14); }
+
+/* กระดานผู้สมัคร: คอลัมน์กระจกบาง การ์ดกระจกหนา */
+.column { background: rgba(255, 255, 255, 0.32); border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 26px; box-shadow: var(--glass-shine); }
+.app-card { background: var(--glass-strong); border: 1px solid var(--glass-edge); border-radius: 18px; box-shadow: var(--glass-shine), 0 4px 14px rgba(31, 45, 61, 0.07); }
+
+/* ปุ่ม: ปุ่มหลักเป็นกระจกสี ปุ่มรองเป็นกระจกใส */
+.btn {
+  background: linear-gradient(180deg, #1a9585 0%, #0f7a6e 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0 -1px 0 rgba(0, 0, 0, 0.12), 0 6px 16px rgba(15, 122, 110, 0.3);
+  border-radius: 999px;
+}
+.btn:hover { background: linear-gradient(180deg, #17897a 0%, #0b6a60 100%); }
+.btn.ghost, .topbar .btn.ghost, .btn.outline {
+  background: var(--glass-bg); color: var(--ink);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-shine), 0 4px 12px rgba(31, 45, 61, 0.08);
+  -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
+}
+.btn.outline { color: var(--brand-ink); }
+.btn.ghost:hover, .btn.outline:hover { background: var(--glass-strong); }
+.btn.link, .btn.link:hover { background: transparent; box-shadow: none; }
+.btn.danger { background: linear-gradient(180deg, #ff5a4f, #e0291e); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 6px 16px rgba(224, 41, 30, 0.28); }
+.btn:disabled, .btn[aria-disabled='true'] { background: rgba(255, 255, 255, 0.45); box-shadow: none; color: rgba(60, 60, 67, 0.45); }
+.icon-btn, .switch-btn {
+  background: var(--glass-bg); border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-shine), 0 3px 10px rgba(31, 45, 61, 0.08);
+}
+.chip { background: var(--glass-bg); border: 1px solid var(--glass-edge); box-shadow: var(--glass-shine); }
+.chip[aria-pressed='true'], .chip.on, label.chip:has(input:checked) { background: linear-gradient(180deg, #1a9585, #0f7a6e); border-color: transparent; }
+
+/* ช่องกรอก: กระจกเว้าลงเล็กน้อย */
+.input, .textarea, .select {
+  background-color: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: inset 0 1px 3px rgba(31, 45, 61, 0.08);
+}
+.input:focus, .textarea:focus, .select:focus { background-color: rgba(255, 255, 255, 0.95); }
+
+/* ป้ายและแจ้งเตือน: สีอ่อนแบบใส */
+.badge { background: rgba(255, 255, 255, 0.6); box-shadow: inset 0 0 0 0.5px rgba(60, 60, 67, 0.12); }
+.alert { -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); box-shadow: var(--glass-shine); }
+.alert.info { background: rgba(230, 240, 253, 0.75); }
+.alert.success { background: rgba(225, 243, 239, 0.8); }
+.alert.warn { background: rgba(255, 241, 230, 0.8); }
+.alert.error { background: rgba(253, 236, 236, 0.8); }
+.bubble .text { background: rgba(255, 255, 255, 0.8); box-shadow: var(--glass-shine), 0 2px 6px rgba(31, 45, 61, 0.06); }
+.bubble.me .text { background: linear-gradient(180deg, #1a9585, #0f7a6e); }
+
+.hero { background: transparent; }
+.footer { border-top: 1px solid var(--glass-edge); }
+
+/* อุปกรณ์ที่ไม่รองรับเบลอ หรือผู้ใช้ตั้งค่าลดความโปร่งใส: ใช้พื้นทึบแทน อ่านง่ายเหมือนเดิม */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .card, .empty, .chat, .app-card, .navbar nav, .tabs, .topbar { background: #fff; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  body::before { display: none; }
+  .card, .empty, .chat, .app-card, .navbar nav, .tabs, .topbar, .btn.ghost, .btn.outline, .chip { background: #fff; -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
