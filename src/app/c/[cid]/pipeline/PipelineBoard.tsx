@@ -8,6 +8,7 @@ import {
   saveTemplateAction, undoBatchAction
 } from '@/lib/actions/hiring';
 import type { PipelineItem, Template } from '@/lib/types';
+import { mediaUrl } from '@/lib/env';
 
 type Reason = { code: string; label: string; needs_note: boolean };
 type Slot = { id: string; starts_at: string; mode: string; location: string; job_id: string | null };
@@ -490,7 +491,13 @@ export function PipelineBoard({
                 const inner = (
                   <>
                     <span className="row-between">
-                      <span className="name">{it.candidate_name}</span>
+                      <span className="card-head">
+                        {it.photo_path ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={mediaUrl(it.photo_path) || ''} alt="" className="avatar has-img" style={{ width: 32, height: 32 }} loading="lazy" />
+                        ) : null}
+                        <span className="name">{it.candidate_name}</span>
+                      </span>
                       <span className="score">{it.match_score}%</span>
                     </span>
                     <span className="tiny muted">

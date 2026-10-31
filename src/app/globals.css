@@ -241,3 +241,12 @@ details.disclosure[open] summary::after { content: '▴'; }
 @media (max-width: 400px) { .talent-grid { grid-template-columns: 1fr; } }
 .talent-headline { font-size: 17px; margin: 0; }
 .badge.wrap { white-space: normal; line-height: 1.4; padding-top: 4px; padding-bottom: 4px; }
+
+/* รูปโปรไฟล์และโลโก้ */
+.avatar.square { border-radius: 10px; }
+img.avatar.has-img { object-fit: cover; background: #fff; border: 1px solid var(--line); padding: 0; }
+img.avatar.square.has-img { object-fit: contain; padding: 3px; }
+.photo-field { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.photo-field .actions { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.card-head { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.card-head > div { min-width: 0; }

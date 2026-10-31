@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import { requireCompany, can } from '@/lib/auth';
 import { ActionForm, ConfirmSubmit, SubmitButton } from '@/components/forms';
 import { FileUpload } from '@/components/FileUpload';
+import { PhotoUpload } from '@/components/PhotoUpload';
+import { mediaUrl } from '@/lib/env';
 import { Alert, Badge } from '@/components/ui';
 import { setCertificateAction, setRuleAction, updateCompanyAction } from '@/lib/actions/company';
 import { deleteTemplateAction, saveTemplateFormAction } from '@/lib/actions/hiring';
@@ -12,7 +14,7 @@ export const metadata: Metadata = { title: 'ตั้งค่าบริษั
 
 type Company = {
   id: string; name: string; reg_no: string; size_range: string | null; industry: string | null; province: string | null; about: string;
-  website: string | null; status: string; cert_path: string | null; review_note: string | null; reviewed_at: string | null;
+  website: string | null; logo_path: string | null; status: string; cert_path: string | null; review_note: string | null; reviewed_at: string | null;
   quiet_start: string; quiet_end: string; plan: string; created_by: string | null;
 };
 type Tpl = { id: string; kind: string; label: string; body: string; is_default: boolean; created_by: string | null };
@@ -86,6 +88,15 @@ export default async function SettingsPage({ params, searchParams }: { params: P
             <ActionForm action={updateCompanyAction} className="card">
               <h2>ข้อมูลที่ผู้สมัครเห็น</h2>
               <input type="hidden" name="company_id" value={cid} />
+              <PhotoUpload
+                prefix={`logos/${cid}`}
+                name="logo_path"
+                clearName="clear_logo"
+                current={mediaUrl(c.logo_path)}
+                displayName={c.name}
+                square
+                label="โลโก้บริษัท (แสดงในประกาศงาน)"
+              />
               <div className="field">
                 <label htmlFor="about">เกี่ยวกับบริษัท</label>
                 <textarea id="about" name="about" className="textarea" rows={5} defaultValue={c.about} maxLength={3000} placeholder="ทำอะไร ลูกค้าเป็นใคร ทีมทำงานแบบไหน เด็กจบใหม่จะได้เรียนรู้อะไร" />

@@ -46,7 +46,8 @@ export async function saveProfileAction(_prev: ActionState, fd: FormData): Promi
     experiences: pairs(str(fd, 'experiences'), ['title', 'detail']),
     pref_job_types: all(fd, 'pref_job_types'),
     pref_provinces: all(fd, 'pref_provinces'),
-    expected_salary: num(fd, 'expected_salary')
+    expected_salary: num(fd, 'expected_salary'),
+    ...(str(fd, 'photo_path') ? { photo_path: str(fd, 'photo_path') } : bool(fd, 'clear_photo') ? { photo_path: null } : {})
   };
   const { error } = await supabase.from('candidate_profiles').upsert(row, { onConflict: 'user_id' });
   if (error) return fail(error);

@@ -11,6 +11,10 @@
 // หรือรันจาก GitHub: Actions → Seed demo data (ดู docs/SETUP.md ขั้นที่ 6.5)
 // รันครั้งเดียวต่อฐานข้อมูล ถ้าพบบัญชีเดโมอยู่แล้วจะหยุดโดยไม่สร้างซ้ำ
 
+import fs from 'node:fs';
+import path from 'node:path';
+
+const MEDIA_DIR = path.join(path.dirname(new URL(import.meta.url).pathname), 'demo-media');
 const URL_BASE = (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\/$/, '');
 const PUBLIC_KEY =
   process.env.SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY || '';
@@ -104,9 +108,32 @@ async function join(user, owner, companyId, positionId) {
   await rpc(user, 'accept_invite', { p_code: code });
 }
 
+// อัปโหลดรูปจาก scripts/demo-media ไปที่ bucket "media" ในนามผู้ใช้คนนั้น (ตามสิทธิ์จริง)
+async function uploadMedia(who, objectPath, file) {
+  const full = path.join(MEDIA_DIR, file);
+  if (!fs.existsSync(full)) return null;
+  const res = await fetch(`${URL_BASE}/storage/v1/object/media/${objectPath}`, {
+    method: 'POST',
+    headers: { apikey: PUBLIC_KEY, Authorization: `Bearer ${who.token}`, 'Content-Type': 'image/svg+xml' },
+    body: fs.readFileSync(full)
+  });
+  if (!res.ok) {
+    console.warn(`  ! อัปโหลด ${file} ไม่สำเร็จ (${res.status}) ข้ามรูปนี้`);
+    return null;
+  }
+  return objectPath;
+}
+
+async function setLogo(owner, companyId, file) {
+  const p = await uploadMedia(owner, `logos/${companyId}/logo.svg`, file);
+  if (p) await rpc(owner, 'set_company_logo', { p_company: companyId, p_path: p });
+}
+
 async function candidate(slug, name, profile, education) {
   const u = await account(slug, name);
+  const photo = await uploadMedia(u, `avatars/${u.id}/photo.svg`, `avatar-${slug}.svg`);
   await upsertAs(u, 'candidate_profiles', {
+    ...(photo ? { photo_path: photo } : {}),
     user_id: u.id, full_name: name, province: 'กรุงเทพมหานคร', pref_job_types: ['full_time', 'part_time'], discoverable: true, ...profile
   });
   if (education) {
@@ -172,6 +199,7 @@ async function main() {
     name: 'บริษัท สุขใจฟู้ดส์ จำกัด', reg_no: '0105561234567', size: '20-49', industry: 'อาหารและเครื่องดื่ม', province: 'กรุงเทพมหานคร',
     about: 'ผู้ผลิตน้ำพริกและซอสแบบโฮมเมด ขายผ่านร้านค้าออนไลน์และซูเปอร์มาร์เก็ตทั่วประเทศ ทีมงาน 35 คน'
   });
+  await setLogo(owner, sukjai.id, 'logo-sukjai.svg');
   const mktHead = await rpc(owner, 'create_position', {
     p_company: sukjai.id, p_parent: sukjai.root, p_title: 'หัวหน้าการตลาด', p_is_department: true,
     p_grants: { team: 1, post: 1, approve_post: 1, screen: 1, offer: 1, members: 1, announce: 1, leave: 1 }
@@ -229,6 +257,7 @@ async function main() {
     name: 'บ้านสวนคาเฟ่', reg_no: '0505563000123', size: '1-19', industry: 'ร้านอาหารและคาเฟ่', province: 'เชียงใหม่',
     about: 'คาเฟ่และร้านเบเกอรี่ 2 สาขาในเชียงใหม่'
   });
+  await setLogo(cafeOwner, cafe.id, 'logo-baansuan.svg');
   const cafeJob = await rpc(cafeOwner, 'save_job', {
     p_company: cafe.id, p_job: null,
     p_fields: {
@@ -248,6 +277,7 @@ async function main() {
     name: 'บริษัท ไทยโลจิสติกส์ พลัส จำกัด', reg_no: '0115562009876', size: '50-199', industry: 'ขนส่งและคลังสินค้า', province: 'สมุทรปราการ',
     about: 'บริการคลังสินค้าและจัดส่งสำหรับร้านค้าออนไลน์'
   });
+  await setLogo(logiOwner, logi.id, 'logo-thailogistics.svg');
   const logiJob = await rpc(logiOwner, 'save_job', {
     p_company: logi.id, p_job: null,
     p_fields: {
