@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { requireUser } from '@/lib/auth';
 import { ActionForm, ConfirmSubmit, SubmitButton } from '@/components/forms';
 import { FileUpload } from '@/components/FileUpload';
+import { PhotoUpload } from '@/components/PhotoUpload';
+import { mediaUrl } from '@/lib/env';
 import { VerifyBadge } from '@/components/ui';
 import { deleteEducationAction, requestVerifyAction, saveEducationAction, saveProfileAction } from '@/lib/actions/candidate';
 import { JOB_TYPE, PROVINCES } from '@/lib/format';
@@ -104,6 +106,14 @@ export default async function ProfilePage() {
         <div className="main">
           <ActionForm action={saveProfileAction} className="card">
             <h2>ข้อมูลหลัก</h2>
+            <PhotoUpload
+              prefix={`avatars/${user.id}`}
+              name="photo_path"
+              clearName="clear_photo"
+              current={mediaUrl(cp?.photo_path)}
+              displayName={cp?.full_name || prof?.display_name || ''}
+              label="รูปโปรไฟล์ (บริษัทเห็นเมื่อคุณกดสมัครงานเท่านั้น)"
+            />
             <div className="form-row">
               <div className="field">
                 <label htmlFor="full_name">ชื่อ-นามสกุล</label>

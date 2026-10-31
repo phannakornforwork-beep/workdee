@@ -1,15 +1,17 @@
 import Link from 'next/link';
 import { requireUser } from '@/lib/auth';
-import { BellIcon, Logo } from '@/components/ui';
+import { Avatar, BellIcon, Logo } from '@/components/ui';
+import { mediaUrl } from '@/lib/env';
 import { NavLinks } from '@/components/NavLinks';
 import { signOutAction } from '@/lib/actions/auth';
 
 // พื้นที่ส่วนตัว: ไม่มีบริษัทใดเห็นข้อมูลในส่วนนี้ รวมถึงบริษัทที่คุณทำงานอยู่
 export default async function PersonalLayout({ children }: { children: React.ReactNode }) {
   const { supabase, user } = await requireUser('/me');
-  const [{ data: unread }, { data: profile }] = await Promise.all([
+  const [{ data: unread }, { data: profile }, { data: cand }] = await Promise.all([
     supabase.rpc('unread_count', { p_company: null }),
-    supabase.from('profiles').select('display_name').eq('id', user.id).maybeSingle()
+    supabase.from('profiles').select('display_name').eq('id', user.id).maybeSingle(),
+    supabase.from('candidate_profiles').select('photo_path').eq('user_id', user.id).maybeSingle()
   ]);
   const name = (profile?.display_name as string) || user.email || '';
   return (
@@ -24,7 +26,8 @@ export default async function PersonalLayout({ children }: { children: React.Rea
             {unread ? <span className="count-dot">{unread > 99 ? '99+' : unread}</span> : null}
           </Link>
           <Link href="/spaces" className="switch-btn">
-            <span className="avatar">{name.slice(0, 1)}</span>สลับพื้นที่
+            <Avatar src={mediaUrl(cand?.photo_path as string | null)} name={name} size={28} />
+            สลับพื้นที่
           </Link>
           <form action={signOutAction}>
             <button type="submit" className="btn small ghost" style={{ color: '#fff', borderColor: '#4a5057' }}>

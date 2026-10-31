@@ -3,14 +3,15 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { Footer, PublicHeader } from '@/components/PublicHeader';
-import { Badge } from '@/components/ui';
+import { Avatar, Badge } from '@/components/ui';
+import { mediaUrl } from '@/lib/env';
 import { ActionForm, SubmitButton } from '@/components/forms';
 import { applyAction } from '@/lib/actions/candidate';
 import { AI_POLICY, JOB_TYPE, WORK_MODE, salaryRange, thaiDate } from '@/lib/format';
 import type { Criterion } from '@/lib/types';
 
 type Job = {
-  id: string; company_id: string; company_name: string; company_industry: string | null; title: string; job_type: string;
+  id: string; company_id: string; company_name: string; company_logo_path: string | null; company_industry: string | null; title: string; job_type: string;
   description: string; responsibilities: string; requirements: string; skills: string[]; province: string | null; work_mode: string;
   salary_min: number | null; salary_max: number | null; pay_unit: string; gig_days: number | null; gig_start: string | null; gig_end: string | null;
   headcount: number; published_at: string; closes_at: string | null; has_challenge: boolean; challenge_title: string | null;
@@ -56,7 +57,10 @@ export default async function JobDetail({ params }: { params: Promise<{ id: stri
         <div className="split">
           <div className="main">
             <div className="stack-sm">
-              <span className="muted">{job.company_name}{job.company_industry ? ` · ${job.company_industry}` : ''}</span>
+              <span className="card-head">
+                <Avatar src={mediaUrl(job.company_logo_path)} name={job.company_name} tone="orange" size={48} square />
+                <span className="muted">{job.company_name}{job.company_industry ? ` · ${job.company_industry}` : ''}</span>
+              </span>
               <h1>{job.title}</h1>
               <div className="chips">
                 <Badge tone="teal">บริษัทยืนยันแล้ว</Badge>

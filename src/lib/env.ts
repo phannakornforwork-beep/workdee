@@ -17,3 +17,9 @@ export function isConfigured(): boolean {
 
 // อีเมลติดต่อทีมงาน (แสดงในหน้าช่วยเหลือ นโยบาย และเงื่อนไข)
 export const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || '';
+
+// ที่อยู่รูปใน bucket สาธารณะ "media" (รูปโปรไฟล์ผู้หางาน โลโก้บริษัท)
+export function mediaUrl(path?: string | null): string | null {
+  if (!path || !SUPABASE_URL) return null;
+  return `${SUPABASE_URL.replace(/\/$/, '')}/storage/v1/object/public/media/${path.split('/').map(encodeURIComponent).join('/')}`;
+}

@@ -5,7 +5,8 @@ import { requireCompany } from '@/lib/auth';
 import { ActionForm, SubmitButton } from '@/components/forms';
 import { ChatRoom, type ChatMessage } from '@/components/ChatRoom';
 import { afterChatSendAction } from '@/lib/actions/chat';
-import { Alert, Badge, StageBadge, VerifyBadge } from '@/components/ui';
+import { Alert, Avatar, Badge, StageBadge, VerifyBadge } from '@/components/ui';
+import { mediaUrl } from '@/lib/env';
 import { GradeForm } from './GradeForm';
 import {
   addNoteAction, completeInterviewAction, inviteChallengeOneAction, inviteInterviewOneAction, makeOfferAction, offerSlotsAction, rejectOneAction
@@ -16,7 +17,7 @@ import type { Criterion } from '@/lib/types';
 export const metadata: Metadata = { title: 'ใบสมัคร' };
 
 type Snap = {
-  full_name: string; headline: string; intro: string; province: string | null; age: number | null; skills: string[]; tools: string[];
+  full_name: string; photo_path?: string | null; headline: string; intro: string; province: string | null; age: number | null; skills: string[]; tools: string[];
   languages: { name: string; detail: string }[]; certificates: { name: string; detail: string }[]; projects: { title: string; detail: string }[];
   experiences: { title: string; detail: string }[];
   educations: { institution_name: string; level: string; faculty: string | null; major: string | null; status: string; year_label: string | null; gpa: number | null; verify_level: string }[];
@@ -92,6 +93,7 @@ export default async function ApplicantPage({ params }: { params: Promise<{ cid:
       </Link>
       <div className="row-between">
         <div className="stack-sm">
+          <Avatar src={mediaUrl(snap?.photo_path)} name={a.candidate_name} size={72} />
           <span className="muted">{d.job.title} · สมัครเมื่อ {thaiDateTime(a.created_at)}</span>
           <h1>{a.candidate_name}</h1>
           <div className="chips">

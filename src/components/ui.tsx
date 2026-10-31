@@ -61,9 +61,29 @@ export function Alert({ tone = 'info', children }: { tone?: 'info' | 'warn' | 'e
   );
 }
 
-export function Avatar({ name, tone }: { name?: string | null; tone?: string }) {
+// รูปโปรไฟล์หรือโลโก้ ถ้าไม่มีรูปจะแสดงตัวอักษรแรกของชื่อ
+export function Avatar({
+  name,
+  tone,
+  src,
+  size,
+  square = false
+}: {
+  name?: string | null;
+  tone?: string;
+  src?: string | null;
+  size?: number;
+  square?: boolean;
+}) {
+  const style = size ? { width: size, height: size, fontSize: Math.max(12, Math.round(size * 0.38)) } : undefined;
+  const cls = `avatar ${tone || ''} ${square ? 'square' : ''}`;
+  if (src)
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={src} alt="" className={`${cls} has-img`} style={style} loading="lazy" />
+    );
   return (
-    <span className={`avatar ${tone || ''}`} aria-hidden="true">
+    <span className={cls} style={style} aria-hidden="true">
       {(name || '?').trim().slice(0, 1) || '?'}
     </span>
   );

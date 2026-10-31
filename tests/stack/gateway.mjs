@@ -124,6 +124,18 @@ async function storage(req, res, rest) {
     return res.end(fs.readFileSync(file));
   }
 
+  // bucket สาธารณะ: อ่านได้โดยไม่ต้องล็อกอิน (เหมือน /object/public ของ Supabase)
+  if (seg[1] === 'public' && req.method === 'GET') {
+    const bucket = seg[2];
+    const name = seg.slice(3).join('/');
+    const pub = runAs(null, `select count(*) from storage.objects where bucket_id = ${sqlLiteral(bucket)} and name = ${sqlLiteral(name)};`);
+    const file = path.join(FILES, bucket, name);
+    if (!pub.ok || pub.out.split('\n').pop() !== '1' || !fs.existsSync(file)) return json(res, 404, { error: 'not_found' });
+    const types = { '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp' };
+    res.writeHead(200, { 'Content-Type': types[path.extname(name).toLowerCase()] || 'application/octet-stream', 'Cache-Control': 'public, max-age=3600' });
+    return res.end(fs.readFileSync(file));
+  }
+
   const isAuthPrefix = seg[1] === 'authenticated';
   const bucket = isAuthPrefix ? seg[2] : seg[1];
   const name = (isAuthPrefix ? seg.slice(3) : seg.slice(2)).join('/');

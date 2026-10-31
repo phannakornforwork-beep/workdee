@@ -60,6 +60,11 @@ export async function updateCompanyAction(_prev: ActionState, fd: FormData): Pro
   }
   const { error } = await supabase.rpc('update_company_profile', { p_company: company, p_fields: fields });
   if (error) return fail(error);
+  const logo = str(fd, 'logo_path');
+  if (logo || bool(fd, 'clear_logo')) {
+    const { error: e2 } = await supabase.rpc('set_company_logo', { p_company: company, p_path: logo || null });
+    if (e2) return fail(e2);
+  }
   revalidatePath(`/c/${company}`, 'layout');
   return done('บันทึกข้อมูลบริษัทแล้ว');
 }

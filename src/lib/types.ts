@@ -16,6 +16,7 @@ export type JobCard = {
   title: string;
   company_id: string;
   company_name: string;
+  company_logo_path?: string | null;
   job_type: string;
   province: string | null;
   work_mode: string;
@@ -53,6 +54,7 @@ export type PipelineItem = {
   reject_labels: string | null;
   access_revoked: boolean;
   institution_name: string | null;
+  photo_path?: string | null;
   submitted_at: string | null;
   score_total: number | null;
   reused: boolean;

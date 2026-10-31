@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { Badge } from '@/components/ui';
+import { Avatar, Badge } from '@/components/ui';
+import { mediaUrl } from '@/lib/env';
 import { JOB_TYPE, PROVINCES, WORK_MODE, relative, salaryRange } from '@/lib/format';
 import type { JobCard } from '@/lib/types';
 
@@ -53,7 +54,10 @@ export function JobList({ jobs, base = '/jobs', showMatch = false }: { jobs: Job
       {jobs.map((j) => (
         <Link key={j.id} href={`${base}/${j.id}`} className="card">
           <div className="row-between">
-            <span className="muted small">{j.company_name}</span>
+            <span className="card-head">
+              <Avatar src={mediaUrl(j.company_logo_path)} name={j.company_name} tone="orange" size={36} square />
+              <span className="muted small">{j.company_name}</span>
+            </span>
             {showMatch && j.match_score !== null ? <span className="score">ตรง {j.match_score}%</span> : null}
           </div>
           <h3>{j.title}</h3>
