@@ -410,3 +410,77 @@ a.card:hover { box-shadow: var(--glass-shine), 0 16px 40px rgba(31, 45, 61, 0.14
 :root[data-theme='dark'] img.avatar.has-img { background: #2a2c34; border-color: rgba(255, 255, 255, 0.12); }
 :root[data-theme='dark'] .card.warn { background: rgba(255, 159, 90, 0.14); }
 :root[data-theme='dark'] .card.dark { background: rgba(255, 255, 255, 0.1); }
+
+/* ===================================================================
+   การเคลื่อนไหว: เปลี่ยนหน้า เมนูเลื่อน ปุ่ม และองค์ประกอบที่ปรากฏ
+   =================================================================== */
+:root { --spring: cubic-bezier(0.2, 0.9, 0.3, 1.15); --ease-out: cubic-bezier(0.16, 1, 0.3, 1); }
+
+/* เข้าหน้าใหม่ */
+.page-anim { display: flex; flex-direction: column; gap: inherit; }
+.page-anim.enter-forward { animation: page-in-right 0.42s var(--ease-out) both; }
+.page-anim.enter-back { animation: page-in-left 0.42s var(--ease-out) both; }
+.page-anim.enter-fade { animation: page-in-up 0.45s var(--ease-out) both; }
+@keyframes page-in-right { from { opacity: 0; transform: translateX(56px); } to { opacity: 1; transform: none; } }
+@keyframes page-in-left { from { opacity: 0; transform: translateX(-56px); } to { opacity: 1; transform: none; } }
+@keyframes page-in-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+/* การ์ดค่อยๆ ลอยขึ้นตามลำดับ */
+.page-anim > *, .page-anim .grid > *, .page-anim .board > * { animation: rise 0.5s var(--ease-out) both; }
+.page-anim > *:nth-child(2), .page-anim .grid > *:nth-child(2), .page-anim .board > *:nth-child(2) { animation-delay: 0.04s; }
+.page-anim > *:nth-child(3), .page-anim .grid > *:nth-child(3), .page-anim .board > *:nth-child(3) { animation-delay: 0.08s; }
+.page-anim > *:nth-child(4), .page-anim .grid > *:nth-child(4), .page-anim .board > *:nth-child(4) { animation-delay: 0.12s; }
+.page-anim > *:nth-child(n+5), .page-anim .grid > *:nth-child(n+5), .page-anim .board > *:nth-child(n+5) { animation-delay: 0.16s; }
+@keyframes rise { from { opacity: 0; transform: translateY(10px) scale(0.99); } to { opacity: 1; transform: none; } }
+
+/* เมนู: เม็ดไฮไลต์เลื่อนแบบสปริง */
+.navbar nav { position: relative; scroll-behavior: smooth; }
+.nav-pill {
+  position: absolute; top: 4px; bottom: 4px; left: 0; border-radius: 999px; z-index: 0; pointer-events: none;
+  background: linear-gradient(180deg, #fff, rgba(255, 255, 255, 0.82));
+  box-shadow: inset 0 1px 0 #fff, 0 4px 14px rgba(15, 122, 110, 0.18), 0 0 0 0.5px rgba(15, 122, 110, 0.25);
+  transition: transform 0.45s var(--spring), width 0.45s var(--spring);
+}
+.navbar nav a { position: relative; z-index: 1; transition: color 0.25s ease; }
+.navbar.has-pill nav a[aria-current='page'] { background: transparent !important; box-shadow: none !important; }
+.navbar nav a:active { transform: scale(0.95); }
+
+/* จุดบอกตำแหน่งเมนู (แสดงบนจอสัมผัส บอกว่าปัดได้) */
+.swipe-dots { display: none; justify-content: center; gap: 6px; padding-top: 8px; }
+.swipe-dots span { width: 6px; height: 6px; border-radius: 999px; background: var(--line-2); transition: width 0.35s var(--spring), background 0.25s ease; }
+.swipe-dots span.on { width: 18px; background: var(--brand); }
+@media (hover: none) and (pointer: coarse) { .swipe-dots { display: flex; } }
+
+/* ปุ่มและการ์ด: ยุบเด้งตอนกด */
+.btn, .chip, .icon-btn, .switch-btn, a.card, .app-card, .tabs a { transition: transform 0.2s var(--spring), box-shadow 0.25s ease, background 0.2s ease, opacity 0.2s ease; }
+.btn:active, .chip:active, .icon-btn:active, .switch-btn:active, .tabs a:active { transform: scale(0.94); transition-duration: 0.08s; }
+a.card:active, .app-card:active { transform: scale(0.98); transition-duration: 0.08s; }
+.theme-btn svg { transition: transform 0.5s var(--spring); }
+.theme-btn:active svg { transform: rotate(90deg) scale(0.9); }
+
+/* ข้อความแจ้งผลและป้ายแจ้งเตือน */
+.alert { animation: pop-in 0.35s var(--spring) both; }
+@keyframes pop-in { from { opacity: 0; transform: translateY(-6px) scale(0.98); } to { opacity: 1; transform: none; } }
+.count-dot { animation: badge-pop 0.5s var(--spring) both; }
+@keyframes badge-pop { 0% { transform: scale(0); } 70% { transform: scale(1.2); } 100% { transform: scale(1); } }
+details.disclosure summary::after { transition: transform 0.3s var(--spring); }
+details.disclosure[open] > *:not(summary) { animation: rise 0.35s var(--ease-out) both; }
+.input, .textarea, .select { transition: background-color 0.2s ease, box-shadow 0.25s ease, border-color 0.2s ease; }
+
+/* หน้ากำลังโหลด: แถบเรืองแสงวิ่ง */
+.loading-shimmer, .skeleton { background: linear-gradient(90deg, var(--fill) 25%, var(--fill-2) 50%, var(--fill) 75%); background-size: 200% 100%; animation: shimmer 1.2s linear infinite; border-radius: 14px; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+
+/* ผู้ใช้ตั้งค่าลดการเคลื่อนไหว: ปิดแอนิเมชันทั้งหมด */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-delay: 0s !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+
+/* โหมดมืดของเม็ดไฮไลต์ */
+@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .nav-pill { background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 4px 14px rgba(0, 0, 0, 0.35); } }
+:root[data-theme='dark'] .nav-pill { background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 4px 14px rgba(0, 0, 0, 0.35); }
+
+/* แท็บย่อยไม่ตัดบรรทัด เลื่อนข้างได้แทน (แคปซูลไม่แตกเป็นสองแถวบนมือถือ) */
+.tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs a { flex: none; white-space: nowrap; }

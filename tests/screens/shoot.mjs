@@ -60,6 +60,34 @@ async function shootOnce(page, dir, name, url) {
   await page.screenshot({ path: path.join(OUT, dir, `${name}.png`), fullPage: true });
 }
 
+// ปัดซ้ายบนหน้าแรกของบริษัท ต้องไปเมนูถัดไป (งานของทีม) แล้วปัดขวาต้องกลับมา
+async function swipeCheck(page, base) {
+  const swipe = async (fromX, toX) => {
+    await page.evaluate(([a, b]) => {
+      const el = document.querySelector('main') || document.body;
+      const mk = (x) => new Touch({ identifier: 1, target: el, clientX: x, clientY: 420 });
+      el.dispatchEvent(new TouchEvent('touchstart', { touches: [mk(a)], changedTouches: [mk(a)], bubbles: true }));
+      for (let i = 1; i <= 6; i++) {
+        const x = a + ((b - a) * i) / 6;
+        el.dispatchEvent(new TouchEvent('touchmove', { touches: [mk(x)], changedTouches: [mk(x)], bubbles: true }));
+      }
+      el.dispatchEvent(new TouchEvent('touchend', { touches: [], changedTouches: [mk(b)], bubbles: true }));
+    }, [fromX, toX]);
+  };
+  try {
+    await page.goto(`${WEB}${base}`, { waitUntil: 'networkidle' });
+    await swipe(300, 80);
+    await page.waitForURL((u) => u.pathname === `${base}/work`, { timeout: 8000 });
+    await page.waitForTimeout(600);
+    await page.screenshot({ path: path.join(OUT, 'phone', '40-after-swipe-left.png') });
+    await swipe(80, 300);
+    await page.waitForURL((u) => u.pathname === base, { timeout: 8000 });
+    console.log('ปัดเปลี่ยนเมนูทำงาน: หน้าแรก → งานของทีม → หน้าแรก');
+  } catch (e) {
+    problems.push(`swipe: ปัดแล้วไม่เปลี่ยนเมนู (${String(e.message || e).split('\n')[0]}) อยู่ที่ ${page.url()}`);
+  }
+}
+
 const browser = await chromium.launch();
 for (const [dir, device] of Object.entries(sizes)) {
   fs.mkdirSync(path.join(OUT, dir), { recursive: true });
@@ -112,6 +140,7 @@ for (const [dir, device] of Object.entries(sizes)) {
     await shoot(op, dir, '28-new-job', `${base}/jobs/new`);
     await shoot(op, dir, '29-notifications', `${base}/notifications`);
     await shoot(op, dir, '30-help', `${base}/help`);
+    if (dir === 'phone') await swipeCheck(op, base);
   }
   await comp.close();
 }
