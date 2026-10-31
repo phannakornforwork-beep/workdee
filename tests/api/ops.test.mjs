@@ -197,6 +197,32 @@ test('announcements: permission, read receipts and reminders', async () => {
   assert.equal(await ok(staff, 'announcement_status', { p_message: msgId }), null, 'staff without announce permission cannot see who read');
   const rooms = await ok(staff, 'chat_room_list', { p_company: companyId });
   assert.equal(rooms.find((r) => r.room_id === room).unread, 0);
+  assert.equal(rooms.find((r) => r.room_id === room).last_body, 'วันศุกร์นี้ปิดคลังสินค้าเร็ว 16:00');
+
+  // ขอสถานะหลายประกาศในคำขอเดียว: ได้ผลเท่ากับขอทีละข้อความ และคนไม่มีสิทธิ์ได้ null
+  const batch = await ok(hr, 'announcement_statuses', { p_messages: [msgId] });
+  assert.equal(batch.length, 1);
+  assert.equal(batch[0].status.read, 1);
+  const hidden = await ok(staff, 'announcement_statuses', { p_messages: [msgId] });
+  assert.equal(hidden[0].status, null);
+});
+
+test('my_company_access returns permissions, logo and unread count in one call', async () => {
+  const { owner, companyId, hr, staff } = await setup();
+  const own = await ok(owner, 'my_company_access', { p_company: companyId });
+  assert.equal(own.is_owner, true);
+  assert.ok(Object.values(own.perms).every((v) => v === 2), 'owner has every permission at company level');
+  const h = await ok(hr, 'my_company_access', { p_company: companyId });
+  assert.equal(h.is_owner, false);
+  assert.equal(h.perms.post, 2);
+  assert.equal(h.perms.offer, 0);
+  assert.equal(h.position_title, 'HR');
+  assert.ok('logo_path' in h.company);
+  assert.equal(typeof h.unread, 'number');
+  const s = await ok(staff, 'my_company_access', { p_company: companyId });
+  assert.equal(s.perms.team, 1);
+  const outsider = await signUp('คนนอก');
+  assert.equal(await ok(outsider, 'my_company_access', { p_company: companyId }), null);
 });
 
 test('reusing a passed challenge result for the same skill', async () => {

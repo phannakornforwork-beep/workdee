@@ -128,9 +128,13 @@ export function NavLinks({ items, label }: { items: Item[]; label: string }) {
     };
   }, [activeIndex, items, router]);
 
-  // โหลดหน้าข้างเคียงล่วงหน้า ให้ปัดแล้วเปลี่ยนทันที
+  // โหลดหน้าข้างเคียงล่วงหน้าแบบเต็ม (รวมข้อมูล) ให้ปัดหรือกดแล้วขึ้นทันที
+  // รอให้หน้าปัจจุบันแสดงเสร็จก่อน จะได้ไม่แย่งเครือข่ายกัน
   useEffect(() => {
-    for (const i of [activeIndex - 1, activeIndex + 1]) if (items[i]) router.prefetch(items[i].href);
+    const t = window.setTimeout(() => {
+      for (const i of [activeIndex + 1, activeIndex - 1]) if (items[i]) router.prefetch(items[i].href, { kind: 'full' } as never);
+    }, 600);
+    return () => window.clearTimeout(t);
   }, [activeIndex, items, router]);
 
   return (

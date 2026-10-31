@@ -7,11 +7,9 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default async function CompanyLayout({ children, params }: { children: React.ReactNode; params: Promise<{ cid: string }> }) {
   const { cid } = await params;
-  const { supabase, access } = await requireCompany(cid);
-  const [{ data: unread }, { data: logo }] = await Promise.all([
-    supabase.rpc('unread_count', { p_company: cid }),
-    supabase.from('companies').select('logo_path').eq('id', cid).maybeSingle()
-  ]);
+  const { access } = await requireCompany(cid);
+  // สิทธิ์ โลโก้ และจำนวนแจ้งเตือน มาจากคำขอเดียว (requireCompany cache ไว้ให้หน้าใช้ต่อ)
+  const unread = access.unread || 0;
   const base = `/c/${cid}`;
   const items = [
     { href: base, label: 'หน้าแรก', exact: true },
@@ -42,7 +40,7 @@ export default async function CompanyLayout({ children, params }: { children: Re
             {unread ? <span className="count-dot">{unread > 99 ? '99+' : unread}</span> : null}
           </Link>
           <Link href="/spaces" className="switch-btn">
-            <Avatar src={mediaUrl(logo?.logo_path as string | null)} name={access.company.name} tone="orange" size={28} square />
+            <Avatar src={mediaUrl(access.company.logo_path)} name={access.company.name} tone="orange" size={28} square />
             สลับพื้นที่
           </Link>
         </div>

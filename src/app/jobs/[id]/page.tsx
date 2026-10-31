@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
+import { cache } from 'react';
+import { getUser } from '@/lib/auth';
 import { Footer, PublicHeader } from '@/components/PublicHeader';
 import { Avatar, Badge } from '@/components/ui';
 import { mediaUrl } from '@/lib/env';
@@ -19,11 +20,12 @@ type Job = {
   accept_reuse: boolean | null; response_rate: number | null; response_sample: number;
 };
 
-async function load(id: string) {
-  const supabase = await createClient();
+// cache ต่อคำขอ: generateMetadata กับหน้าใช้ผลเดียวกัน (เดิมยิง query ซ้ำ 2 ครั้ง)
+const load = cache(async (id: string) => {
+  const { supabase, user } = await getUser();
   const { data } = await supabase.from('job_board').select('*').eq('id', id).maybeSingle();
-  return { supabase, job: data as Job | null };
-}
+  return { supabase, user, job: data as Job | null };
+});
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
@@ -33,10 +35,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function JobDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const { supabase, job } = await load(id);
+  const { supabase, user, job } = await load(id);
   if (!job) notFound();
-  const { data: auth } = await supabase.auth.getUser();
-  const user = auth.user;
   let applied: string | null = null;
   let hasProfile = false;
   let planShared = false;
