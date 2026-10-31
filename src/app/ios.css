@@ -302,3 +302,111 @@ a.card:hover { box-shadow: var(--glass-shine), 0 16px 40px rgba(31, 45, 61, 0.14
   body::before { display: none; }
   .card, .empty, .chat, .app-card, .navbar nav, .tabs, .topbar, .btn.ghost, .btn.outline, .chip { background: #fff; -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
+
+/* ===================================================================
+   ธีมมืด: ใช้เมื่อเครื่องตั้งโหมดมืด (อัตโนมัติ) หรือผู้ใช้เลือก "มืด" จากปุ่มบนแถบหัว
+   กติกา: data-theme="light" บังคับสว่าง, data-theme="dark" บังคับมืด, ไม่มีค่า = ตามเครื่อง
+   =================================================================== */
+.theme-btn { cursor: pointer; font: inherit; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --ink: #f2f2f7; --ink-2: #d1d1d6; --muted: #a1a1aa;
+    --line: rgba(255, 255, 255, 0.1); --line-2: rgba(255, 255, 255, 0.18);
+    --bg: #0b0d12; --bg-2: #1c1c22; --card: #1c1c22;
+    --brand: #3cc4b0; --brand-ink: #7fe0d1; --brand-soft: rgba(60, 196, 176, 0.16);
+    --accent: #ff9f5a; --accent-ink: #ffc49a; --accent-soft: rgba(255, 159, 90, 0.16);
+    --blue: #7fb2ff; --blue-soft: rgba(80, 140, 255, 0.18);
+    --danger: #ff6b6b; --danger-soft: rgba(255, 90, 90, 0.16);
+    --glass-bg: linear-gradient(160deg, rgba(44, 46, 56, 0.72) 0%, rgba(28, 30, 38, 0.55) 100%);
+    --glass-strong: linear-gradient(160deg, rgba(52, 54, 66, 0.86) 0%, rgba(36, 38, 48, 0.72) 100%);
+    --glass-edge: rgba(255, 255, 255, 0.12);
+    --glass-shine: inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+    --glass-drop: 0 12px 34px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.3);
+    --fill: rgba(255, 255, 255, 0.08); --fill-2: rgba(255, 255, 255, 0.14);
+    color-scheme: dark;
+  }
+}
+:root[data-theme='dark'] {
+  --ink: #f2f2f7; --ink-2: #d1d1d6; --muted: #a1a1aa;
+  --line: rgba(255, 255, 255, 0.1); --line-2: rgba(255, 255, 255, 0.18);
+  --bg: #0b0d12; --bg-2: #1c1c22; --card: #1c1c22;
+  --brand: #3cc4b0; --brand-ink: #7fe0d1; --brand-soft: rgba(60, 196, 176, 0.16);
+  --accent: #ff9f5a; --accent-ink: #ffc49a; --accent-soft: rgba(255, 159, 90, 0.16);
+  --blue: #7fb2ff; --blue-soft: rgba(80, 140, 255, 0.18);
+  --danger: #ff6b6b; --danger-soft: rgba(255, 90, 90, 0.16);
+  --glass-bg: linear-gradient(160deg, rgba(44, 46, 56, 0.72) 0%, rgba(28, 30, 38, 0.55) 100%);
+  --glass-strong: linear-gradient(160deg, rgba(52, 54, 66, 0.86) 0%, rgba(36, 38, 48, 0.72) 100%);
+  --glass-edge: rgba(255, 255, 255, 0.12);
+  --glass-shine: inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+  --glass-drop: 0 12px 34px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.3);
+  --fill: rgba(255, 255, 255, 0.08); --fill-2: rgba(255, 255, 255, 0.14);
+  color-scheme: dark;
+}
+:root[data-theme='light'] { color-scheme: light; }
+
+/* ส่วนที่ต้องปรับเพิ่มในโหมดมืด (ใช้ selector เดียวกันทั้งแบบอัตโนมัติและแบบเลือกเอง) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) body { background: #0b0d12; }
+  :root:not([data-theme='light']) body::before {
+    background:
+      radial-gradient(38% 42% at 12% 8%, rgba(32, 160, 140, 0.35), transparent 70%),
+      radial-gradient(40% 40% at 92% 12%, rgba(60, 100, 220, 0.32), transparent 70%),
+      radial-gradient(45% 45% at 78% 88%, rgba(130, 80, 220, 0.3), transparent 70%),
+      radial-gradient(40% 40% at 8% 92%, rgba(220, 120, 60, 0.22), transparent 70%),
+      #0b0d12;
+  }
+  :root:not([data-theme='light']) .topbar { background: linear-gradient(180deg, rgba(22, 24, 30, 0.78), rgba(22, 24, 30, 0.6)); box-shadow: var(--glass-shine), 0 6px 20px rgba(0, 0, 0, 0.35); }
+  :root:not([data-theme='light']) .navbar a[aria-current='page'], :root:not([data-theme='light']) .tabs a[aria-current='page'] { background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1)); color: #fff; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 4px 14px rgba(0, 0, 0, 0.35); }
+  :root:not([data-theme='light']) .column { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.08); }
+  :root:not([data-theme='light']) .card.soft { background: rgba(255, 255, 255, 0.05); }
+  :root:not([data-theme='light']) .input, :root:not([data-theme='light']) .textarea, :root:not([data-theme='light']) .select { background-color: rgba(255, 255, 255, 0.07); border-color: rgba(255, 255, 255, 0.1); color: var(--ink); box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3); }
+  :root:not([data-theme='light']) .input:focus, :root:not([data-theme='light']) .textarea:focus, :root:not([data-theme='light']) .select:focus { background-color: rgba(255, 255, 255, 0.12); }
+  :root:not([data-theme='light']) .select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23a1a1aa' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+  :root:not([data-theme='light']) .badge { background: rgba(255, 255, 255, 0.1); color: var(--ink-2); box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.1); }
+  :root:not([data-theme='light']) .badge.dark { background: #f2f2f7; color: #1c1c1e; }
+  :root:not([data-theme='light']) .alert.info { background: rgba(80, 140, 255, 0.16); color: #b9d3ff; }
+  :root:not([data-theme='light']) .alert.success { background: rgba(60, 196, 176, 0.16); color: #9ae8da; }
+  :root:not([data-theme='light']) .alert.warn { background: rgba(255, 159, 90, 0.16); color: #ffc49a; }
+  :root:not([data-theme='light']) .alert.error { background: rgba(255, 90, 90, 0.16); color: #ffb3b3; }
+  :root:not([data-theme='light']) .alert.privacy { background: rgba(255, 255, 255, 0.05); }
+  :root:not([data-theme='light']) .bubble .text { background: rgba(255, 255, 255, 0.1); color: var(--ink); }
+  :root:not([data-theme='light']) .btn:disabled, :root:not([data-theme='light']) .btn[aria-disabled='true'] { background: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.35); }
+  :root:not([data-theme='light']) .count-dot { border-color: #16181e; }
+  :root:not([data-theme='light']) fieldset { background: rgba(255, 255, 255, 0.04); }
+  :root:not([data-theme='light']) .space-pill.personal { background: var(--brand-soft); color: var(--brand-ink); }
+  :root:not([data-theme='light']) img.avatar.has-img { background: #2a2c34; border-color: rgba(255, 255, 255, 0.12); }
+  :root:not([data-theme='light']) .card.warn { background: rgba(255, 159, 90, 0.14); }
+  :root:not([data-theme='light']) .card.dark { background: rgba(255, 255, 255, 0.1); }
+}
+:root[data-theme='dark'] body { background: #0b0d12; }
+:root[data-theme='dark'] body::before {
+  background:
+    radial-gradient(38% 42% at 12% 8%, rgba(32, 160, 140, 0.35), transparent 70%),
+    radial-gradient(40% 40% at 92% 12%, rgba(60, 100, 220, 0.32), transparent 70%),
+    radial-gradient(45% 45% at 78% 88%, rgba(130, 80, 220, 0.3), transparent 70%),
+    radial-gradient(40% 40% at 8% 92%, rgba(220, 120, 60, 0.22), transparent 70%),
+    #0b0d12;
+}
+:root[data-theme='dark'] .topbar { background: linear-gradient(180deg, rgba(22, 24, 30, 0.78), rgba(22, 24, 30, 0.6)); box-shadow: var(--glass-shine), 0 6px 20px rgba(0, 0, 0, 0.35); }
+:root[data-theme='dark'] .navbar a[aria-current='page'], :root[data-theme='dark'] .tabs a[aria-current='page'] { background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1)); color: #fff; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 4px 14px rgba(0, 0, 0, 0.35); }
+:root[data-theme='dark'] .column { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.08); }
+:root[data-theme='dark'] .card.soft { background: rgba(255, 255, 255, 0.05); }
+:root[data-theme='dark'] .input, :root[data-theme='dark'] .textarea, :root[data-theme='dark'] .select { background-color: rgba(255, 255, 255, 0.07); border-color: rgba(255, 255, 255, 0.1); color: var(--ink); box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3); }
+:root[data-theme='dark'] .input:focus, :root[data-theme='dark'] .textarea:focus, :root[data-theme='dark'] .select:focus { background-color: rgba(255, 255, 255, 0.12); }
+:root[data-theme='dark'] .select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23a1a1aa' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+:root[data-theme='dark'] .badge { background: rgba(255, 255, 255, 0.1); color: var(--ink-2); box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.1); }
+:root[data-theme='dark'] .badge.dark { background: #f2f2f7; color: #1c1c1e; }
+:root[data-theme='dark'] .alert.info { background: rgba(80, 140, 255, 0.16); color: #b9d3ff; }
+:root[data-theme='dark'] .alert.success { background: rgba(60, 196, 176, 0.16); color: #9ae8da; }
+:root[data-theme='dark'] .alert.warn { background: rgba(255, 159, 90, 0.16); color: #ffc49a; }
+:root[data-theme='dark'] .alert.error { background: rgba(255, 90, 90, 0.16); color: #ffb3b3; }
+:root[data-theme='dark'] .alert.privacy { background: rgba(255, 255, 255, 0.05); }
+:root[data-theme='dark'] .bubble .text { background: rgba(255, 255, 255, 0.1); color: var(--ink); }
+:root[data-theme='dark'] .btn:disabled, :root[data-theme='dark'] .btn[aria-disabled='true'] { background: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.35); }
+:root[data-theme='dark'] .count-dot { border-color: #16181e; }
+:root[data-theme='dark'] fieldset { background: rgba(255, 255, 255, 0.04); }
+:root[data-theme='dark'] .space-pill.personal { background: var(--brand-soft); color: var(--brand-ink); }
+:root[data-theme='dark'] img.avatar.has-img { background: #2a2c34; border-color: rgba(255, 255, 255, 0.12); }
+:root[data-theme='dark'] .card.warn { background: rgba(255, 159, 90, 0.14); }
+:root[data-theme='dark'] .card.dark { background: rgba(255, 255, 255, 0.1); }

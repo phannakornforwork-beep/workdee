@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getUser } from '@/lib/auth';
 import { Logo } from '@/components/ui';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export async function PublicHeader() {
   const { user } = await getUser();
@@ -9,6 +10,7 @@ export async function PublicHeader() {
       <div className="inner">
         <Logo />
         <span className="right" />
+          <ThemeToggle />
         <Link href="/jobs" className="tlink">
           หางาน
         </Link>

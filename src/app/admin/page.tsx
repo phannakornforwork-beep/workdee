@@ -5,6 +5,7 @@ import { ActionForm, SubmitButton } from '@/components/forms';
 import { Alert, Badge, Empty, Logo } from '@/components/ui';
 import { reviewCompanyAction, reviewEducationAction, setCompanyStatusAction } from '@/lib/actions/admin';
 import { relative, thaiDateTime } from '@/lib/format';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export const metadata: Metadata = { title: 'ผู้ดูแลระบบ', robots: { index: false } };
 
@@ -54,6 +55,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
           <Logo href="/spaces" />
           <span className="space-pill">ผู้ดูแลระบบ</span>
           <span className="right" />
+          <ThemeToggle />
           <Link href="/spaces" className="tlink">
             ออกจากหน้าผู้ดูแล
           </Link>

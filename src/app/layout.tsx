@@ -20,11 +20,27 @@ export const metadata: Metadata = {
   openGraph: { siteName: 'WorkDee', locale: 'th_TH', type: 'website' }
 };
 
-export const viewport: Viewport = { themeColor: '#F2F2F7', width: 'device-width', initialScale: 1 };
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#eef2f6' },
+    { media: '(prefers-color-scheme: dark)', color: '#0b0d12' }
+  ],
+  colorScheme: 'light dark',
+  width: 'device-width',
+  initialScale: 1
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="th" className={font.variable}>
+    <html lang="th" className={font.variable} suppressHydrationWarning>
+      <head>
+        {/* ตั้งธีมก่อนหน้าแสดงผล กันหน้าจอกะพริบ */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: "try{var t=localStorage.getItem('workdee-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}"
+          }}
+        />
+      </head>
       <body>{children}</body>
     </html>
   );

@@ -52,11 +52,11 @@ export async function NotificationsView({ userId, companyId, quiet }: { userId: 
               </div>
             );
             return n.link ? (
-              <Link key={n.id} href={n.link} className="card tight" style={{ background: n.read_at ? '#fafaf8' : '#fff' }}>
+              <Link key={n.id} href={n.link} className="card tight" style={n.read_at ? { opacity: 0.72 } : undefined}>
                 {body}
               </Link>
             ) : (
-              <div key={n.id} className="card tight" style={{ background: n.read_at ? '#fafaf8' : '#fff' }}>
+              <div key={n.id} className="card tight" style={n.read_at ? { opacity: 0.72 } : undefined}>
                 {body}
               </div>
             );
