@@ -1,0 +1,22 @@
+# กดรันเองจากแท็บ Actions: สร้างข้อมูลเดโม (บริษัท ประกาศงาน ผู้สมัครทุกขั้น) ในฐานข้อมูล Supabase จริง
+# ต้องตั้ง secret 4 ตัวก่อน ดู docs/SETUP.md ขั้นที่ 6.5
+name: Seed demo data
+
+on:
+  workflow_dispatch:
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Create demo accounts and data
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          DEMO_PASSWORD: ${{ secrets.DEMO_PASSWORD }}
+        run: node scripts/seed-demo.mjs

@@ -45,7 +45,7 @@ img { max-width: 100%; }
 
 /* layout */
 .container { max-width: 1160px; margin: 0 auto; padding: 0 20px; }
-.page { padding: 28px 0 72px; display: flex; flex-direction: column; gap: 20px; }
+.page { padding-top: 28px; padding-bottom: 72px; display: flex; flex-direction: column; gap: 20px; }
 .stack { display: flex; flex-direction: column; gap: 12px; }
 .stack-sm { display: flex; flex-direction: column; gap: 6px; }
 .stack-lg { display: flex; flex-direction: column; gap: 20px; }
@@ -227,3 +227,17 @@ details.disclosure[open] summary::after { content: '▴'; }
   .card { padding: 16px; }
   .kv { grid-template-columns: 1fr; }
 }
+
+/* ปุ่ม Google และเส้นคั่น "หรือ" ในหน้าเข้าสู่ระบบ */
+.google-btn { background: #fff; color: var(--ink); border-color: var(--line-2); }
+.google-btn:hover { background: var(--bg-2); color: var(--ink); }
+.or-divider { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 13px; margin: 6px 0 2px; }
+.or-divider::before, .or-divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+
+/* ค้นหาผู้หางาน */
+.talent-filters { display: grid; gap: 12px; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto; align-items: end; }
+@media (max-width: 640px) { .talent-filters { grid-template-columns: 1fr; } }
+.talent-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+@media (max-width: 400px) { .talent-grid { grid-template-columns: 1fr; } }
+.talent-headline { font-size: 17px; margin: 0; }
+.badge.wrap { white-space: normal; line-height: 1.4; padding-top: 4px; padding-bottom: 4px; }

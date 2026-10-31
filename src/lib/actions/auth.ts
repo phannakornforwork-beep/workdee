@@ -19,6 +19,21 @@ export async function signInAction(_prev: ActionState, fd: FormData): Promise<Ac
   redirect(safeNext(str(fd, 'next')));
 }
 
+// เข้าสู่ระบบหรือสมัครด้วย Google (บัญชีใหม่ถูกสร้างอัตโนมัติครั้งแรก)
+export async function signInWithGoogleAction(_prev: ActionState, fd: FormData): Promise<ActionState> {
+  const next = safeNext(str(fd, 'next'));
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `${SITE_URL}/auth/callback?next=${encodeURIComponent(next)}`,
+      queryParams: { prompt: 'select_account' }
+    }
+  });
+  if (error || !data?.url) return fail({ message: 'เข้าสู่ระบบด้วย Google ไม่สำเร็จ ลองอีกครั้ง หรือใช้อีเมลแทน' });
+  redirect(data.url);
+}
+
 export async function signUpAction(_prev: ActionState, fd: FormData): Promise<ActionState> {
   const email = str(fd, 'email').toLowerCase();
   const password = str(fd, 'password');
