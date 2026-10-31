@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { AuthShell } from '@/components/AuthShell';
 import { ActionForm, SubmitButton } from '@/components/forms';
 import { signUpAction } from '@/lib/actions/auth';
+import { GoogleSignIn } from '@/components/GoogleSignIn';
 
 export const metadata: Metadata = { title: 'สมัครใช้งาน' };
 
@@ -14,6 +15,7 @@ export default async function SignupPage({ searchParams }: { searchParams: Promi
       title="สมัครใช้งาน WorkDee"
       sub={sp.as === 'company' ? 'สร้างบัญชีก่อน แล้วสร้างพื้นที่บริษัทต่อได้ทันที' : 'ฟรีสำหรับคนหางาน ข้อมูลของคุณเป็นของคุณ'}
     >
+      <GoogleSignIn next={next} />
       <ActionForm action={signUpAction}>
         <input type="hidden" name="next" value={next} />
         <div className="field">

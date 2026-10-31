@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { AuthShell } from '@/components/AuthShell';
 import { ActionForm, SubmitButton } from '@/components/forms';
 import { signInAction } from '@/lib/actions/auth';
+import { GoogleSignIn } from '@/components/GoogleSignIn';
 
 export const metadata: Metadata = { title: 'เข้าสู่ระบบ' };
 
@@ -10,7 +11,12 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const sp = await searchParams;
   return (
     <AuthShell title="เข้าสู่ระบบ" sub="บัญชีเดียว ใช้ได้ทั้งพื้นที่ส่วนตัวและพื้นที่บริษัท">
-      {sp.error ? <div className="alert error">ลิงก์หมดอายุหรือใช้ไปแล้ว ลองเข้าสู่ระบบอีกครั้ง</div> : null}
+      {sp.error === 'oauth' ? (
+        <div className="alert error">เข้าสู่ระบบด้วย Google ไม่สำเร็จหรือถูกยกเลิก ลองอีกครั้ง หรือใช้อีเมลแทน</div>
+      ) : sp.error ? (
+        <div className="alert error">ลิงก์หมดอายุหรือใช้ไปแล้ว ลองเข้าสู่ระบบอีกครั้ง</div>
+      ) : null}
+      <GoogleSignIn next={sp.next || '/spaces'} />
       <ActionForm action={signInAction}>
         <input type="hidden" name="next" value={sp.next || ''} />
         <div className="field">

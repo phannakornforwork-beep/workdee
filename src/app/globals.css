@@ -227,3 +227,9 @@ details.disclosure[open] summary::after { content: '▴'; }
   .card { padding: 16px; }
   .kv { grid-template-columns: 1fr; }
 }
+
+/* ปุ่ม Google และเส้นคั่น "หรือ" ในหน้าเข้าสู่ระบบ */
+.google-btn { background: #fff; color: var(--ink); border-color: var(--line-2); }
+.google-btn:hover { background: var(--bg-2); color: var(--ink); }
+.or-divider { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 13px; margin: 6px 0 2px; }
+.or-divider::before, .or-divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }

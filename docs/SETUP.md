@@ -28,7 +28,7 @@
 **วิธี A: ทำในหน้าเว็บ Supabase**
 
 1. เปิด **SQL Editor → New query**
-2. ใน GitHub เปิดโฟลเดอร์ `supabase/migrations` แล้วทำทีละไฟล์ **ตามลำดับเลขจากน้อยไปมาก** (12 ไฟล์)
+2. ใน GitHub เปิดโฟลเดอร์ `supabase/migrations` แล้วทำทีละไฟล์ **ตามลำดับเลขจากน้อยไปมาก** (13 ไฟล์)
    เปิดไฟล์ → กด **Raw** → คัดลอกทั้งหมด → วางใน SQL Editor → **Run**
 3. ทุกไฟล์ต้องขึ้น `Success. No rows returned` ถ้าไฟล์ไหนขึ้น error ให้หยุดและแก้ก่อนทำไฟล์ถัดไป
 
@@ -62,6 +62,19 @@
 > **เดโมในชั้นเรียนโดยยังไม่มีโดเมน:** ปิด **Confirm email** ใน Sign In / Providers → Email ได้ชั่วคราว
 > คนจะสมัครแล้วใช้งานได้ทันทีโดยไม่ต้องยืนยันอีเมล แต่ใครก็ใช้อีเมลคนอื่นสมัครได้ และใช้ลืมรหัสผ่านไม่ได้ เปิดกลับก่อนใช้จริง
 
+### 3.5 ล็อกอินด้วย Google (ไม่บังคับ)
+
+1. เข้า [Google Cloud Console](https://console.cloud.google.com) → สร้างโปรเจกต์ใหม่ (ชื่อ `WorkDee`)
+2. **APIs & Services → OAuth consent screen**: เลือก External ใส่ชื่อแอป `WorkDee` และอีเมลติดต่อ
+   ระหว่างยังไม่ส่งตรวจ ให้เพิ่มอีเมลคนที่จะลองใช้ไว้ใน **Test users** (หรือกด Publish app เพื่อให้ทุกคนใช้ได้)
+3. **APIs & Services → Credentials → Create credentials → OAuth client ID** เลือก **Web application**
+   - Authorized redirect URIs: `https://<project-ref>.supabase.co/auth/v1/callback`
+     (คัดลอกค่า Callback URL ได้จาก Supabase ในข้อ 4)
+4. Supabase → **Authentication → Sign In / Providers → Google** เปิดใช้ แล้ววาง **Client ID** และ **Client Secret** จากข้อ 3 → Save
+5. ใน Vercel เพิ่ม `NEXT_PUBLIC_AUTH_GOOGLE` = `1` แล้ว **Redeploy** ปุ่ม "ดำเนินการต่อด้วย Google" จะขึ้นในหน้าเข้าสู่ระบบและสมัคร
+
+ผู้ใช้ที่สมัครด้วย Google ได้ชื่อจากบัญชี Google เป็นชื่อที่แสดง (แก้ได้ภายหลัง) และไม่ต้องยืนยันอีเมลซ้ำ
+
 ## 4. เปิดเว็บไซต์บน Vercel
 
 1. เข้า [vercel.com](https://vercel.com) ด้วยบัญชี GitHub → **Add New → Project** → Import repository `workdee`
@@ -80,6 +93,7 @@
 | `RESEND_API_KEY` | API key ของ Resend (สำหรับอีเมลแจ้งเตือน) |
 | `EMAIL_FROM` | เช่น `WorkDee <no-reply@โดเมนของคุณ>` |
 | `LINE_CHANNEL_SECRET` / `LINE_CHANNEL_ACCESS_TOKEN` / `NEXT_PUBLIC_LINE_ADD_FRIEND_URL` | ถ้าใช้ LINE (ขั้นที่ 7) |
+| `NEXT_PUBLIC_AUTH_GOOGLE` | `1` เมื่อเปิดล็อกอินด้วย Google แล้ว (ขั้นที่ 3.5) ไม่ใส่ = ไม่แสดงปุ่ม Google |
 
 3. กด **Deploy** รอประมาณ 2–3 นาที
 4. ถ้าที่อยู่เว็บที่ได้ต่างจากที่ใส่ไว้ แก้ `NEXT_PUBLIC_SITE_URL` และ Site URL ใน Supabase ให้ตรง แล้ว **Redeploy**
@@ -166,9 +180,11 @@ select id from auth.users where email = 'you@example.com';
 | อาการ | สาเหตุที่พบบ่อย |
 |---|---|
 | กดลิงก์ในอีเมลแล้วขึ้น "ลิงก์หมดอายุ" | ยังไม่แก้ Email Templates ในขั้นที่ 3 หรือ Redirect URLs ไม่มีที่อยู่เว็บ |
-| หน้าเว็บขึ้น "คุณไม่มีสิทธิ์" หรือ "function ... does not exist" | รัน migration ไม่ครบ 12 ไฟล์ หรือรันข้ามลำดับ |
+| หน้าเว็บขึ้น "คุณไม่มีสิทธิ์" หรือ "function ... does not exist" | รัน migration ไม่ครบ 13 ไฟล์ หรือรันข้ามลำดับ |
 | สมัครแล้วไม่มีอีเมลมา | ยังไม่ตั้ง Custom SMTP |
 | อีเมลแจ้งเตือนไม่ออก แต่ในแอปมี | ไม่ได้ใส่ `RESEND_API_KEY`/`EMAIL_FROM` หรือยังไม่ได้ทำขั้นที่ 5 |
 | พิมพ์รหัสใน LINE แล้วไม่มีอะไรตอบ | Webhook URL ผิด ยังไม่เปิด Use webhook หรือ Channel secret ไม่ตรง |
+| กด Google แล้วขึ้น "redirect_uri_mismatch" | Authorized redirect URI ใน Google Cloud ไม่ตรงกับ Callback URL ของ Supabase |
+| กลับจาก Google แล้วไปหน้าแปลก หรือ localhost | Site URL / Redirect URLs ใน Supabase ไม่มีที่อยู่เว็บจริง หรือ `NEXT_PUBLIC_SITE_URL` ผิด |
 | `/api/cron/...` ตอบ 401 | `CRON_SECRET` ใน Vercel กับใน Supabase Vault ไม่ตรงกัน |
 | เปลี่ยนค่าใน Vercel แล้วไม่มีผล | ต้อง Redeploy หลังแก้ Environment Variables |
