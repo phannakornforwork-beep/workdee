@@ -1,0 +1,68 @@
+# ถ่ายภาพหน้าจอทุกหน้าหลักขนาด iPad และมือถือ ด้วยข้อมูลเดโม แล้วเก็บไว้ในผลการรัน (Artifacts → screens)
+# ใช้ตรวจหน้าตาก่อนนำเสนอ และหาหน้าที่กว้างเกินจอ
+name: Screenshots
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: screens-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  screens:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ['54322:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      DB_URL: postgres://postgres:postgres@127.0.0.1:54322/postgres
+      NEXT_TELEMETRY_DISABLED: '1'
+      CRON_SECRET: ci-cron-secret
+      NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
+      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+      NEXT_PUBLIC_AUTH_GOOGLE: '1'
+      DEMO_PASSWORD: Demo-screens-2026
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund && npm install --no-save --no-audit --no-fund playwright@1
+      - name: Install psql and browser
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
+          npx playwright install --with-deps chromium
+      - name: Start Supabase-compatible stack and seed demo data
+        run: |
+          bash tests/stack/start.sh
+          . .stack/keys.env
+          echo "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$SUPABASE_ANON_KEY" >> "$GITHUB_ENV"
+          echo "SUPABASE_SECRET_KEY=$SUPABASE_SERVICE_ROLE_KEY" >> "$GITHUB_ENV"
+          SUPABASE_URL=http://127.0.0.1:54321 SUPABASE_PUBLISHABLE_KEY=$SUPABASE_ANON_KEY SUPABASE_SECRET_KEY=$SUPABASE_SERVICE_ROLE_KEY node scripts/seed-demo.mjs
+      - name: Build
+        run: npm run build
+      - name: Start the site
+        run: |
+          nohup npx next start -p 3000 > next.log 2>&1 &
+          node tests/stack/wait-for.mjs http://127.0.0.1:3000/login 90
+      - name: Take screenshots
+        run: node tests/screens/shoot.mjs
+        env:
+          WEB_URL: http://127.0.0.1:3000
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screens
+          path: |
+            screens/
+            next.log
+          retention-days: 14

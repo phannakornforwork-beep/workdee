@@ -10,3 +10,4 @@ playwright-report/
 supabase/.temp/
 supabase/.branches/
 *.tsbuildinfo
+screens/
