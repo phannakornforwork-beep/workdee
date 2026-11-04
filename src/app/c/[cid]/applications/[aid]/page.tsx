@@ -64,7 +64,7 @@ export default async function ApplicantPage({ params }: { params: Promise<{ cid:
     supabase.from('interview_slots').select('id, starts_at, mode').eq('company_id', cid).gt('starts_at', new Date().toISOString()).order('starts_at').limit(30),
     supabase
       .from('application_ai')
-      .select('match_score, matches, missing_must, verified_score, verified_items, summary, screened_at, grade_suggestion')
+      .select('match_score, matches, missing_must, verified_score, verified_items, summary, screened_at, grade_suggestion, model')
       .eq('application_id', aid)
       .maybeSingle(),
     supabase.rpc('application_language_certs', { p_app: aid })

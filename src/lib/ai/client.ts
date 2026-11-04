@@ -3,9 +3,18 @@
 // ตั้งใน Vercel: ANTHROPIC_API_KEY และ (ไม่บังคับ) AI_MODEL
 export const AI_MODEL = process.env.AI_MODEL || 'claude-sonnet-5-5';
 
-export function aiEnabled(): boolean {
-  return Boolean(process.env.ANTHROPIC_API_KEY);
+// ไม่มี ANTHROPIC_API_KEY (หรือตั้ง AI_DEMO=1) = โหมดสาธิต: ปุ่ม AI ทุกปุ่มใช้งานได้ โดยใช้กฎจับคำและข้อมูลตัวอย่าง
+// แทนการเรียก AI จริง ไม่มีค่าใช้จ่าย และทุกผลลัพธ์มีป้าย "โหมดสาธิต" กำกับ
+export function aiDemo(): boolean {
+  return !process.env.ANTHROPIC_API_KEY || /^(1|true|yes)$/i.test(process.env.AI_DEMO || '');
 }
+
+// ปุ่ม AI แสดงเสมอ (โหมดจริงหรือโหมดสาธิต)
+export function aiEnabled(): boolean {
+  return true;
+}
+
+export const DEMO_MODEL = 'demo';
 
 export class AiError extends Error {}
 

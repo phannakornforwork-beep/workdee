@@ -3,14 +3,18 @@
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { AI_MODEL, aiErrorMessage, type AiFile } from '@/lib/ai/client';
+import { AI_MODEL, DEMO_MODEL, aiDemo, aiErrorMessage, type AiFile } from '@/lib/ai/client';
+import { demoCert } from '@/lib/ai/demo';
 import {
   checkCert, designJob, extractCv, readLanguageCert, screenCandidate, suggestGrade,
   type CvExtract, type GradeSuggestion, type JobDesign, type Qualification
 } from '@/lib/ai/tasks';
 import type { CompanyAccess, Criterion } from '@/lib/types';
 
-type Result<T = undefined> = { ok: true; data?: T; message?: string } | { ok: false; error: string };
+type Result<T = undefined> = { ok: true; data?: T; message?: string; demo?: boolean } | { ok: false; error: string };
+
+const DEMO_NOTE = 'โหมดสาธิต: ยังไม่ได้เชื่อม AI จริง';
+const model = () => (aiDemo() ? DEMO_MODEL : AI_MODEL);
 
 const MAX_FILE_MB = 8;
 
@@ -52,9 +56,9 @@ export async function scanCvAction(path: string): Promise<Result<CvExtract>> {
     const admin = createAdminClient();
     const file = await loadFile('education-docs', path);
     try {
-      await admin.from('consents').insert({ user_id: user.id, purpose: 'ai_cv_scan', detail: { model: AI_MODEL } });
+      await admin.from('consents').insert({ user_id: user.id, purpose: 'ai_cv_scan', detail: { model: model() } });
       const data = await extractCv(file);
-      return { ok: true, data };
+      return { ok: true, data, demo: aiDemo(), message: aiDemo() ? `${DEMO_NOTE} ผลด้านล่างเป็นข้อมูลตัวอย่าง ไม่ได้อ่านจาก CV ของคุณ` : undefined };
     } finally {
       // ไม่เก็บไฟล์ CV ไว้หลังอ่านเสร็จ
       await admin.storage.from('education-docs').remove([path]);
@@ -71,7 +75,7 @@ export async function designJobAction(cid: string, title: string, jobType: strin
     await companyPerm(supabase, cid, 'post');
     if (objective.trim().length < 20) throw new Error('อธิบายว่าอยากได้คนแบบไหนอย่างน้อย 1–2 ประโยค');
     const data = await designJob({ title, jobType, objective: objective.slice(0, 3000) });
-    return { ok: true, data };
+    return { ok: true, data, demo: aiDemo() };
   } catch (e) {
     return fail(e);
   }
@@ -136,7 +140,7 @@ async function screenOne(supabase: Awaited<ReturnType<typeof createClient>>, app
     verified_items: evidence.items,
     summary: result.summary,
     screened_at: new Date().toISOString(),
-    model: AI_MODEL
+    model: model()
   });
   if (error) throw new Error('บันทึกผลคัดกรองไม่สำเร็จ');
 }
@@ -146,7 +150,7 @@ export async function screenApplicationAction(cid: string, appId: string): Promi
     const { supabase } = await session();
     await screenOne(supabase, appId);
     revalidatePath(`/c/${cid}`, 'layout');
-    return { ok: true, message: 'AI วิเคราะห์แล้ว' };
+    return { ok: true, message: aiDemo() ? `วิเคราะห์แล้ว (${DEMO_NOTE} ใช้การจับคำพ้องความหมาย)` : 'AI วิเคราะห์แล้ว', demo: aiDemo() };
   } catch (e) {
     return fail(e);
   }
@@ -171,7 +175,8 @@ export async function screenJobAction(cid: string, jobId: string, redo = false):
     return {
       ok: true,
       data: { done: doneN, left: todo.length - batch.length, failed },
-      message: batch.length ? `AI คัดกรองแล้ว ${doneN} คน${todo.length > batch.length ? ` · เหลืออีก ${todo.length - batch.length} คน กดอีกครั้ง` : ''}${failed ? ` · ไม่สำเร็จ ${failed} คน` : ''}` : 'คัดกรองครบทุกคนแล้ว'
+      demo: aiDemo(),
+      message: (aiDemo() ? `${DEMO_NOTE} · ` : '') + (batch.length ? `AI คัดกรองแล้ว ${doneN} คน${todo.length > batch.length ? ` · เหลืออีก ${todo.length - batch.length} คน กดอีกครั้ง` : ''}${failed ? ` · ไม่สำเร็จ ${failed} คน` : ''}` : 'คัดกรองครบทุกคนแล้ว')
     };
   } catch (e) {
     return fail(e);
@@ -211,9 +216,9 @@ export async function suggestGradeAction(cid: string, appId: string): Promise<Re
       aiUse: `${d.submission.ai_use}${d.submission.ai_detail ? ` (${d.submission.ai_detail})` : ''}`,
       file
     });
-    await createAdminClient().from('application_ai').upsert({ application_id: appId, grade_suggestion: data2, graded_at: new Date().toISOString(), model: AI_MODEL });
+    await createAdminClient().from('application_ai').upsert({ application_id: appId, grade_suggestion: data2, graded_at: new Date().toISOString(), model: model() });
     revalidatePath(`/c/${cid}/applications/${appId}`);
-    return { ok: true, data: data2, message: 'AI ร่างคะแนนแล้ว ตรวจและแก้ก่อนกดบันทึก' };
+    return { ok: true, data: data2, demo: aiDemo(), message: aiDemo() ? `${DEMO_NOTE} คะแนนร่างจากการจับคำในคำตอบ ตรวจและแก้ก่อนบันทึก` : 'AI ร่างคะแนนแล้ว ตรวจและแก้ก่อนกดบันทึก' };
   } catch (e) {
     return fail(e);
   }
@@ -239,13 +244,14 @@ export async function submitLanguageCertAction(path: string): Promise<Result> {
   try {
     const { supabase, user } = await session();
     if (!path.startsWith(`${user.id}/lang/`)) throw new Error('คุณไม่มีสิทธิ์อ่านไฟล์นี้');
-    const read = await readLanguageCert(await loadFile('education-docs', path));
+    const file = aiDemo() ? null : await loadFile('education-docs', path);
     const [{ data: cp }, { data: prof }] = await Promise.all([
       supabase.from('candidate_profiles').select('full_name').eq('user_id', user.id).maybeSingle(),
       supabase.from('profiles').select('display_name').eq('id', user.id).maybeSingle()
     ]);
     const names = [cp?.full_name, prof?.display_name, user.user_metadata?.full_name, user.user_metadata?.name].filter((x): x is string => typeof x === 'string' && x.length > 1);
-    const { checks, expires_on, exam_date, passed } = checkCert(read, names);
+    const read = file ? await readLanguageCert(file) : demoCert(names[0] || 'Demo User');
+    const { checks, expires_on, exam_date, passed } = checkCert(read, names.length ? names : ['Demo User']);
     if (!checks.is_language_cert) {
       await createAdminClient().storage.from('education-docs').remove([path]);
       throw new Error('ไฟล์นี้ไม่ใช่ใบรับรองผลสอบภาษา');
@@ -261,10 +267,11 @@ export async function submitLanguageCertAction(path: string): Promise<Result> {
       holder_name: read.holder_name?.slice(0, 160) || null,
       doc_path: path,
       trust: passed ? 'doc_pending' : 'self',
-      checks
+      checks: aiDemo() ? { ...checks, demo: true } : checks
     });
     if (error) throw new Error('บันทึกใบรับรองไม่สำเร็จ');
     revalidatePath('/me/profile');
+    if (aiDemo()) return { ok: true, demo: true, message: `${DEMO_NOTE} บันทึกผลสอบตัวอย่าง (IELTS 6.5) ไม่ได้อ่านจากไฟล์ของคุณ ส่งให้ทีมงานตรวจแล้ว` };
     return {
       ok: true,
       message: passed ? 'AI อ่านผลสอบแล้ว ส่งให้ทีมงานตรวจ' : 'AI อ่านแล้วแต่ตรวจไม่ผ่านบางข้อ จึงเป็นระดับ "ระบุเอง" ดูรายละเอียดในรายการ'

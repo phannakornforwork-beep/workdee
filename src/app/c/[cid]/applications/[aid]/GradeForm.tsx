@@ -16,6 +16,7 @@ export function GradeForm({
   const [state, action] = useActionState(gradeAction, null);
   const [ai, setAi] = useState<Suggestion | null>(suggestion || null);
   const [aiError, setAiError] = useState('');
+  const [aiNote, setAiNote] = useState('');
   const [aiPending, startAi] = useTransition();
   const [feedback, setFeedback] = useState('');
   const reasonOf = (name: string) => ai?.scores.find((x) => x.name === name);
@@ -26,6 +27,7 @@ export function GradeForm({
       const res = await suggestGradeAction(companyId, appId);
       if (!res.ok) return setAiError(res.error);
       const sug = res.data as Suggestion;
+      setAiNote(res.message || '');
       setAi(sug);
       setScores(Object.fromEntries(criteria.map((c) => [c.name, sug.scores.find((x) => x.name === c.name)?.score ?? scores[c.name]])));
       if (!feedback.trim()) setFeedback(sug.feedback);
@@ -49,6 +51,7 @@ export function GradeForm({
           </div>
           <span className="tiny muted">AI ให้คะแนนพร้อมเหตุผลทุกเกณฑ์ คุณปรับได้ คะแนนนับเมื่อคุณกด &ldquo;บันทึกคะแนน&rdquo; เท่านั้น</span>
           {aiError ? <span className="small error-text" role="alert">{aiError}</span> : null}
+          {aiNote ? <span className="small ok-text" role="status">{aiNote}</span> : null}
         </div>
       ) : null}
       <input type="hidden" name="company_id" value={companyId} />

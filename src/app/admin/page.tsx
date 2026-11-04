@@ -193,7 +193,9 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
                 <span className="strong">
                   {c.exam} {c.score_text}
                 </span>
-                <span className="small muted">ส่งเมื่อ {relative(c.created_at)}</span>
+                <span className="small muted">
+                  {c.checks?.demo ? <Badge tone="orange">ข้อมูลสาธิต</Badge> : null} ส่งเมื่อ {relative(c.created_at)}
+                </span>
               </div>
               <dl className="kv">
                 <dt>ชื่อในเอกสาร</dt>
