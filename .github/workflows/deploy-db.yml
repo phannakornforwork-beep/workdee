@@ -26,5 +26,5 @@ jobs:
           if [ "${{ inputs.dry_run }}" = "true" ]; then
             supabase db push --db-url "$SUPABASE_DB_URL" --dry-run
           else
-            supabase db push --db-url "$SUPABASE_DB_URL"
+            supabase db push --db-url "$SUPABASE_DB_URL" --yes
           fi
