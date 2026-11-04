@@ -2,6 +2,7 @@ import { ActionForm, SubmitButton } from '@/components/forms';
 import { saveJobAction } from '@/lib/actions/hiring';
 import { AI_POLICY, JOB_TYPE, PROVINCES, WORK_MODE } from '@/lib/format';
 import type { Criterion } from '@/lib/types';
+import { AiJobDesigner } from '@/components/ai/AiJobDesigner';
 
 type JobRow = Record<string, unknown> & { id?: string; skills?: string[] };
 type ChallengeRow = {
@@ -19,7 +20,8 @@ export function JobForm({
   job,
   challenge,
   locked = false,
-  status = 'draft'
+  status = 'draft',
+  aiProfile = null
 }: {
   companyId: string;
   departments: { id: string; title: string }[];
@@ -27,6 +29,7 @@ export function JobForm({
   challenge?: ChallengeRow;
   locked?: boolean;
   status?: string;
+  aiProfile?: { objective: string; qualifications: { name: string; description: string; must_have: boolean; weight: number }[] } | null;
 }) {
   const criteria = [...(challenge?.criteria || [])];
   while (criteria.length < 5) criteria.push({ name: '', weight: 0 });
@@ -34,6 +37,7 @@ export function JobForm({
     <ActionForm action={saveJobAction} className="stack-lg">
       <input type="hidden" name="company_id" value={companyId} />
       <input type="hidden" name="job_id" value={v(job?.id)} />
+      <AiJobDesigner companyId={companyId} initialObjective={aiProfile?.objective || ''} initialQuals={aiProfile?.qualifications || []} locked={locked} />
       <section className="card">
         <h2>ข้อมูลประกาศ</h2>
         <div className="form-row">
@@ -197,6 +201,7 @@ export function JobForm({
             <div key={i} className="form-row">
               <input name="crit_name" className="input" aria-label={`ชื่อเกณฑ์ข้อ ${i + 1}`} placeholder={`เกณฑ์ข้อ ${i + 1}`} defaultValue={c.name} style={{ flex: '3 1 220px' }} />
               <input name="crit_weight" className="input" aria-label={`น้ำหนักเกณฑ์ข้อ ${i + 1} (%)`} inputMode="numeric" placeholder="%" defaultValue={c.weight || ''} style={{ flex: '1 1 80px' }} />
+              <input name="crit_desc" className="input" aria-label={`คะแนนเต็มเมื่อ (เกณฑ์ข้อ ${i + 1})`} placeholder="ได้คะแนนเต็มเมื่อ… (AI ใช้ช่วยตรวจ)" defaultValue={c.description || ''} maxLength={300} style={{ flex: '1 1 100%' }} />
             </div>
           ))}
         </fieldset>

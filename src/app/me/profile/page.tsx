@@ -7,8 +7,12 @@ import { mediaUrl } from '@/lib/env';
 import { VerifyBadge } from '@/components/ui';
 import { deleteEducationAction, requestVerifyAction, saveEducationAction, saveProfileAction } from '@/lib/actions/candidate';
 import { JOB_TYPE, PROVINCES } from '@/lib/format';
+import { CvScan } from '@/components/ai/CvScan';
+import { LanguageCerts, type LangCert } from '@/components/ai/LanguageCerts';
 
 export const metadata: Metadata = { title: 'โปรไฟล์' };
+// AI อ่าน CV และผลสอบภาษาใช้เวลานานกว่าหน้าปกติ
+export const maxDuration = 60;
 
 type Pair = { name?: string; title?: string; detail?: string };
 type Edu = {
@@ -87,11 +91,16 @@ function EducationFields({ e, institutions }: { e?: Edu; institutions: { id: str
 
 export default async function ProfilePage() {
   const { supabase, user } = await requireUser('/me/profile');
-  const [{ data: cp }, { data: prof }, { data: edus }, { data: insts }] = await Promise.all([
+  const [{ data: cp }, { data: prof }, { data: edus }, { data: insts }, { data: certs }] = await Promise.all([
     supabase.from('candidate_profiles').select('*').eq('user_id', user.id).maybeSingle(),
     supabase.from('profiles').select('display_name, phone').eq('id', user.id).maybeSingle(),
     supabase.from('educations').select('*').order('created_at'),
-    supabase.from('institutions').select('id, name').order('is_partner', { ascending: false }).order('name')
+    supabase.from('institutions').select('id, name').order('is_partner', { ascending: false }).order('name'),
+    supabase
+      .from('language_certificates')
+      .select('id, exam, score_text, exam_date, expires_on, trust, checks, review_note, verify_url')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
   ]);
   const institutions = (insts || []) as { id: string; name: string }[];
   const prefTypes: string[] = cp?.pref_job_types || [];
@@ -104,6 +113,7 @@ export default async function ProfilePage() {
       </div>
       <div className="split">
         <div className="main">
+          <CvScan userId={user.id} />
           <ActionForm action={saveProfileAction} className="card">
             <h2>ข้อมูลหลัก</h2>
             <PhotoUpload
@@ -241,12 +251,13 @@ export default async function ProfilePage() {
             ))}
             <details className="disclosure" open={!(edus || []).length}>
               <summary>+ เพิ่มการศึกษา</summary>
-              <ActionForm action={saveEducationAction} resetOnSuccess>
+              <ActionForm action={saveEducationAction} resetOnSuccess id="add-education">
                 <EducationFields institutions={institutions} />
                 <SubmitButton className="btn small">เพิ่ม</SubmitButton>
               </ActionForm>
             </details>
           </section>
+          <LanguageCerts userId={user.id} certs={(certs || []) as LangCert[]} />
         </aside>
       </div>
     </>

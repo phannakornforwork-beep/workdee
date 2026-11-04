@@ -121,7 +121,7 @@ test('company, candidate and admin pages render with real data', async () => {
   const outsider = await get(c, cand);
   assert.ok([302, 303, 307, 308].includes(outsider.status), `outsider should be redirected, got ${outsider.status}`);
 
-  for (const path of ['/me', '/me/profile', '/me/applications', `/me/applications/${appId}`, '/me/notifications', '/me/plan', '/me/privacy', `/jobs/${jobId}`, '/companies/new']) {
+  for (const path of ['/me', '/me/profile', '/me/portfolio', '/me/applications', `/me/applications/${appId}`, '/me/notifications', '/me/plan', '/me/privacy', `/jobs/${jobId}`, '/companies/new']) {
     await expectPage(path, cand);
   }
   await expectPage(`/join/${code}`, cand, 'บริษัท ทดสอบหน้าเว็บ จำกัด');

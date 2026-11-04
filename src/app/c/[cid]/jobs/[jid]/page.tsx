@@ -9,16 +9,19 @@ import { closeJobAction, deleteJobAction } from '@/lib/actions/hiring';
 import { SITE_URL } from '@/lib/env';
 
 export const metadata: Metadata = { title: 'จัดการประกาศ' };
+// งาน AI ใช้เวลานานกว่าหน้าปกติ
+export const maxDuration = 60;
 
 export default async function JobPage({ params, searchParams }: { params: Promise<{ cid: string; jid: string }>; searchParams: Promise<{ published?: string; saved?: string }> }) {
   const { cid, jid } = await params;
   const sp = await searchParams;
   const { supabase } = await requireCompany(cid);
-  const [{ data: job }, { data: challenge }, { data: positions }, { count: submitted }] = await Promise.all([
+  const [{ data: job }, { data: challenge }, { data: positions }, { count: submitted }, { data: aiProfile }] = await Promise.all([
     supabase.from('jobs').select('*').eq('id', jid).eq('company_id', cid).maybeSingle(),
     supabase.from('challenges').select('*').eq('job_id', jid).maybeSingle(),
     supabase.from('positions').select('id, title, is_department, parent_id').eq('company_id', cid).order('created_at'),
-    supabase.from('applications').select('id', { count: 'exact', head: true }).eq('job_id', jid).not('challenge_invited_at', 'is', null)
+    supabase.from('applications').select('id', { count: 'exact', head: true }).eq('job_id', jid).not('challenge_invited_at', 'is', null),
+    supabase.from('job_ai_profiles').select('objective, qualifications').eq('job_id', jid).maybeSingle()
   ]);
   if (!job) notFound();
   const departments = ((positions || []) as { id: string; title: string; is_department: boolean; parent_id: string | null }[])
@@ -53,7 +56,7 @@ export default async function JobPage({ params, searchParams }: { params: Promis
       ) : status === 'pending_approval' ? (
         <Alert tone="info">รออนุมัติอยู่ แก้ไขไม่ได้จนกว่าผู้อนุมัติจะตัดสิน หรือยกเลิกคำขอในหน้าทีมและตำแหน่ง</Alert>
       ) : (
-        <JobForm companyId={cid} departments={departments} job={job} challenge={challenge} status={status} locked={(submitted || 0) > 0} />
+        <JobForm companyId={cid} departments={departments} job={job} challenge={challenge} status={status} locked={(submitted || 0) > 0} aiProfile={aiProfile} />
       )}
 
       {status === 'open' ? (
