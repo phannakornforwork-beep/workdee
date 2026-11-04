@@ -38,10 +38,15 @@ function jobFields(fd: FormData) {
 }
 
 function challengeFields(fd: FormData) {
-  const names = all(fd, 'crit_name');
-  const weights = all(fd, 'crit_weight');
+  // ใช้ getAll ตรง ๆ เพื่อให้ลำดับ ชื่อ/น้ำหนัก/คำอธิบาย ตรงกันแม้บางช่องว่าง
+  const names = fd.getAll('crit_name').map((v) => String(v));
+  const weights = fd.getAll('crit_weight').map((v) => String(v));
+  const descs = fd.getAll('crit_desc').map((v) => String(v));
   const criteria = names
-    .map((n, i) => ({ name: n.trim(), weight: Number(weights[i] || 0) }))
+    .map((n, i) => {
+      const description = (descs[i] || '').trim().slice(0, 300);
+      return { name: n.trim(), weight: Number(weights[i] || 0), ...(description ? { description } : {}) };
+    })
     .filter((c) => c.name);
   return {
     title: str(fd, 'ch_title'),
@@ -71,6 +76,21 @@ export async function saveJobAction(_prev: ActionState, fd: FormData): Promise<A
     if (e2) {
       revalidatePath(`/c/${cid}/jobs`);
       return fail({ message: `บันทึกประกาศแล้ว แต่โจทย์ยังไม่ผ่าน: ${errorMessage(e2)}` });
+    }
+  }
+  // คุณสมบัติที่ AI ช่วยแตก (HR ปรับแล้ว) ใช้คัดกรองผู้สมัคร 30%
+  const aiQuals = str(fd, 'ai_quals');
+  if (aiQuals) {
+    let quals: unknown = [];
+    try {
+      quals = JSON.parse(aiQuals);
+    } catch {
+      quals = [];
+    }
+    const { error: e4 } = await supabase.rpc('save_job_ai_profile', { p_job: id, p_objective: str(fd, 'ai_objective'), p_quals: quals });
+    if (e4) {
+      revalidatePath(`/c/${cid}/jobs`);
+      return fail({ message: `บันทึกประกาศแล้ว แต่คุณสมบัติสำหรับ AI คัดกรองยังไม่ผ่าน: ${errorMessage(e4)}` });
     }
   }
   if (intent === 'publish') {

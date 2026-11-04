@@ -45,3 +45,17 @@ export async function reviewEducationAction(_prev: ActionState, fd: FormData): P
   revalidatePath('/admin');
   return done(approve ? 'ยืนยันวุฒิแล้ว' : 'แจ้งผลไม่ผ่านแล้ว');
 }
+
+export async function reviewLanguageCertAction(_prev: ActionState, fd: FormData): Promise<ActionState> {
+  const supabase = await db();
+  const level = str(fd, 'decision');
+  const { error } = await supabase.rpc('admin_review_language_cert', {
+    p_id: str(fd, 'cert_id'),
+    p_level: level,
+    p_note: str(fd, 'note') || null,
+    p_verify_url: str(fd, 'verify_url') || null
+  });
+  if (error) return fail(error);
+  revalidatePath('/admin');
+  return done(level === 'official' ? 'ยืนยันกับผู้จัดสอบแล้ว' : level === 'doc' ? 'ยืนยันว่าตรวจเอกสารแล้ว' : 'แจ้งผลไม่ผ่านแล้ว');
+}

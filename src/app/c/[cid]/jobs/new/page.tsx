@@ -6,6 +6,7 @@ import { JobForm } from '@/components/JobForm';
 import { JOB_TEMPLATES } from '@/lib/templates';
 
 export const metadata: Metadata = { title: 'ลงประกาศใหม่' };
+export const maxDuration = 60;
 
 export default async function NewJob({ params, searchParams }: { params: Promise<{ cid: string }>; searchParams: Promise<{ template?: string }> }) {
   const { cid } = await params;

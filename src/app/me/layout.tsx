@@ -44,6 +44,7 @@ export default async function PersonalLayout({ children }: { children: React.Rea
           { href: '/me', label: 'งานที่ตรงกับฉัน', exact: true },
           { href: '/me/applications', label: 'ใบสมัครของฉัน' },
           { href: '/me/profile', label: 'โปรไฟล์' },
+          { href: '/me/portfolio', label: 'แฟ้มผลงาน' },
           { href: '/me/plan', label: 'แผนอาชีพ' },
           { href: '/me/privacy', label: 'ความเป็นส่วนตัว' }
         ]}

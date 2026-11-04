@@ -3,7 +3,9 @@ import type { Metadata } from 'next';
 import { requireUser } from '@/lib/auth';
 import { ActionForm, SubmitButton } from '@/components/forms';
 import { Alert, Badge, Empty, Logo } from '@/components/ui';
-import { reviewCompanyAction, reviewEducationAction, setCompanyStatusAction } from '@/lib/actions/admin';
+import { reviewCompanyAction, reviewEducationAction, reviewLanguageCertAction, setCompanyStatusAction } from '@/lib/actions/admin';
+import { createAdminClient } from '@/lib/supabase/admin';
+import { CERT_CHECK } from '@/lib/ai/labels';
 import { relative, thaiDateTime } from '@/lib/format';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
@@ -43,6 +45,27 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   );
   const docUrls = await Promise.all(
     q.educations.map(async (e) => (e.doc_path ? (await supabase.storage.from('education-docs').createSignedUrl(e.doc_path, 600)).data?.signedUrl || null : null))
+  );
+  // F. ใบรับรองภาษาที่ AI อ่านและตรวจเบื้องต้นแล้ว รอทีมงานยืนยัน
+  const { data: certRows } = await supabase
+    .from('language_certificates')
+    .select('id, user_id, exam, score_text, sub_scores, cert_number, exam_date, expires_on, holder_name, doc_path, checks, created_at')
+    .eq('trust', 'doc_pending')
+    .order('created_at')
+    .limit(30);
+  type CertRow = {
+    id: string; user_id: string; exam: string; score_text: string; sub_scores: Record<string, string>; cert_number: string | null; exam_date: string | null;
+    expires_on: string | null; holder_name: string | null; doc_path: string | null; checks: Record<string, boolean>; created_at: string;
+  };
+  const certs = (certRows || []) as CertRow[];
+  let certAdmin: ReturnType<typeof createAdminClient> | null = null;
+  try {
+    certAdmin = certs.length ? createAdminClient() : null;
+  } catch {
+    certAdmin = null;
+  }
+  const certDocUrls = await Promise.all(
+    certs.map(async (c) => (c.doc_path && certAdmin ? (await certAdmin.storage.from('education-docs').createSignedUrl(c.doc_path, 600)).data?.signedUrl || null : null))
   );
   let search = supabase.from('companies').select('id, name, reg_no, status, review_note, created_at').neq('status', 'pending').order('created_at', { ascending: false }).limit(30);
   if (sp.q) search = search.or(`name.ilike.%${sp.q.replace(/[%,()]/g, ' ')}%,reg_no.eq.${sp.q.replace(/\D/g, '') || '0'}`);
@@ -150,6 +173,77 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
                     ข้อมูลตรงกับเอกสาร
                   </SubmitButton>
                   <SubmitButton name="decision" value="reject" className="btn small ghost">
+                    ไม่ผ่าน
+                  </SubmitButton>
+                </div>
+              </ActionForm>
+            </div>
+          ))}
+        </section>
+
+        <section className="stack">
+          <h2>ใบรับรองภาษารอตรวจ ({certs.length})</h2>
+          <p className="small muted">
+            AI อ่านไฟล์และตรวจชื่อ วันหมดอายุ เลขที่ผลสอบ แล้ว เทียบค่ากับไฟล์จริงก่อนยืนยัน ถ้าตรวจกับระบบของผู้จัดสอบได้ (เช่น หน้า TRF verification ของ IELTS) ใส่ลิงก์เพื่อให้เป็นระดับ &ldquo;ยืนยันกับผู้จัดสอบ&rdquo;
+          </p>
+          {certs.length === 0 ? <Empty>ไม่มีใบรับรองรอตรวจ</Empty> : null}
+          {certs.map((c, i) => (
+            <div key={c.id} className="card">
+              <div className="row-between">
+                <span className="strong">
+                  {c.exam} {c.score_text}
+                </span>
+                <span className="small muted">ส่งเมื่อ {relative(c.created_at)}</span>
+              </div>
+              <dl className="kv">
+                <dt>ชื่อในเอกสาร</dt>
+                <dd>{c.holder_name || '-'}</dd>
+                <dt>เลขที่ผลสอบ</dt>
+                <dd>{c.cert_number || '-'}</dd>
+                <dt>วันสอบ / หมดอายุ</dt>
+                <dd>
+                  {c.exam_date || '-'} / {c.expires_on || 'ไม่หมดอายุ'}
+                </dd>
+                {Object.keys(c.sub_scores || {}).length ? (
+                  <>
+                    <dt>คะแนนย่อย</dt>
+                    <dd>{Object.entries(c.sub_scores).map(([k, v]) => `${k} ${v}`).join(' · ')}</dd>
+                  </>
+                ) : null}
+                <dt>AI ตรวจ</dt>
+                <dd className="chips">
+                  {Object.entries(c.checks || {})
+                    .filter(([k]) => CERT_CHECK[k])
+                    .map(([k, v]) => (
+                      <Badge key={k} tone={v ? 'teal' : 'red'}>
+                        {v ? '✓' : '✗'} {CERT_CHECK[k]}
+                      </Badge>
+                    ))}
+                </dd>
+              </dl>
+              {certDocUrls[i] ? (
+                <a href={certDocUrls[i] as string} target="_blank" rel="noreferrer" className="btn small ghost">
+                  เปิดไฟล์ผลสอบ
+                </a>
+              ) : null}
+              <ActionForm action={reviewLanguageCertAction} className="stack-sm">
+                <input type="hidden" name="cert_id" value={c.id} />
+                <div className="field">
+                  <label htmlFor={`verify-${c.id}`}>ลิงก์ตรวจผลของผู้จัดสอบ (ถ้ามี)</label>
+                  <input id={`verify-${c.id}`} name="verify_url" className="input" placeholder="https://" />
+                </div>
+                <div className="field">
+                  <label htmlFor={`note-${c.id}`}>หมายเหตุถึงผู้ใช้ (ถ้าไม่ผ่าน)</label>
+                  <input id={`note-${c.id}`} name="note" className="input" maxLength={500} />
+                </div>
+                <div className="row">
+                  <SubmitButton name="decision" value="official" className="btn small">
+                    ยืนยันกับผู้จัดสอบแล้ว
+                  </SubmitButton>
+                  <SubmitButton name="decision" value="doc" className="btn small outline">
+                    ตรวจเอกสารแล้ว
+                  </SubmitButton>
+                  <SubmitButton name="decision" value="rejected" className="btn small ghost">
                     ไม่ผ่าน
                   </SubmitButton>
                 </div>

@@ -8,6 +8,8 @@ import { afterChatSendAction } from '@/lib/actions/chat';
 import { Alert, Avatar, Badge, StageBadge, VerifyBadge } from '@/components/ui';
 import { mediaUrl } from '@/lib/env';
 import { GradeForm } from './GradeForm';
+import { AiScorePanel, type AppAi } from '@/components/ai/AiScorePanel';
+import { aiEnabled } from '@/lib/ai/client';
 import {
   addNoteAction, completeInterviewAction, inviteChallengeOneAction, inviteInterviewOneAction, makeOfferAction, offerSlotsAction, rejectOneAction
 } from '@/lib/actions/hiring';
@@ -15,6 +17,8 @@ import { AI_USE, CLOSED_STAGES, EVENT_LABEL, PAY_UNIT, dueText, money, salaryRan
 import type { Criterion } from '@/lib/types';
 
 export const metadata: Metadata = { title: 'ใบสมัคร' };
+// AI วิเคราะห์และร่างคะแนนใช้เวลานานกว่าหน้าปกติ
+export const maxDuration = 60;
 
 type Snap = {
   full_name: string; photo_path?: string | null; headline: string; intro: string; province: string | null; age: number | null; skills: string[]; tools: string[];
@@ -54,11 +58,18 @@ export default async function ApplicantPage({ params }: { params: Promise<{ cid:
   const snap = a.profile_snapshot;
   const closed = CLOSED_STAGES.includes(a.stage);
 
-  const [{ data: templates }, { data: reasons }, { data: slots }] = await Promise.all([
+  const [{ data: templates }, { data: reasons }, { data: slots }, { data: aiRow }, { data: langCerts }] = await Promise.all([
     supabase.from('message_templates').select('kind, label, body').eq('company_id', cid),
     supabase.from('reject_reasons').select('code, label, needs_note').eq('system_only', false).order('sort'),
-    supabase.from('interview_slots').select('id, starts_at, mode').eq('company_id', cid).gt('starts_at', new Date().toISOString()).order('starts_at').limit(30)
+    supabase.from('interview_slots').select('id, starts_at, mode').eq('company_id', cid).gt('starts_at', new Date().toISOString()).order('starts_at').limit(30),
+    supabase
+      .from('application_ai')
+      .select('match_score, matches, missing_must, verified_score, verified_items, summary, screened_at, grade_suggestion')
+      .eq('application_id', aid)
+      .maybeSingle(),
+    supabase.rpc('application_language_certs', { p_app: aid })
   ]);
+  const ai = (aiRow || null) as AppAi;
   const tpl = (kind: string) => ((templates || []) as { kind: string; body: string }[]).find((t) => t.kind === kind)?.body || '';
 
   const files: { name: string; url: string }[] = [];
@@ -115,6 +126,16 @@ export default async function ApplicantPage({ params }: { params: Promise<{ cid:
 
       <div className="split">
         <div className="main">
+          {snap ? (
+            <AiScorePanel
+              companyId={cid}
+              appId={a.id}
+              ai={ai}
+              taskScore={d.score ? d.score.total : null}
+              certs={(langCerts || []) as { exam: string; score: string; exam_date: string | null; trust: string; verify_url: string | null }[]}
+              enabled={aiEnabled()}
+            />
+          ) : null}
           {snap ? (
             <section className="card">
               <h2>โปรไฟล์ (สำเนา ณ วันที่สมัคร)</h2>
@@ -249,6 +270,8 @@ export default async function ApplicantPage({ params }: { params: Promise<{ cid:
                     appId={a.id}
                     criteria={d.challenge.criteria}
                     initial={d.score ? Object.fromEntries(d.score.scores.map((s) => [s.name, s.score])) : undefined}
+                    suggestion={ai?.grade_suggestion || null}
+                    aiEnabled={aiEnabled()}
                   />
                 </details>
               ) : null}
