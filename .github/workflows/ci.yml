@@ -102,3 +102,36 @@ jobs:
       - name: Explain failures
         if: failure()
         run: node tests/ci-annotate.mjs smoke.tap next.log
+
+  demo-data:
+    name: Demo data scripts
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ['54322:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      DB_URL: postgres://postgres:postgres@127.0.0.1:54322/postgres
+      DEMO_PASSWORD: Demo-ci-2026
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Install psql
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
+      - name: Seed demo data, then the second set twice (must be safe to re-run)
+        run: |
+          bash tests/stack/start.sh
+          . .stack/keys.env
+          export SUPABASE_URL=http://127.0.0.1:54321 SUPABASE_PUBLISHABLE_KEY=$SUPABASE_ANON_KEY SUPABASE_SECRET_KEY=$SUPABASE_SERVICE_ROLE_KEY
+          node scripts/seed-demo.mjs
+          node scripts/seed-demo-more.mjs | tee more.log
+          node scripts/seed-demo-more.mjs > again.log
+          if grep -q "· ข้าม" more.log; then echo "first run skipped steps:"; grep "· ข้าม" more.log; exit 1; fi
+          psql "$DB_URL" -At -c "select count(*) from applications" -c "select count(*) from challenge_scores" -c "select count(*) from language_certificates" -c "select count(*) from jobs where status='open'"

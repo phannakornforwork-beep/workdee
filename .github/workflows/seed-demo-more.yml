@@ -1,0 +1,22 @@
+# กดรันเองจากแท็บ Actions: เพิ่มข้อมูลเดโมชุดที่ 2 ต่อจาก "Seed demo data" (ไม่ลบของเดิม รันซ้ำได้)
+# ใช้ secret ชุดเดียวกับ seed-demo.yml ดู docs/SETUP.md ขั้นที่ 6.5
+name: Seed more demo data
+
+on:
+  workflow_dispatch:
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Add more demo accounts and data
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          DEMO_PASSWORD: ${{ secrets.DEMO_PASSWORD }}
+        run: node scripts/seed-demo-more.mjs
