@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
-import { screenApplicationAction, screenJobAction, setPortfolioHiddenAction } from '@/lib/actions/ai';
+import { screenApplicationAction, setPortfolioHiddenAction } from '@/lib/actions/ai';
 
 function useRun() {
   const router = useRouter();
@@ -34,19 +34,6 @@ export function AiScreenButton({ companyId, appId, again }: { companyId: string;
     <div className="row">
       <button type="button" className={`btn small ${again ? 'ghost' : 'ai'}`} disabled={pending} onClick={() => run(() => screenApplicationAction(companyId, appId))}>
         {pending ? 'AI กำลังวิเคราะห์…' : again ? 'วิเคราะห์ใหม่' : 'ให้ AI วิเคราะห์ผู้สมัครคนนี้'}
-      </button>
-      <Msg msg={msg} />
-    </div>
-  );
-}
-
-// C. คัดกรองผู้สมัครทุกคนในประกาศ
-export function AiScreenJobButton({ companyId, jobId, pendingCount }: { companyId: string; jobId: string; pendingCount: number }) {
-  const { pending, msg, run } = useRun();
-  return (
-    <div className="row">
-      <button type="button" className="btn ai" disabled={pending} onClick={() => run(() => screenJobAction(companyId, jobId, pendingCount === 0))}>
-        {pending ? 'AI กำลังคัดกรอง…' : pendingCount ? `ให้ AI คัดกรอง ${pendingCount} คนที่ยังไม่ได้วิเคราะห์` : 'ให้ AI คัดกรองทุกคนใหม่'}
       </button>
       <Msg msg={msg} />
     </div>
