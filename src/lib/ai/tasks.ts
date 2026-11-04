@@ -1,6 +1,7 @@
 // งาน AI ทั้งหมดของ WorkDee: prompt + โครงสร้างผลลัพธ์ + ตัวตรวจผลก่อนใช้
 // ใช้ฝั่งเซิร์ฟเวอร์เท่านั้น
-import { aiJson, type AiFile } from '@/lib/ai/client';
+import { aiDemo, aiJson, type AiFile } from '@/lib/ai/client';
+import { demoCv, demoDesignJob, demoGrade, demoScreen } from '@/lib/ai/demo';
 
 const conf = { type: 'number', minimum: 0, maximum: 1 };
 
@@ -20,7 +21,8 @@ export type CvExtract = {
   confidence: number;
 };
 
-export function extractCv(file: AiFile) {
+export async function extractCv(file: AiFile): Promise<CvExtract> {
+  if (aiDemo()) return demoCv();
   return aiJson<CvExtract>({
     tool: 'save_profile_from_cv',
     file,
@@ -76,6 +78,7 @@ export type JobDesign = {
 };
 
 export async function designJob(input: { title: string; jobType: string; objective: string }): Promise<JobDesign> {
+  if (aiDemo()) return demoDesignJob(input, toHundred);
   const out = await aiJson<JobDesign>({
     tool: 'save_job_design',
     maxTokens: 6000,
@@ -137,6 +140,7 @@ export type MatchItem = { name: string; must_have: boolean; weight: number; leve
 export type Screening = { matches: MatchItem[]; match_score: number; missing_must: string[]; summary: string };
 
 export async function screenCandidate(quals: Qualification[], profileText: string): Promise<Screening> {
+  if (aiDemo()) return demoScreen(quals, profileText, matchScore);
   const out = await aiJson<{ items: { name: string; level: number; evidence: string; note: string }[]; summary: string }>({
     tool: 'save_screening',
     system: `คุณช่วย HR คัดกรองผู้สมัครโดยเทียบ "ความหมาย" ไม่ใช่คำตรงตัว (เช่น "ยิงแอดเฟซบุ๊ก" ตรงกับ "Meta Ads")
@@ -184,6 +188,7 @@ export async function suggestGrade(input: {
   aiUse: string;
   file?: AiFile;
 }): Promise<GradeSuggestion> {
+  if (aiDemo()) return demoGrade(input);
   const out = await aiJson<GradeSuggestion>({
     tool: 'save_grade_suggestion',
     file: input.file,

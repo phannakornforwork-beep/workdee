@@ -8,13 +8,15 @@ export type RankRow = {
 };
 
 // C+D. ผู้สมัครทุกคนของประกาศเรียงตามคะแนน กดเข้าไปดูที่มาของคะแนนได้ทุกคน
-export function AiRanking({ companyId, jobId, rows, enabled }: { companyId: string; jobId: string; rows: RankRow[]; enabled: boolean }) {
+export function AiRanking({ companyId, jobId, rows, enabled, demo = false }: { companyId: string; jobId: string; rows: RankRow[]; enabled: boolean; demo?: boolean }) {
   const pendingCount = rows.filter((r) => !r.screened_at && !['rejected', 'declined'].includes(r.stage)).length;
   return (
     <section className="card ai-card">
       <div className="row-between">
         <div className="stack-sm">
-          <h2>อันดับผู้สมัครโดย AI</h2>
+          <h2>
+            อันดับผู้สมัครโดย AI {demo ? <span className="badge orange">โหมดสาธิต</span> : null}
+          </h2>
           <span className="small muted">คะแนนรวม = ตรงคุณสมบัติ 30% + ผลโจทย์ 60% + หลักฐานยืนยันแล้ว 10% · กดชื่อเพื่อดูเหตุผลทุกข้อ</span>
         </div>
         {enabled ? <AiScreenJobButton companyId={companyId} jobId={jobId} pendingCount={pendingCount} /> : <span className="small muted">ยังไม่ได้เปิดใช้ AI</span>}

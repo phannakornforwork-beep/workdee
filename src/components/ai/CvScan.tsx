@@ -29,6 +29,7 @@ export function CvScan({ userId }: { userId: string }) {
   const [data, setData] = useState<Extract | null>(null);
   const [replace, setReplace] = useState(false);
   const [applied, setApplied] = useState(false);
+  const [note, setNote] = useState('');
 
   async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
@@ -57,7 +58,10 @@ export function CvScan({ userId }: { userId: string }) {
     start(async () => {
       const res = await scanCvAction(path);
       if (!res.ok) setError(res.error);
-      else setData(res.data as Extract);
+      else {
+        setData(res.data as Extract);
+        setNote(res.message || '');
+      }
     });
   }
 
@@ -125,6 +129,7 @@ export function CvScan({ userId }: { userId: string }) {
       {error ? <p className="small error-text" role="alert">{error}</p> : null}
       {data ? (
         <div className="stack-sm">
+          {note ? <span className="badge orange demo-note">{note}</span> : null}
           <div className="row-between">
             <span className="strong">AI อ่านได้ ความมั่นใจ {Math.round((data.confidence || 0) * 100)}%</span>
             {data.low_confidence.length ? <span className="badge orange">ตรวจเป็นพิเศษ: {data.low_confidence.map((k) => LABEL[k] || k).join(', ')}</span> : null}

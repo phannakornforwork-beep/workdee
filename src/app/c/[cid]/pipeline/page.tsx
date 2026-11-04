@@ -5,7 +5,7 @@ import { NoAccess } from '@/components/ui';
 import { PipelineBoard } from './PipelineBoard';
 import type { PipelineItem, Template } from '@/lib/types';
 import { AiRanking, type RankRow } from '@/components/ai/AiRanking';
-import { aiEnabled } from '@/lib/ai/client';
+import { aiDemo, aiEnabled } from '@/lib/ai/client';
 
 export const metadata: Metadata = { title: 'กระดานผู้สมัคร' };
 // คัดกรองด้วย AI หลายคนต่อครั้งใช้เวลานานกว่าหน้าปกติ
@@ -49,7 +49,7 @@ export default async function PipelinePage({ params, searchParams }: { params: P
           </Link>
         ))}
       </nav>
-      {sp.job && ranking ? <AiRanking companyId={cid} jobId={sp.job} rows={ranking as RankRow[]} enabled={aiEnabled()} /> : null}
+      {sp.job && ranking ? <AiRanking companyId={cid} jobId={sp.job} rows={ranking as RankRow[]} enabled={aiEnabled()} demo={aiDemo()} /> : null}
       {!sp.job && jobList.length ? <p className="small muted">เลือกประกาศด้านบนเพื่อดูอันดับผู้สมัครโดย AI และให้ AI คัดกรองทุกคน</p> : null}
       <PipelineBoard
         companyId={cid}

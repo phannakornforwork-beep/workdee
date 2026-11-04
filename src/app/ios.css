@@ -539,3 +539,4 @@ table.ai-rank td.num, table.ai-rank th.num { text-align: right; font-variant-num
 .trend-label { fill: var(--muted); font-size: 12px; }
 .trend-line { fill: none; stroke: var(--brand); stroke-width: 2.5; stroke-linejoin: round; }
 .trend-dot { fill: var(--brand); }
+.demo-note { white-space: normal; text-align: left; align-self: flex-start; }

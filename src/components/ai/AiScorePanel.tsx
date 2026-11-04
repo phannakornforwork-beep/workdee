@@ -11,6 +11,7 @@ export type AppAi = {
   verified_items: { label: string; trust: string; points: number }[];
   summary: string;
   screened_at: string | null;
+  model?: string;
   grade_suggestion: { scores: { name: string; weight: number; score: number; reason: string }[]; feedback: string } | null;
 } | null;
 
@@ -30,7 +31,9 @@ export function AiScorePanel({
   return (
     <section className="card ai-card">
       <div className="row-between">
-        <h2>คะแนน WorkDee และที่มา</h2>
+        <h2>
+          คะแนน WorkDee และที่มา {ai?.model === 'demo' ? <span className="badge orange">โหมดสาธิต</span> : null}
+        </h2>
         <span className="score" style={{ fontSize: 26 }}>
           {total ?? '–'}
           <span className="small muted">/100</span>
@@ -123,7 +126,7 @@ export function AiScorePanel({
         <span className="small muted">ยังไม่ได้เปิดใช้ AI (ผู้ดูแลต้องใส่ ANTHROPIC_API_KEY)</span>
       )}
       <span className="tiny muted">
-        {ai?.screened_at ? `AI วิเคราะห์เมื่อ ${thaiDateTime(ai.screened_at)} · ` : ''}
+        {ai?.screened_at ? `${ai.model === 'demo' ? 'วิเคราะห์ด้วยโหมดสาธิต (จับคำพ้องความหมาย ยังไม่ได้เชื่อม AI จริง)' : 'AI วิเคราะห์'}เมื่อ ${thaiDateTime(ai.screened_at)} · ` : ''}
         ไม่ใช้ชื่อ อายุ เพศ รูป หรือชื่อสถาบันในการคิดคะแนน · AI แนะนำ คนตัดสิน
       </span>
     </section>
