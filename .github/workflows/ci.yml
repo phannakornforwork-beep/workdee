@@ -135,3 +135,6 @@ jobs:
           node scripts/seed-demo-more.mjs > again.log
           if grep -q "· ข้าม" more.log; then echo "first run skipped steps:"; grep "· ข้าม" more.log; exit 1; fi
           psql "$DB_URL" -At -c "select count(*) from applications" -c "select count(*) from challenge_scores" -c "select count(*) from language_certificates" -c "select count(*) from jobs where status='open'"
+          photos=$(psql "$DB_URL" -At -c "select count(*) from candidate_profiles where photo_path like '%.jpg'")
+          logos=$(psql "$DB_URL" -At -c "select count(*) from companies where logo_path like '%.jpg'")
+          echo "jpg photos: $photos, jpg logos: $logos"; test "$photos" -ge 5 && test "$logos" -ge 1

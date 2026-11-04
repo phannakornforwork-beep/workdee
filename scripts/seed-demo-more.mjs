@@ -8,6 +8,9 @@
 // ใช้ secret ชุดเดียวกับ seed-demo.mjs · รันซ้ำได้: ข้ามสิ่งที่มีอยู่แล้ว
 // GitHub: Actions → Seed more demo data
 
+import fs from 'node:fs';
+import path from 'node:path';
+
 const URL_BASE = (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\/$/, '');
 const PUBLIC_KEY = process.env.SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY || '';
 const SECRET = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -88,6 +91,37 @@ async function account(slug, name) {
     u = u.user || u;
   }
   return { id: u.id, token: await login(slug), name };
+}
+
+// รูปจริงที่ได้รับความยินยอมแล้ว (scripts/demo-media/*.jpg) อัปโหลดในนามผู้ใช้คนนั้นตามสิทธิ์จริง
+const MEDIA_DIR = path.join(path.dirname(new URL(import.meta.url).pathname), 'demo-media');
+
+async function uploadJpeg(who, objectPath, file) {
+  const full = path.join(MEDIA_DIR, file);
+  if (!fs.existsSync(full)) return null;
+  const res = await fetch(`${URL_BASE}/storage/v1/object/media/${objectPath}`, {
+    method: 'POST',
+    headers: { apikey: PUBLIC_KEY, Authorization: `Bearer ${who.token}`, 'Content-Type': 'image/jpeg', 'x-upsert': 'true' },
+    body: fs.readFileSync(full)
+  });
+  if (!res.ok) {
+    console.log(`  · ข้าม อัปโหลด ${file}: ${res.status} ${(await res.text()).slice(0, 120)}`);
+    return null;
+  }
+  return objectPath;
+}
+
+const PHOTOS = { c8: 'photo-c8.jpg', c11: 'photo-c11.jpg', c12: 'photo-c12.jpg', c17: 'photo-c17.jpg', startup: 'photo-startup.jpg' };
+
+/** ใส่รูปโปรไฟล์ แล้วอัปเดตสำเนาโปรไฟล์ในใบสมัครที่ส่งไปแล้วให้มีรูปด้วย */
+async function setPhoto(u, slug) {
+  const file = PHOTOS[slug];
+  if (!file) return;
+  const p = await uploadJpeg(u, `avatars/${u.id}/photo.jpg`, file);
+  if (!p) return;
+  await upsertAs(u, 'candidate_profiles', { user_id: u.id, photo_path: p });
+  const apps = await sel(`applications?candidate_id=eq.${u.id}&profile_snapshot=not.is.null&select=id,profile_snapshot`);
+  for (const a of apps) await patch(`applications?id=eq.${a.id}`, { profile_snapshot: { ...a.profile_snapshot, photo_path: p } });
 }
 
 async function candidate(slug, name, profile, education) {
@@ -251,6 +285,10 @@ async function main() {
     startup = { id };
   }
   const [startupRoot] = await sel(`positions?company_id=eq.${startup.id}&parent_id=is.null&select=id`);
+  const logo = await uploadJpeg(startupOwner, `logos/${startup.id}/logo.jpg`, 'logo-omdee.jpg');
+  if (logo) await soft('โลโก้ออมดี', () => rpc(startupOwner, 'set_company_logo', { p_company: startup.id, p_path: logo }));
+  await upsertAs(startupOwner, 'candidate_profiles', { user_id: startupOwner.id, full_name: 'ณัฐวุฒิ ออมดี' });
+  await setPhoto(startupOwner, 'startup');
 
   // ---------------------------------------------------------------- ประกาศงานเพิ่ม
   console.log('• ประกาศงานเพิ่ม 5 ตำแหน่ง');
@@ -443,6 +481,10 @@ async function main() {
   }, { scores: scoresOf(CH.react.criteria, [0.92, 0.86, 0.8]), feedback: 'โค้ดแบ่งส่วนดี README ครบ ลองเพิ่มการจัดการกรณีไม่พบผลลัพธ์' });
   if ((await stageOf(a.c11r)) === 'applied') await soft('ปฏิเสธ', () => rpc(startupOwner, 'reject_applications', { p_apps: [a.c11r], p_reasons: ['missing_core_skill'], p_note: null, p_message: null }));
   await releaseBatches();
+
+  // ---------------------------------------------------------------- รูปโปรไฟล์ (หลังสมัครแล้ว เพื่ออัปเดตสำเนาในใบสมัครด้วย)
+  console.log('• รูปโปรไฟล์และโลโก้');
+  for (const slug of ['c8', 'c11', 'c12', 'c17']) await soft(`รูป ${slug}`, () => setPhoto(P[slug], slug));
 
   // ---------------------------------------------------------------- หลักฐานที่ยืนยันแล้ว
   console.log('• วุฒิที่ตรวจแล้ว และใบรับรองภาษา 3 ระดับ');
