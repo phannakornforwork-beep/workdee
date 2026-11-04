@@ -103,7 +103,7 @@ async function candidate(slug, name, profile, education) {
 }
 
 async function job(owner, companyId, fields, challenge) {
-  const [found] = await sel(`jobs?company_id=eq.${companyId}&title=eq.${q(fields.title)}&select=id,status`);
+  const found = (await sel(`jobs?company_id=eq.${companyId}&select=id,title`)).find((j) => j.title === fields.title);
   if (found) return found.id;
   const id = await rpc(owner, 'save_job', { p_company: companyId, p_job: null, p_fields: fields });
   if (challenge) {
@@ -222,14 +222,21 @@ async function main() {
   const c3 = await account('c3', 'ณัฐธิดา แก้วมณี');
   const c4 = await account('c4', 'วรเมธ ทองดี');
 
-  const [sukjai] = await sel(`companies?name=eq.${q('บริษัท สุขใจฟู้ดส์ จำกัด')}&select=id`);
-  const [cafe] = await sel(`companies?name=eq.${q('บ้านสวนคาเฟ่')}&select=id`);
-  const [logi] = await sel(`companies?name=eq.${q('บริษัท ไทยโลจิสติกส์ พลัส จำกัด')}&select=id`);
-  const [mktHead] = await sel(`positions?company_id=eq.${sukjai.id}&title=eq.${q('หัวหน้าการตลาด')}&select=id`);
-  const [cafeRoot] = await sel(`positions?company_id=eq.${cafe.id}&parent_id=is.null&select=id`);
-  const [logiRoot] = await sel(`positions?company_id=eq.${logi.id}&parent_id=is.null&select=id`);
-  const [contentJob] = await sel(`jobs?company_id=eq.${sukjai.id}&title=eq.${q('เจ้าหน้าที่การตลาดออนไลน์ (Content)')}&select=id`);
-  const [salesJob] = await sel(`jobs?company_id=eq.${sukjai.id}&title=like.${encodeURIComponent('ผู้ช่วยขายออนไลน์*')}&select=id`);
+  // หาแถวด้วยการกรองในสคริปต์ (ไม่พึ่งการกรองข้อความภาษาไทยใน URL)
+  const companies = await sel('companies?select=id,name,created_by');
+  const byOwner = (u) => companies.find((c) => c.created_by === u.id);
+  const sukjai = byOwner(owner);
+  const cafe = byOwner(cafeOwner);
+  const logi = byOwner(logiOwner);
+  if (!sukjai || !cafe || !logi) throw new Error('ไม่พบบริษัทเดโมชุดแรก');
+  const positions = await sel(`positions?company_id=in.(${sukjai.id},${cafe.id},${logi.id})&select=id,company_id,parent_id,title`);
+  const mktHead = positions.find((p) => p.company_id === sukjai.id && p.title === 'หัวหน้าการตลาด');
+  const cafeRoot = positions.find((p) => p.company_id === cafe.id && !p.parent_id);
+  const logiRoot = positions.find((p) => p.company_id === logi.id && !p.parent_id);
+  const sukjaiJobs = await sel(`jobs?company_id=eq.${sukjai.id}&select=id,title`);
+  const contentJob = sukjaiJobs.find((j) => j.title === 'เจ้าหน้าที่การตลาดออนไลน์ (Content)');
+  const salesJob = sukjaiJobs.find((j) => j.title.startsWith('ผู้ช่วยขายออนไลน์'));
+  if (!mktHead || !contentJob) throw new Error('ไม่พบแผนกการตลาดหรือประกาศ Content ของชุดแรก');
   const [contentCh] = await sel(`challenges?job_id=eq.${contentJob.id}&select=criteria`);
 
   // ---------------------------------------------------------------- บริษัทที่ 4
