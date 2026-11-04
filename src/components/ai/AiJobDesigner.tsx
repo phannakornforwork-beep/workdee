@@ -2,6 +2,7 @@
 
 import { useRef, useState, useTransition } from 'react';
 import { designJobAction } from '@/lib/actions/ai';
+import { pickChallenges, type BankChallenge } from '@/lib/challenge-bank';
 
 type Qual = { name: string; description: string; must_have: boolean; weight: number };
 
@@ -23,6 +24,8 @@ export function AiJobDesigner({
   const [quals, setQuals] = useState<Qual[]>(initialQuals);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [pending, start] = useTransition();
+  const [picks, setPicks] = useState<BankChallenge[]>([]);
+  const [chosen, setChosen] = useState<number | null>(null);
   const sum = quals.reduce((a, q) => a + (Number(q.weight) || 0), 0);
   const touched = quals.length > 0 || initialQuals.length > 0;
 
@@ -33,46 +36,46 @@ export function AiJobDesigner({
     el.value = value;
   }
 
+  function applyChallenge(c: BankChallenge, i: number) {
+    const form = box.current?.closest('form');
+    if (!form || locked) return;
+    setField(form, 'ch_title', c.title);
+    setField(form, 'ch_brief', c.brief);
+    setField(form, 'ch_deliverable', c.deliverable);
+    setField(form, 'ch_minutes', String(c.minutes));
+    setField(form, 'ch_due_days', String(c.due_days));
+    if (c.skill_key) setField(form, 'ch_skill_key', c.skill_key, true);
+    const names = form.querySelectorAll<HTMLInputElement>('[name="crit_name"]');
+    const weights = form.querySelectorAll<HTMLInputElement>('[name="crit_weight"]');
+    const descs = form.querySelectorAll<HTMLInputElement>('[name="crit_desc"]');
+    names.forEach((el, j) => {
+      const cr = c.criteria[j];
+      el.value = cr?.name || '';
+      if (weights[j]) weights[j].value = cr ? String(cr.weight) : '';
+      if (descs[j]) descs[j].value = cr?.description || '';
+    });
+    setChosen(i);
+    setMsg({ ok: true, text: `ใส่โจทย์ "${c.title}" และเกณฑ์ให้คะแนนลงฟอร์มแล้ว แก้ได้ทุกช่องก่อนกดบันทึก` });
+    form.querySelector('[name="ch_title"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
   function run() {
     const form = box.current?.closest('form');
     if (!form) return;
     const title = (form.elements.namedItem('title') as HTMLInputElement | null)?.value || '';
     const jobType = (form.elements.namedItem('job_type') as HTMLSelectElement | null)?.value || 'full_time';
     setMsg(null);
+    setPicks([]);
+    setChosen(null);
     start(async () => {
-      const res = await designJobAction(companyId, title, jobType, objective);
-      if (!res.ok) {
-        setMsg({ ok: false, text: res.error });
-        return;
+      const [res] = await Promise.all([designJobAction(companyId, title, jobType, objective), new Promise((r) => setTimeout(r, 1400))]);
+      if (res.ok && res.data) {
+        setQuals(res.data.qualifications);
+        setField(form, 'requirements', res.data.requirements, true);
+        setField(form, 'skills', res.data.skills.join(', '), true);
       }
-      const d = res.data!;
-      setQuals(d.qualifications);
-      setField(form, 'requirements', d.requirements);
-      setField(form, 'skills', d.skills.join(', '));
-      if (!locked) {
-        setField(form, 'ch_title', d.challenge.title);
-        setField(form, 'ch_brief', d.challenge.brief);
-        setField(form, 'ch_deliverable', d.challenge.deliverable);
-        setField(form, 'ch_minutes', String(d.challenge.minutes));
-        setField(form, 'ch_due_days', String(d.challenge.due_days));
-        if (d.challenge.skill_key) setField(form, 'ch_skill_key', d.challenge.skill_key, true);
-        const names = form.querySelectorAll<HTMLInputElement>('[name="crit_name"]');
-        const weights = form.querySelectorAll<HTMLInputElement>('[name="crit_weight"]');
-        const descs = form.querySelectorAll<HTMLInputElement>('[name="crit_desc"]');
-        names.forEach((el, i) => {
-          const c = d.criteria[i];
-          el.value = c?.name || '';
-          if (weights[i]) weights[i].value = c ? String(c.weight) : '';
-          if (descs[i]) descs[i].value = c?.description || '';
-        });
-      }
-      const demoNote = res.demo ? 'โหมดสาธิต (จับคำจากข้อความของคุณ ยังไม่ได้เชื่อม AI จริง) · ' : '';
-      setMsg({
-        ok: true,
-        text: demoNote + (locked
-          ? 'AI เสนอคุณสมบัติแล้ว (มีผู้สมัครส่งโจทย์แล้ว จึงไม่เปลี่ยนโจทย์และเกณฑ์) ตรวจแล้วกดบันทึก'
-          : 'AI เติมคุณสมบัติ โจทย์ และเกณฑ์ให้คะแนนลงฟอร์มแล้ว ตรวจและแก้ได้ทุกช่องก่อนกดบันทึก')
-      });
+      setPicks(pickChallenges(`${title} ${objective}`));
+      setMsg({ ok: true, text: locked ? 'AI เสนอคุณสมบัติแล้ว (มีผู้สมัครส่งโจทย์แล้ว จึงเปลี่ยนโจทย์ไม่ได้)' : 'AI เสนอคุณสมบัติและโจทย์ 5 แบบ เลือกโจทย์ที่ชอบด้านล่าง' });
     });
   }
 
@@ -83,12 +86,12 @@ export function AiJobDesigner({
   return (
     <section className="card ai-card" ref={box}>
       <div className="row-between">
-        <h2>ให้ AI ช่วยออกแบบการคัดเลือก</h2>
+        <h2>ให้ AI คิดโจทย์และคุณสมบัติ</h2>
         <span className="badge ai">AI</span>
       </div>
       <p className="muted small">
-        เล่าเป็นภาษาธรรมดาว่าอยากได้คนแบบไหน ทำงานอะไร AI จะเสนอคุณสมบัติ &ldquo;ต้องมี / มีแล้วดี&rdquo; พร้อมน้ำหนัก ใช้คัดกรองผู้สมัครทุกคนอัตโนมัติ
-        และร่างโจทย์กับเกณฑ์ให้คะแนนให้ คุณแก้ได้ทุกช่อง
+        เล่าเป็นภาษาธรรมดาว่าอยากได้คนแบบไหน ทำงานอะไร AI จะเสนอคุณสมบัติ &ldquo;ต้องมี / มีแล้วดี&rdquo; พร้อมน้ำหนัก และโจทย์พร้อมเกณฑ์ให้คะแนน 5 แบบให้เลือก
+        คุณแก้ได้ทุกช่อง
       </p>
       <div className="field">
         <label htmlFor="ai_objective">อยากได้คนแบบไหน</label>
@@ -103,8 +106,8 @@ export function AiJobDesigner({
         />
       </div>
       <div className="row">
-        <button type="button" className="btn ai" onClick={run} disabled={pending || objective.trim().length < 20}>
-          {pending ? 'AI กำลังออกแบบ…' : quals.length ? 'ให้ AI ออกแบบใหม่' : 'ให้ AI ออกแบบ'}
+        <button type="button" className="btn ai" onClick={run} disabled={pending || !objective.trim()}>
+          {pending ? 'AI กำลังคิดโจทย์…' : picks.length ? 'ให้ AI คิดใหม่' : 'ให้ AI คิดโจทย์'}
         </button>
         {msg ? <span className={`small ${msg.ok ? 'ok-text' : 'error-text'}`} role="status">{msg.text}</span> : null}
       </div>
@@ -141,6 +144,32 @@ export function AiJobDesigner({
             </button>
           ) : null}
           <span className="tiny muted">ข้อ &ldquo;ต้องมี&rdquo; ที่ผู้สมัครไม่มี จะขึ้นธงเตือนให้ HR ดู ระบบไม่ตัดผู้สมัครทิ้งเอง</span>
+        </div>
+      ) : null}
+      {picks.length && !locked ? (
+        <div className="stack-sm">
+          <span className="strong">โจทย์ที่ AI เสนอ ({picks.length} แบบ)</span>
+          <div className="challenge-picks">
+            {picks.map((c, i) => (
+              <div key={c.title} className={`card soft tight challenge-pick ${chosen === i ? 'on' : ''}`}>
+                <span className="strong">{c.title}</span>
+                <span className="small prewrap">{c.brief.length > 220 ? `${c.brief.slice(0, 220)}…` : c.brief}</span>
+                <span className="tiny muted">
+                  ส่ง: {c.deliverable} · {c.minutes} นาที · ภายใน {c.due_days} วัน
+                </span>
+                <span className="chips">
+                  {c.criteria.map((cr) => (
+                    <span key={cr.name} className="badge gray">
+                      {cr.name} {cr.weight}%
+                    </span>
+                  ))}
+                </span>
+                <button type="button" className={`btn small ${chosen === i ? '' : 'outline'}`} onClick={() => applyChallenge(c, i)} style={{ alignSelf: 'flex-start' }}>
+                  {chosen === i ? 'ใช้โจทย์นี้แล้ว' : 'ใช้โจทย์นี้'}
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       ) : null}
       <input type="hidden" name="ai_quals" value={touched ? JSON.stringify(quals.filter((q) => q.name.trim())) : ''} />

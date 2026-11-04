@@ -6,8 +6,8 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { AI_MODEL, DEMO_MODEL, aiDemo, aiErrorMessage, type AiFile } from '@/lib/ai/client';
 import { demoCert } from '@/lib/ai/demo';
 import {
-  checkCert, designJob, extractCv, readLanguageCert, screenCandidate, suggestGrade,
-  type CvExtract, type GradeSuggestion, type JobDesign, type Qualification
+  checkCert, designJob, readLanguageCert, screenCandidate, suggestGrade,
+  type GradeSuggestion, type JobDesign, type Qualification
 } from '@/lib/ai/tasks';
 import type { CompanyAccess, Criterion } from '@/lib/types';
 
@@ -48,32 +48,12 @@ function fail(e: unknown): { ok: false; error: string } {
   return { ok: false, error: aiErrorMessage(e) };
 }
 
-// ---------------------------------------------------------------- A. สแกน CV
-export async function scanCvAction(path: string): Promise<Result<CvExtract>> {
-  try {
-    const { user } = await session();
-    if (!path.startsWith(`${user.id}/cv/`)) throw new Error('คุณไม่มีสิทธิ์อ่านไฟล์นี้');
-    const admin = createAdminClient();
-    const file = await loadFile('education-docs', path);
-    try {
-      await admin.from('consents').insert({ user_id: user.id, purpose: 'ai_cv_scan', detail: { model: model() } });
-      const data = await extractCv(file);
-      return { ok: true, data, demo: aiDemo(), message: aiDemo() ? `${DEMO_NOTE} ผลด้านล่างเป็นข้อมูลตัวอย่าง ไม่ได้อ่านจาก CV ของคุณ` : undefined };
-    } finally {
-      // ไม่เก็บไฟล์ CV ไว้หลังอ่านเสร็จ
-      await admin.storage.from('education-docs').remove([path]);
-    }
-  } catch (e) {
-    return fail(e);
-  }
-}
-
 // ---------------------------------------------------------------- B. สร้างคุณสมบัติ + โจทย์
 export async function designJobAction(cid: string, title: string, jobType: string, objective: string): Promise<Result<JobDesign>> {
   try {
     const { supabase } = await session();
     await companyPerm(supabase, cid, 'post');
-    if (objective.trim().length < 20) throw new Error('อธิบายว่าอยากได้คนแบบไหนอย่างน้อย 1–2 ประโยค');
+    if (!objective.trim()) throw new Error('พิมพ์ว่าอยากได้คนแบบไหน');
     const data = await designJob({ title, jobType, objective: objective.slice(0, 3000) });
     return { ok: true, data, demo: aiDemo() };
   } catch (e) {
@@ -151,33 +131,6 @@ export async function screenApplicationAction(cid: string, appId: string): Promi
     await screenOne(supabase, appId);
     revalidatePath(`/c/${cid}`, 'layout');
     return { ok: true, message: aiDemo() ? `วิเคราะห์แล้ว (${DEMO_NOTE} ใช้การจับคำพ้องความหมาย)` : 'AI วิเคราะห์แล้ว', demo: aiDemo() };
-  } catch (e) {
-    return fail(e);
-  }
-}
-
-/** คัดกรองผู้สมัครที่ยังไม่ได้วิเคราะห์ในประกาศนี้ ครั้งละไม่เกิน 12 คน (กดซ้ำเพื่อทำต่อ) */
-export async function screenJobAction(cid: string, jobId: string, redo = false): Promise<Result<{ done: number; left: number; failed: number }>> {
-  try {
-    const { supabase } = await session();
-    const { data, error } = await supabase.rpc('ai_ranking', { p_job: jobId });
-    if (error) throw new Error(error.message);
-    const rows = (data || []) as { id: string; screened_at: string | null; stage: string }[];
-    const todo = rows.filter((r) => (redo || !r.screened_at) && !['rejected', 'declined'].includes(r.stage));
-    const batch = todo.slice(0, 12);
-    let failed = 0;
-    for (let i = 0; i < batch.length; i += 4) {
-      const res = await Promise.allSettled(batch.slice(i, i + 4).map((r) => screenOne(supabase, r.id)));
-      failed += res.filter((r) => r.status === 'rejected').length;
-    }
-    revalidatePath(`/c/${cid}`, 'layout');
-    const doneN = batch.length - failed;
-    return {
-      ok: true,
-      data: { done: doneN, left: todo.length - batch.length, failed },
-      demo: aiDemo(),
-      message: (aiDemo() ? `${DEMO_NOTE} · ` : '') + (batch.length ? `AI คัดกรองแล้ว ${doneN} คน${todo.length > batch.length ? ` · เหลืออีก ${todo.length - batch.length} คน กดอีกครั้ง` : ''}${failed ? ` · ไม่สำเร็จ ${failed} คน` : ''}` : 'คัดกรองครบทุกคนแล้ว')
-    };
   } catch (e) {
     return fail(e);
   }

@@ -4,14 +4,11 @@ import { can, requireCompany } from '@/lib/auth';
 import { NoAccess } from '@/components/ui';
 import { PipelineBoard } from './PipelineBoard';
 import type { PipelineItem, Template } from '@/lib/types';
-import { AiRanking, type RankRow } from '@/components/ai/AiRanking';
-import { aiDemo, aiEnabled } from '@/lib/ai/client';
+import { KeywordScreen, type ScreenApp } from '@/components/ai/KeywordScreen';
 
 export const metadata: Metadata = { title: 'กระดานผู้สมัคร' };
-// คัดกรองด้วย AI หลายคนต่อครั้งใช้เวลานานกว่าหน้าปกติ
-export const maxDuration = 60;
 
-export default async function PipelinePage({ params, searchParams }: { params: Promise<{ cid: string }>; searchParams: Promise<{ job?: string }> }) {
+export default async function PipelinePage({ params, searchParams }: { params: Promise<{ cid: string }>; searchParams: Promise<{ job?: string; kw?: string }> }) {
   const { cid } = await params;
   const sp = await searchParams;
   const { supabase, access } = await requireCompany(cid);
@@ -24,7 +21,17 @@ export default async function PipelinePage({ params, searchParams }: { params: P
     supabase.from('interview_slots').select('id, starts_at, ends_at, mode, location, job_id, capacity').eq('company_id', cid).gt('starts_at', new Date().toISOString()).order('starts_at').limit(60),
     supabase.from('companies').select('name').eq('id', cid).maybeSingle()
   ]);
-  const { data: ranking } = sp.job ? await supabase.rpc('ai_ranking', { p_job: sp.job }) : { data: null };
+  // ผู้สมัครของประกาศที่เลือก (สิทธิ์อ่านตาม RLS: ผู้ดูแลผู้สมัครของแผนกนั้น) ใช้คัดกรองด้วยคีย์เวิร์ด
+  const { data: screenApps } = sp.job
+    ? await supabase
+        .from('applications')
+        .select('id, candidate_name, stage, intro_message, profile_snapshot, created_at')
+        .eq('job_id', sp.job)
+        .not('profile_snapshot', 'is', null)
+        .not('stage', 'in', '(withdrawn,expired)')
+        .order('created_at')
+        .limit(300)
+    : { data: null };
   const jobList = ((jobs || []) as { id: string; title: string; status: string; challenge_seats: number; seats_used: number; total: number; can_screen: boolean; has_challenge: boolean }[]).filter(
     (j) => j.can_screen && j.status !== 'draft'
   );
@@ -49,8 +56,8 @@ export default async function PipelinePage({ params, searchParams }: { params: P
           </Link>
         ))}
       </nav>
-      {sp.job && ranking ? <AiRanking companyId={cid} jobId={sp.job} rows={ranking as RankRow[]} enabled={aiEnabled()} demo={aiDemo()} /> : null}
-      {!sp.job && jobList.length ? <p className="small muted">เลือกประกาศด้านบนเพื่อดูอันดับผู้สมัครโดย AI และให้ AI คัดกรองทุกคน</p> : null}
+      {sp.job && screenApps ? <KeywordScreen companyId={cid} jobId={sp.job} q={sp.kw || ''} apps={screenApps as ScreenApp[]} /> : null}
+      {!sp.job && jobList.length ? <p className="small muted">เลือกประกาศด้านบนเพื่อคัดกรองผู้สมัครด้วยคีย์เวิร์ด</p> : null}
       <PipelineBoard
         companyId={cid}
         companyName={(company?.name as string) || ''}

@@ -113,7 +113,7 @@ export default async function ProfilePage() {
       </div>
       <div className="split">
         <div className="main">
-          <CvScan userId={user.id} />
+          <CvScan />
           <ActionForm action={saveProfileAction} className="card">
             <h2>ข้อมูลหลัก</h2>
             <PhotoUpload

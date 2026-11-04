@@ -3,24 +3,9 @@
 // - สแกน CV และใบรับรองภาษา: อ่านไฟล์จริงไม่ได้ จึงคืนข้อมูลตัวอย่าง และบอกผู้ใช้ชัดเจน
 import type { CertRead, CvExtract, GradeSuggestion, JobDesign, MatchItem, Qualification, Screening } from '@/lib/ai/tasks';
 
-type Skill = { name: string; description: string; keys: string[]; rubric: string; full: string };
+import { SKILLS, type Skill } from '@/lib/skills-dict';
 
-// คำพ้องที่ใช้จับความหมาย เช่น "ยิงแอด" = Meta Ads
-const SKILLS: Skill[] = [
-  { name: 'ยิงโฆษณาออนไลน์ (Meta Ads)', description: 'ตั้งแคมเปญ เลือกกลุ่มเป้าหมาย และคุมงบโฆษณาบน Facebook/Instagram', keys: ['meta ads', 'facebook ads', 'fb ads', 'ยิงแอด', 'ยิงads', 'โฆษณาออนไลน์', 'โฆษณาเฟซบุ๊ก', 'โฆษณา facebook', 'ads manager', 'บูสต์โพสต์', 'tiktok ads', 'google ads', 'แคมเปญโฆษณา'], rubric: 'กลุ่มเป้าหมายและแผนโฆษณา', full: 'ระบุกลุ่มเป้าหมายชัด พร้อมเหตุผลและช่องทางที่เลือก' },
-  { name: 'เขียนคอนเทนต์โซเชียล', description: 'เขียนโพสต์และแคปชันที่ตรงโทนแบรนด์และชวนให้ลงมือทำ', keys: ['คอนเทนต์', 'content', 'แคปชัน', 'caption', 'copywriting', 'เขียนโพสต์', 'โพสต์', 'เขียนบทความ', 'ดูแลเพจ', 'แอดมินเพจ', 'social media', 'โซเชียล'], rubric: 'คุณภาพคอนเทนต์', full: 'ข้อความชัด ตรงโทนแบรนด์ และมีคำเชิญชวนที่ทำตามได้' },
-  { name: 'อ่านผลและปรับงบ', description: 'อ่านตัวเลข เช่น CTR CPC ยอดขาย แล้วปรับงบหรือแผนตามผล', keys: ['ctr', 'cpc', 'cpa', 'roas', 'วิเคราะห์ผล', 'ปรับงบ', 'รายงานผล', 'insight', 'analytics', 'ยอดเข้าถึง', 'ยอดขาย', 'kpi', 'ตัวชี้วัด'], rubric: 'ตัวชี้วัดและการปรับแผน', full: 'เลือกตัวเลขที่เหมาะ และบอกจุดตัดสินใจว่าจะปรับเมื่อไร' },
-  { name: 'ถ่ายและตัดต่อวิดีโอสั้น', description: 'ถ่ายและตัดต่อคลิปสั้นสำหรับ TikTok, Reels', keys: ['ตัดต่อ', 'วิดีโอ', 'video', 'คลิป', 'capcut', 'premiere', 'reels', 'tiktok', 'ถ่ายทำ'], rubric: 'ไอเดียวิดีโอ', full: 'มีโครงเรื่องคลิปชัดใน 3 วินาทีแรก และเหมาะกับแพลตฟอร์ม' },
-  { name: 'ออกแบบกราฟิก', description: 'ออกแบบภาพโพสต์และสื่อด้วย Canva, Figma หรือ Photoshop', keys: ['canva', 'figma', 'photoshop', 'illustrator', 'ออกแบบ', 'กราฟิก', 'graphic', 'design', 'โปสเตอร์'], rubric: 'งานออกแบบ', full: 'ภาพอ่านง่าย ลำดับสายตาชัด ตรงแบรนด์' },
-  { name: 'วิเคราะห์ข้อมูลด้วย Excel/Sheets', description: 'จัดการและสรุปข้อมูลด้วยสูตร ตาราง Pivot และกราฟ', keys: ['excel', 'google sheets', 'sheets', 'pivot', 'vlookup', 'xlookup', 'วิเคราะห์ข้อมูล', 'data', 'dashboard', 'power bi', 'sql', 'สถิติ'], rubric: 'การวิเคราะห์ข้อมูล', full: 'สรุปข้อมูลถูกต้อง และอธิบายสิ่งที่ตัวเลขบอกได้' },
-  { name: 'งานขายและดูแลลูกค้า', description: 'นำเสนอสินค้า ปิดการขาย และดูแลลูกค้าหลังการขาย', keys: ['ขาย', 'sales', 'ลูกค้า', 'customer', 'ปิดการขาย', 'เสนอขาย', 'บริการลูกค้า', 'crm', 'ตอบแชต'], rubric: 'การสื่อสารกับลูกค้า', full: 'เข้าใจความต้องการลูกค้า และเสนอทางออกที่ชัด' },
-  { name: 'เขียนโปรแกรมเว็บ', description: 'พัฒนาเว็บด้วย JavaScript/TypeScript, React หรือภาษาอื่น', keys: ['javascript', 'typescript', 'react', 'next.js', 'node', 'python', 'html', 'css', 'เขียนโปรแกรม', 'developer', 'api', 'git'], rubric: 'คุณภาพโค้ด', full: 'โค้ดทำงานถูกต้อง อ่านง่าย และอธิบายการตัดสินใจได้' },
-  { name: 'บัญชีและการเงิน', description: 'บันทึกบัญชี ทำงบ และตรวจเอกสารการเงิน', keys: ['บัญชี', 'accounting', 'งบการเงิน', 'ภาษี', 'vat', 'ใบกำกับ', 'express', 'การเงิน', 'finance'], rubric: 'ความถูกต้องทางบัญชี', full: 'ตัวเลขถูกต้อง อ้างหลักการบัญชีได้' },
-  { name: 'ภาษาอังกฤษเพื่อการทำงาน', description: 'สื่อสาร เขียนอีเมล และนำเสนอเป็นภาษาอังกฤษ', keys: ['english', 'ภาษาอังกฤษ', 'ielts', 'toeic', 'toefl', 'cu-tep'], rubric: 'การสื่อสารภาษาอังกฤษ', full: 'สื่อสารชัด ถูกไวยากรณ์ และเหมาะกับผู้อ่าน' },
-  { name: 'บริหารโครงการและประสานงาน', description: 'วางแผนงาน ติดตามกำหนดส่ง และประสานหลายฝ่าย', keys: ['ประสานงาน', 'วางแผน', 'project', 'โครงการ', 'จัดงาน', 'event', 'ทีม', 'ผู้นำ', 'trello', 'notion'], rubric: 'การวางแผนงาน', full: 'แผนมีลำดับ กำหนดเวลา และผู้รับผิดชอบชัด' }
-];
-
-const norm = (s: string) => s.normalize('NFKC').toLowerCase();
+import { norm } from '@/lib/skills-dict';
 
 function skillsIn(text: string): Skill[] {
   const t = norm(text);
