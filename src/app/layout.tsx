@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { IBM_Plex_Sans_Thai } from 'next/font/google';
 import './globals.css';
 import './ios.css';
+import './readable.css';
 import { SITE_URL } from '@/lib/env';
 
 const font = IBM_Plex_Sans_Thai({

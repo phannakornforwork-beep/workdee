@@ -59,9 +59,7 @@ export default async function PortfolioPage() {
     <>
       <div className="stack-sm">
         <h1>แฟ้มผลงาน</h1>
-        <p className="muted">
-          ทุกโจทย์และงานที่จบบน WorkDee ถูกบันทึกที่นี่อัตโนมัติ พร้อมคะแนนรายเกณฑ์จากบริษัท คุณซ่อนรายการได้ แต่แก้คะแนนไม่ได้ จึงใช้เป็นหลักฐานที่ยืนยันแล้วในการสมัครงานครั้งถัดไป
-        </p>
+        <p className="muted">งานที่จบบน WorkDee บันทึกที่นี่เอง ซ่อนได้ แต่แก้คะแนนไม่ได้</p>
       </div>
       <div className="grid-sm">
         <Stat label="โจทย์ที่ได้คะแนน" value={p.stats.done} />
@@ -80,9 +78,7 @@ export default async function PortfolioPage() {
       <section className="card">
         <div className="row-between">
           <h2>ประวัติงาน</h2>
-          <span className="small muted">
-            <Badge tone="teal">ยืนยันโดยระบบ</Badge> = เกิดบน WorkDee และให้คะแนนโดยบริษัท
-          </span>
+
         </div>
         {p.items.length === 0 ? (
           <Empty>
@@ -102,28 +98,30 @@ export default async function PortfolioPage() {
                   {i.hidden ? <Badge tone="gray">ซ่อนอยู่</Badge> : null}
                 </span>
               </div>
-              <span className="small muted">
-                {JOB_TYPE[i.job_type] || i.job_type}
-                {i.graded_at ? ` · ให้คะแนนเมื่อ ${thaiDate(i.graded_at)}` : ''}
-                {i.skill_key ? ` · สกิล ${i.skill_key}` : ''}
-              </span>
-              {i.total !== null ? (
-                <div className="stack-sm">
-                  <div className="row-between">
-                    <span className="small">คะแนนรวม</span>
-                    <span className="score">{i.total}/100</span>
+              <div className="row-between">
+                <span className="muted">
+                  {JOB_TYPE[i.job_type] || i.job_type}
+                  {i.graded_at ? ` · ${thaiDate(i.graded_at)}` : ''}
+                </span>
+                {i.total !== null ? <span className="ai-total">{i.total}</span> : null}
+              </div>
+              {(i.scores || []).length || i.feedback ? (
+                <details className="disclosure">
+                  <summary>คะแนนรายเกณฑ์และคำติชม</summary>
+                  <div className="stack-sm">
+                    {(i.scores || []).map((s) => (
+                      <div key={s.name} className="row-between">
+                        <span>{s.name}</span>
+                        <span className="strong">
+                          {s.score}/{s.weight}
+                        </span>
+                      </div>
+                    ))}
+                    {i.skill_key ? <span className="small muted">สกิล {i.skill_key}</span> : null}
+                    {i.feedback ? <p className="prewrap">คำติชม: {i.feedback}</p> : null}
                   </div>
-                  {(i.scores || []).map((s) => (
-                    <div key={s.name} className="row-between small">
-                      <span>{s.name}</span>
-                      <span>
-                        {s.score}/{s.weight}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+                </details>
               ) : null}
-              {i.feedback ? <p className="small prewrap">คำติชม: {i.feedback}</p> : null}
               <PortfolioHideButton appId={i.application_id} hidden={i.hidden} />
             </div>
           ))

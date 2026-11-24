@@ -40,7 +40,7 @@ export default async function PipelinePage({ params, searchParams }: { params: P
       <div className="row-between">
         <div className="stack-sm">
           <h1>กระดานผู้สมัคร</h1>
-          <p className="muted small">ผู้สมัครทุกคนสมัครด้วยโปรไฟล์ก่อน เชิญเข้ารอบโจทย์เฉพาะคนที่ตรง เพื่อให้ตรวจทันใน 7 วัน</p>
+          <p className="muted">เชิญทำโจทย์เฉพาะคนที่ตรง ตอบให้ครบใน 7 วัน</p>
         </div>
         <Link href={`/c/${cid}/interviews`} className="btn ghost small">
           จัดเวลาสัมภาษณ์

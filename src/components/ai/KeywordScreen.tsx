@@ -18,16 +18,14 @@ export function KeywordScreen({ companyId, jobId, q, apps }: { companyId: string
     <section className="card ai-card">
       <div className="stack-sm">
         <h2>คัดกรองผู้สมัครด้วยคีย์เวิร์ด</h2>
-        <span className="small muted">
-          พิมพ์สิ่งที่ต้องการ คั่นด้วยจุลภาค ระบบค้นในข้อความแนะนำตัวของใบสมัคร โปรไฟล์ ประสบการณ์ และผลงานของผู้สมัครทุกคน รวมคำที่มีความหมายเดียวกัน (เช่น &ldquo;ยิงแอด&rdquo; = Meta Ads)
-        </span>
+        <span className="muted">ไม่ต้องอ่านทีละคน พิมพ์สิ่งที่ต้องการ ระบบหาคำที่ความหมายเดียวกันให้ (&ldquo;ยิงแอด&rdquo; = Meta Ads)</span>
       </div>
       <form method="get" className="row" role="search">
         <input type="hidden" name="job" value={jobId} />
         <label htmlFor="kw" className="sr-only">
           คีย์เวิร์ด
         </label>
-        <input id="kw" name="kw" className="input" style={{ flex: '1 1 260px' }} defaultValue={q} placeholder="เช่น ยิงแอด, เขียนคอนเทนต์, Canva, TOEIC" maxLength={300} />
+        <input id="kw" name="kw" className="input" style={{ flex: '1 1 260px' }} defaultValue={q} placeholder="เช่น ยิงแอด, Canva, TOEIC" maxLength={300} />
         <button type="submit" className="btn ai">
           คัดกรอง
         </button>
@@ -40,15 +38,15 @@ export function KeywordScreen({ companyId, jobId, q, apps }: { companyId: string
 
       {keywords.length ? (
         <>
-          <p className="small">
-            เจอ <strong>{matched}</strong> จาก {apps.length} คน · เรียงตามจำนวนคีย์เวิร์ดที่ตรง
+          <p>
+            เจอ <strong>{matched}</strong> จาก {apps.length} คน
           </p>
           <div className="stack-sm">
             {results.map(({ a, r }, i) => (
               <div key={a.id} className={`kw-result ${r.hits.length ? '' : 'dim'}`}>
                 <div className="row-between">
                   <span className="row">
-                    <span className="muted small">{i + 1}.</span>
+                    <span className="muted">{i + 1}.</span>
                     <Link href={`/c/${companyId}/applications/${a.id}`} className="strong">
                       {a.candidate_name || 'ผู้สมัคร'}
                     </Link>
@@ -63,13 +61,26 @@ export function KeywordScreen({ companyId, jobId, q, apps }: { companyId: string
                     </span>
                   </span>
                 </div>
-                {r.hits.map((h) => (
-                  <div key={h.keyword} className="small kw-hit">
-                    <Badge tone="teal">{h.keyword}</Badge> <span className="tiny muted">{h.source}:</span>{' '}
+                {r.hits.slice(0, 1).map((h) => (
+                  <div key={h.keyword} className="kw-hit">
+                    <Badge tone="teal">{h.keyword}</Badge>{' '}
                     {highlight(h.snippet, h.term).map((p, j) => (p.mark ? <mark key={j} className="ai-quote">{p.text}</mark> : <span key={j}>{p.text}</span>))}
                   </div>
                 ))}
-                {r.missing.length ? <span className="tiny muted">ไม่พบ: {r.missing.join(', ')}</span> : null}
+                {r.hits.length > 1 || r.missing.length ? (
+                  <details className="disclosure">
+                    <summary>{r.hits.length > 1 ? `ดูอีก ${r.hits.length - 1} จุดที่เจอ` : 'ดูรายละเอียด'}</summary>
+                    <div className="stack-sm">
+                      {r.hits.map((h) => (
+                        <div key={h.keyword} className="small kw-hit">
+                          <Badge tone="teal">{h.keyword}</Badge> <span className="muted">{h.source}:</span>{' '}
+                          {highlight(h.snippet, h.term).map((p, j) => (p.mark ? <mark key={j} className="ai-quote">{p.text}</mark> : <span key={j}>{p.text}</span>))}
+                        </div>
+                      ))}
+                      {r.missing.length ? <span className="small muted">ไม่พบ: {r.missing.join(', ')}</span> : null}
+                    </div>
+                  </details>
+                ) : null}
               </div>
             ))}
             {apps.length === 0 ? <p className="small muted">ยังไม่มีผู้สมัครในประกาศนี้</p> : null}

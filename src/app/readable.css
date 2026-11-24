@@ -1,0 +1,54 @@
+/* WorkDee · อ่านง่ายสำหรับผู้ใช้วัยทำงาน (30–47 ปี)
+   ตัวอักษรใหญ่ขึ้น ตัวเล็กสุดไม่ต่ำกว่า 14px สีเทาเข้มขึ้น และเว้นระยะมากขึ้น
+   โหลดหลัง ios.css จึงทับเฉพาะขนาดและสี ลบการ import ใน layout.tsx เพื่อกลับไปแบบเดิมได้ทันที */
+
+/* โหมดสว่าง: เทาเข้มขึ้นให้อ่านชัด (โหมดมืดยังใช้ค่าเดิมใน ios.css ซึ่งเจาะจงกว่า) */
+:root {
+  --muted: #48484d;
+  --ink-2: #2c2c2f;
+}
+
+body { font-size: 17px; line-height: 1.65; }
+h1 { font-size: 32px; }
+h2 { font-size: 22px; }
+h3 { font-size: 19px; }
+.page { gap: 28px; }
+.stack { gap: 14px; }
+.stack-lg { gap: 24px; }
+
+.small { font-size: 15px; }
+.tiny { font-size: 14px; }
+.hint { font-size: 15px; }
+.field > label, .label { font-size: 15px; color: var(--ink-2); }
+.input, .textarea, .select { font-size: 17px; min-height: 50px; }
+.check { font-size: 16px; }
+.check input[type='checkbox'], .check input[type='radio'] { width: 20px; height: 20px; flex: none; }
+
+.btn { min-height: 50px; font-size: 17px; }
+.btn.small { min-height: 44px; font-size: 15px; }
+.chip { min-height: 42px; font-size: 16px; }
+.badge { font-size: 14px; padding: 4px 10px; }
+.space-pill { font-size: 14px; }
+
+.navbar a { font-size: 16px; }
+.topbar a.tlink, .switch-btn { font-size: 15px; }
+.tabs a { font-size: 16px; }
+
+.stat .label { font-size: 15px; }
+.stat .value { font-size: 34px; }
+.alert { font-size: 16px; }
+table.table { font-size: 16px; }
+table.table th { font-size: 14px; }
+.kv { font-size: 16px; }
+.column h3 { font-size: 17px; }
+.bubble .meta { font-size: 13px; }
+.footer { font-size: 15px; }
+details.disclosure summary { font-size: 16px; min-height: 44px; }
+
+/* ส่วน AI */
+.ai-part { padding: 14px 16px; gap: 4px; }
+.ai-part .score { font-size: 30px; }
+.ai-quote, mark.ai-quote { font-size: 16px; }
+.ai-total { font-size: 40px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.trend-label { font-size: 14px; }
+.kw-bar { width: 96px; height: 8px; }
