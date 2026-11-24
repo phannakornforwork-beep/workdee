@@ -33,7 +33,7 @@ export default async function PipelinePage({ params, searchParams }: { params: P
         .order('created_at')
         .limit(300)
     : { data: null };
-  const jobList = ((jobs || []) as { id: string; title: string; status: string; challenge_seats: number; seats_used: number; total: number; can_screen: boolean; has_challenge: boolean }[]).filter(
+  const jobList = ((jobs || []) as { id: string; title: string; status: string; challenge_seats: number; seats_used: number; total: number; can_screen: boolean; has_challenge: boolean; n_applied: number; n_challenge: number; n_interview: number; n_offer: number}[]).filter(
     (j) => j.can_screen && j.status !== 'draft'
   );
   return (
@@ -49,7 +49,7 @@ export default async function PipelinePage({ params, searchParams }: { params: P
         </Link>
         {jobList.map((j) => (
           <Link key={j.id} href={`/c/${cid}/pipeline?job=${j.id}`} aria-current={sp.job === j.id ? 'page' : undefined}>
-            {j.title} ({j.total})
+            {j.title} ({j.n_applied + j.n_challenge + j.n_interview + j.n_offer})
           </Link>
         ))}
       </nav>

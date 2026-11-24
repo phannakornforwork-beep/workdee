@@ -54,7 +54,8 @@ export default async function CompanyJobs({ params }: { params: Promise<{ cid: s
               <div className="row">
                 {j.can_screen && j.total ? (
                   <Link href={`/c/${cid}/pipeline?job=${j.id}`} className="btn small">
-                    ผู้สมัคร {j.total}
+                    รอดำเนินการ {j.n_applied + j.n_challenge + j.n_interview + j.n_offer}
+                    <span style={{ fontWeight: 400 }}> / ทั้งหมด {j.total}</span>
                   </Link>
                 ) : null}
                 {j.can_edit ? (
