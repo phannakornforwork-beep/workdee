@@ -38,7 +38,7 @@ export default async function PipelinePage({ params, searchParams }: { params: P
   );
   return (
     <>
-      <PageTitle title="ผู้สมัคร" sub="ตอบทุกคนให้ครบใน 7 วัน">
+      <PageTitle title="ผู้สมัคร" sub="คัดจากผลงาน ตอบทุกคนให้ครบใน 7 วัน">
         <Link href={`/c/${cid}/interviews`} className="btn ghost small">
           จัดเวลาสัมภาษณ์
         </Link>

@@ -15,7 +15,7 @@ export default async function PlanPage() {
   const steps = ((plan?.steps || []) as { title: string }[]).map((s) => s.title).join('\n');
   return (
     <>
-      <PageTitle title="แผนอาชีพ" sub="ไม่มีถูกผิด แชร์เฉพาะเมื่อคุณเลือก" />
+      <PageTitle title="แผนอาชีพ" sub="รู้เป้าหมาย แล้วเลือกพิสูจน์ฝีมือให้ตรงทาง" />
       <ActionForm action={savePlanAction} className="split">
         <div className="main">
           <section className="card">

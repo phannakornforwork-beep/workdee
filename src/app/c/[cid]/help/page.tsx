@@ -39,6 +39,15 @@ export default async function HelpPage({ params }: { params: Promise<{ cid: stri
   return (
     <>
       <PageTitle title="ช่วยเหลือ" sub={`ตำแหน่งของคุณ: ${access.position_title}`} />
+      <section className="card">
+        <span className="eyebrow">หลักของ WorkDee</span>
+        <h2>ผลงานพูดแทนประสบการณ์</h2>
+        <ul className="check-list">
+          <li>รับคนจากผลงานจริง ให้คะแนนตามเกณฑ์ที่ประกาศไว้</li>
+          <li>ตอบผู้สมัครทุกคนใน 7 วัน ไม่ผ่านต้องบอกเหตุผล</li>
+          <li>AI ช่วยร่าง คนในบริษัทเป็นผู้ตัดสิน</li>
+        </ul>
+      </section>
       <div className="split">
         <div className="main">
           <section className="card">

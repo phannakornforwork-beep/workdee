@@ -563,3 +563,46 @@ button, input, select, textarea, table { font-family: inherit; }
 .hero .result-card p.result-note { color: #333c4e; font-size: 15px; max-width: none; }
 .section-head h2 .badge { vertical-align: middle; margin-left: 6px; }
 @media (max-width: 640px) { .topbar a.tlink.hide-sm { display: none; } }
+
+/* ใบผลงานในหน้าแอป (ไม่ลอย ไม่มีเงา ใช้สีจากตัวแปร รองรับโหมดมืด) */
+.result-card.inline { max-width: none; justify-self: stretch; box-shadow: none; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+.result-card.inline .result-total strong { color: var(--brand); }
+.result-card.inline .result-total span, .result-card.inline .rubric-score { color: var(--muted); }
+.result-card.inline .result-note { background: var(--fill); color: var(--ink-2); max-width: none; }
+.result-card.inline .result-tag { background: var(--brand-soft); color: var(--brand-ink); }
+.result-card.inline .result-foot { color: var(--brand-ink); }
+.result-card.inline .rubric-bar { background: var(--fill-2); }
+.result-card.inline .rubric-bar > span { background: var(--brand); }
+.result-card .result-note b { font-weight: 600; }
+/* แถบเกณฑ์ก่อนทำ */
+.rubric-preview li { grid-template-columns: minmax(0, 1fr) 120px 48px; }
+.rubric-preview .rubric-name { display: flex; flex-direction: column; }
+.rubric-preview .rubric-name small { color: var(--muted); font-size: 14px; }
+.rubric-preview .rubric-bar { background: var(--fill-2); }
+.rubric-preview .rubric-bar > span { background: var(--navy); }
+.rubric-preview .rubric-score { color: var(--ink); font-weight: 600; }
+:root[data-theme='dark'] .rubric-preview .rubric-bar > span { background: var(--brand); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .rubric-preview .rubric-bar > span { background: var(--brand); } }
+@media (max-width: 560px) { .rubric li, .rubric-preview li { grid-template-columns: minmax(0, 1fr) 70px 44px; } }
+.proof-section { border-top: 3px solid var(--navy); }
+.result-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); } @media (max-width: 400px) { .result-grid { grid-template-columns: 1fr; } }
+.step-labels { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 8px; }
+.step-labels small { font-size: 13px; color: var(--muted); }
+.step-labels small.now { color: var(--ink); font-weight: 700; }
+.steps.closed .bars span.on { background: var(--line-2); }
+.score-pill { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--brand-ink); }
+
+/* หน้าเข้าสู่ระบบ/สมัคร: ฟอร์มซ้าย แผงตัวตนขวา */
+.auth-grid { display: grid; grid-template-columns: minmax(0, 480px) minmax(0, 1fr); gap: 48px; align-items: start; }
+.auth-brand { background: var(--navy); color: #fff; border-radius: 20px; padding: 36px; display: flex; flex-direction: column; gap: 18px; }
+.auth-brand h2 { color: #fff; font-size: 26px; line-height: 1.35; max-width: 22ch; }
+.auth-brand .eyebrow { color: #7fe0d1; }
+.auth-brand .result-card { justify-self: start; max-width: 420px; }
+.auth-brand .result-card p.result-note { color: #333c4e; max-width: none; }
+@media (max-width: 900px) { .auth-grid { grid-template-columns: 1fr; } .auth-brand { display: none; } .auth-form { max-width: 520px; } }
+
+/* คะแนนโจทย์ย่อบนการ์ดผู้สมัคร (ภาษาภาพเดียวกับใบผลงาน) */
+.mini-score { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; font-size: 14px; }
+.mini-score .rubric-bar { height: 6px; background: var(--fill-2); border-radius: 999px; overflow: hidden; }
+.mini-score .rubric-bar > span { display: block; height: 100%; background: var(--brand); }
+.mini-score b { color: var(--brand-ink); font-variant-numeric: tabular-nums; }

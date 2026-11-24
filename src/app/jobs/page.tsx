@@ -19,7 +19,7 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
       <main className="container page">
         <PageTitle
           title="หางาน"
-          sub="ทุกประกาศบอกเงินเดือน และตอบผู้สมัครใน 7 วัน"
+          sub="พิสูจน์ฝีมือแทนเรซูเม่ ได้คำตอบทุกใบใน 7 วัน"
           search={<JobFilters action="/jobs" {...sp} />}
         />
         <SectionHead title={sp.q || sp.type || sp.province || sp.salary ? `ผลการค้นหา ${jobs.length} งาน` : `งานทั้งหมด ${jobs.length} งาน`} />

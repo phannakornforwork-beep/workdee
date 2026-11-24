@@ -85,7 +85,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         </div>
       </header>
       <main className="container page">
-        <PageTitle title="ผู้ดูแลระบบ" />
+        <PageTitle title="ผู้ดูแลระบบ" sub="ตรวจบริษัทและวุฒิ ให้ป้าย “ยืนยันแล้ว” เชื่อถือได้" />
         <div className="grid-sm">
           {[
             ['ผู้ใช้ทั้งหมด', q.stats.users],

@@ -31,7 +31,7 @@ export default async function SpacesPage() {
         </div>
       </header>
       <main className="container page" style={{ maxWidth: 760 }}>
-        <PageTitle plain title={`สวัสดี ${(profile?.display_name as string) || ''}`} sub="เลือกพื้นที่ที่จะใช้งาน" />
+        <PageTitle plain title={`สวัสดี ${(profile?.display_name as string) || ''}`} sub="บัญชีเดียว สองพื้นที่ แยกจากกันเสมอ" />
 
         <Link href="/me" className="card">
           <div className="row-between">
@@ -39,8 +39,8 @@ export default async function SpacesPage() {
               <span className="badge teal" style={{ alignSelf: 'flex-start' }}>
                 พื้นที่ส่วนตัว
               </span>
-              <h2>หางาน · โปรไฟล์ · แผนอาชีพ</h2>
-              <p className="muted small">บริษัทที่คุณทำงานอยู่มองไม่เห็น</p>
+              <h2>หางาน · ใบผลงาน · แผนอาชีพ</h2>
+              <p className="muted small">ผลงานพูดแทนประสบการณ์ บริษัทที่คุณทำงานอยู่มองไม่เห็นพื้นที่นี้</p>
             </div>
             <span className="strong">เข้าใช้ →</span>
           </div>

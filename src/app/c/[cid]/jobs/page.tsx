@@ -27,7 +27,7 @@ export default async function CompanyJobs({ params }: { params: Promise<{ cid: s
   const rows = (data || []) as Row[];
   return (
     <>
-      <PageTitle title="ประกาศงาน" sub="ตอบผู้สมัครทุกคนภายใน 7 วัน">
+      <PageTitle title="ประกาศงาน" sub="ประกาศที่มีโจทย์ = รับคนจากผลงาน · ตอบทุกคนใน 7 วัน">
         {can(access, 'post') ? (
           <Link href={`/c/${cid}/jobs/new`} className="btn">
             + ลงประกาศใหม่
@@ -72,6 +72,21 @@ export default async function CompanyJobs({ params }: { params: Promise<{ cid: s
                 <Badge>เสนองาน {j.n_offer}</Badge>
                 <Badge>รับแล้ว {j.n_hired}</Badge>
               </div>
+            ) : null}
+            {/* ตัวตนของ WorkDee: ประกาศที่มีโจทย์ = รับคนจากผลงาน */}
+            {j.has_challenge ? (
+              <span className="proof-chip small ok-text">
+                <span className="mini-rubric" aria-hidden="true">
+                  <i />
+                  <i />
+                  <i />
+                </span>
+                รับจากผลงาน · ที่นั่งรอบโจทย์ {j.seats_used}/{j.challenge_seats}
+              </span>
+            ) : j.can_edit && j.job_type !== 'gig' ? (
+              <Link href={`/c/${cid}/jobs/${j.id}`} className="small">
+                + เพิ่มโจทย์ เพื่อรับคนจากผลงานแทนเรซูเม่
+              </Link>
             ) : null}
           </div>
         ))}

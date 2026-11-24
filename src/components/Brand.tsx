@@ -3,31 +3,47 @@ import Link from 'next/link';
 // ชิ้นส่วนตัวตนของ WorkDee: "ผลงานพูดแทนประสบการณ์"
 // ภาพประจำแบรนด์คือ "ใบผลงาน" = คะแนนรายเกณฑ์ + คำแนะนำ ซึ่งเว็บหางานทั่วไปไม่มี
 
-const SAMPLE = [
-  { name: 'เข้าใจกลุ่มลูกค้า', weight: 40, score: 36 },
-  { name: 'ความคิดสร้างสรรค์', weight: 35, score: 27 },
-  { name: 'อธิบายเหตุผลได้', weight: 25, score: 19 }
-];
+export type RubricScore = { name: string; weight: number; score: number };
 
-// ใบผลงานตัวอย่าง (ข้อมูลสมมติ ระบุชัดว่าเป็นตัวอย่าง)
-export function SampleResult() {
-  const total = SAMPLE.reduce((s, c) => s + c.score, 0);
+// ใบผลงาน: ใช้ทั้งตัวอย่างบนหน้าแรกและผลจริงของผู้สมัคร (หน้าตาเดียวกันทุกที่ ผู้สมัครกับบริษัทเห็นเหมือนกัน)
+export function ResultCard({
+  title,
+  tag = 'ใบผลงาน',
+  scores,
+  total,
+  note,
+  noteLabel,
+  foot,
+  inline = false,
+  children
+}: {
+  title?: React.ReactNode;
+  tag?: string;
+  scores: RubricScore[];
+  total?: number | null;
+  note?: string | null;
+  noteLabel?: string;
+  foot?: React.ReactNode[];
+  inline?: boolean;
+  children?: React.ReactNode;
+}) {
+  const sum = total ?? scores.reduce((s, c) => s + c.score, 0);
   return (
-    <figure className="result-card" aria-label="ตัวอย่างใบผลงานหลังทำโจทย์">
+    <figure className={`result-card${inline ? ' inline' : ''}`} aria-label={`${tag} ${sum} จาก 100`}>
       <div className="result-head">
-        <span className="result-tag">ตัวอย่างใบผลงาน</span>
-        <span className="result-title">โจทย์: วางแผนโพสต์โปรโมชัน 1 สัปดาห์</span>
+        <span className="result-tag">{tag}</span>
+        {title ? <span className="result-title">{title}</span> : null}
       </div>
       <div className="result-total">
-        <strong>{total}</strong>
+        <strong>{sum}</strong>
         <span>/100</span>
       </div>
       <ul className="rubric">
-        {SAMPLE.map((c) => (
+        {scores.map((c) => (
           <li key={c.name}>
             <span className="rubric-name">{c.name}</span>
             <span className="rubric-bar" aria-hidden="true">
-              <span style={{ width: `${(c.score / c.weight) * 100}%` }} />
+              <span style={{ width: `${c.weight ? Math.max(0, Math.min(100, (c.score / c.weight) * 100)) : 0}%` }} />
             </span>
             <span className="rubric-score">
               {c.score}/{c.weight}
@@ -35,12 +51,57 @@ export function SampleResult() {
           </li>
         ))}
       </ul>
-      <p className="result-note">“เลือกช่วงเวลาโพสต์ได้ดี ลองเพิ่มตัวเลขวัดผลในแผน”</p>
-      <div className="result-foot">
-        <span>✓ ใช้กับบริษัทที่รับผลเดิมได้</span>
-        <span>✓ ผลงานเป็นของคุณ</span>
-      </div>
+      {note ? (
+        <p className="result-note">
+          {noteLabel ? <b>{noteLabel} </b> : null}“{note}”
+        </p>
+      ) : null}
+      {children}
+      {foot?.length ? (
+        <div className="result-foot">
+          {foot.map((f, i) => (
+            <span key={i}>✓ {f}</span>
+          ))}
+        </div>
+      ) : null}
     </figure>
+  );
+}
+
+// เกณฑ์ก่อนทำโจทย์: แถบตามน้ำหนักของแต่ละเกณฑ์ (ภาษาภาพเดียวกับใบผลงาน)
+export function RubricPreview({ criteria }: { criteria: { name: string; weight: number; description?: string }[] }) {
+  return (
+    <ul className="rubric rubric-preview">
+      {criteria.map((c) => (
+        <li key={c.name}>
+          <span className="rubric-name">
+            {c.name}
+            {c.description ? <small>{c.description}</small> : null}
+          </span>
+          <span className="rubric-bar" aria-hidden="true">
+            <span style={{ width: `${Math.max(0, Math.min(100, c.weight))}%` }} />
+          </span>
+          <span className="rubric-score">{c.weight}%</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+// ใบผลงานตัวอย่างบนหน้าแรก (ข้อมูลสมมติ มีป้าย "ตัวอย่าง" กำกับ)
+export function SampleResult() {
+  return (
+    <ResultCard
+      tag="ตัวอย่างใบผลงาน"
+      title="โจทย์: วางแผนโพสต์โปรโมชัน 1 สัปดาห์"
+      scores={[
+        { name: 'เข้าใจกลุ่มลูกค้า', weight: 40, score: 36 },
+        { name: 'ความคิดสร้างสรรค์', weight: 35, score: 27 },
+        { name: 'อธิบายเหตุผลได้', weight: 25, score: 19 }
+      ]}
+      note="เลือกช่วงเวลาโพสต์ได้ดี ลองเพิ่มตัวเลขวัดผลในแผน"
+      foot={['ใช้กับบริษัทที่รับผลเดิมได้', 'ผลงานเป็นของคุณ']}
+    />
   );
 }
 
@@ -168,6 +229,31 @@ export function PromiseBar() {
       <span>✓ บอกเงินเดือนชัด</span>
       <span>✓ ไม่ผ่านได้เหตุผล</span>
       <Link href="/#how">ทำงานอย่างไร</Link>
+    </div>
+  );
+}
+
+// เส้นทางใบสมัคร: สมัคร → โจทย์ → สัมภาษณ์ → ข้อเสนอ (แถบแบบ "ขั้นที่ x จาก y")
+const PATH = ['สมัคร', 'โจทย์', 'สัมภาษณ์', 'ข้อเสนอ'];
+const STEP_OF: Record<string, number> = {
+  applied: 1, challenge_invited: 2, challenge_submitted: 2, interview: 3, offer: 4, hired: 4, declined: 4
+};
+export function StageSteps({ stage, closed = false }: { stage: string; closed?: boolean }) {
+  const at = STEP_OF[stage] || 1;
+  return (
+    <div className={`steps${closed ? ' closed' : ''}`} aria-label={`ขั้นที่ ${at} จาก ${PATH.length}: ${PATH[at - 1]}`}>
+      <div className="bars">
+        {PATH.map((p, i) => (
+          <span key={p} className={i < at ? 'on' : ''} />
+        ))}
+      </div>
+      <div className="step-labels" aria-hidden="true">
+        {PATH.map((p, i) => (
+          <small key={p} className={i === at - 1 ? 'now' : ''}>
+            {p}
+          </small>
+        ))}
+      </div>
     </div>
   );
 }
