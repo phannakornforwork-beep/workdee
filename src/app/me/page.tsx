@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { requireUser } from '@/lib/auth';
 import { JobFilters, JobList, refineJobs, type JobQuery } from '@/components/JobList';
 import { PageTitle, SectionHead } from '@/components/ui';
+import { PromiseBar } from '@/components/Brand';
 import type { JobCard } from '@/lib/types';
 
 export const metadata: Metadata = { title: 'งานที่ตรงกับฉัน' };
@@ -50,6 +51,7 @@ export default async function MyFeed({ searchParams }: { searchParams: Promise<J
         </section>
       ) : null}
       <SectionHead title="งานแนะนำสำหรับคุณ" />
+      <PromiseBar />
       <JobList jobs={refineJobs((jobs || []) as JobCard[], sp)} showMatch />
     </>
   );

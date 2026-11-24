@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { Footer, PublicHeader } from '@/components/PublicHeader';
 import { JobFilters, JobList, refineJobs, type JobQuery } from '@/components/JobList';
 import { PageTitle, SectionHead } from '@/components/ui';
+import { PromiseBar } from '@/components/Brand';
 import type { JobCard } from '@/lib/types';
 
 export const metadata: Metadata = { title: 'ประกาศงาน' };
@@ -22,6 +23,7 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
           search={<JobFilters action="/jobs" {...sp} />}
         />
         <SectionHead title={sp.q || sp.type || sp.province || sp.salary ? `ผลการค้นหา ${jobs.length} งาน` : `งานทั้งหมด ${jobs.length} งาน`} />
+        <PromiseBar />
         <JobList jobs={jobs} />
       </main>
       <Footer />

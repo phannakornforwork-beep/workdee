@@ -56,6 +56,7 @@ test('public pages render', async () => {
     ['/forgot-password', 'รหัสผ่าน'],
     ['/privacy', 'นโยบายความเป็นส่วนตัว'],
     ['/terms', 'เงื่อนไขการใช้งาน'],
+    ['/for-companies', 'ไม่ต้องมีฝ่าย HR'],
     ['/saved', 'งานที่บันทึก'],
     ['/manifest.webmanifest', 'WorkDee']
   ]) {
