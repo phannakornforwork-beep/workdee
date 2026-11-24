@@ -80,7 +80,10 @@ html { overflow-x: clip; }
 body {
   background: var(--bg);
   color: var(--ink);
-  font-family: var(--font-thai), 'IBM Plex Sans Thai', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif;
+  /* ฟอนต์ไทยแบบไม่มีหัว (loopless) ทุกเครื่อง: IBM Plex Sans Thai เป็นหลัก
+     สำรอง: Sukhumvit Set (iPhone/iPad/Mac) · Leelawadee UI (Windows) · Noto Sans Thai (Android)
+     ไม่ใส่ฟอนต์ระบบของ Apple ไว้ก่อน เพราะภาษาไทยจะกลายเป็น Thonburi ซึ่งมีหัว */
+  font-family: var(--font-thai, 'IBM Plex Sans Thai'), 'IBM Plex Sans Thai', 'Sukhumvit Set', 'Leelawadee UI', 'Noto Sans Thai', 'Noto Sans Thai UI', sans-serif;
   font-size: 17px;
   line-height: 1.65;
   -webkit-tap-highlight-color: transparent;
@@ -428,3 +431,6 @@ details.legal > summary::after { content: '⌄'; color: var(--muted); font-size:
 details.legal[open] > summary::after { content: '⌃'; }
 details.legal > summary h2 { font-size: 19px; }
 details.legal:not([open]) { gap: 0; }
+
+/* ช่องกรอก ปุ่ม และตารางใช้ฟอนต์เดียวกับเนื้อหา (บางเบราว์เซอร์ใช้ฟอนต์ระบบกับ input) */
+button, input, select, textarea, table { font-family: inherit; }

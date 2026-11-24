@@ -9,6 +9,8 @@ const font = IBM_Plex_Sans_Thai({
   subsets: ['thai', 'latin'],
   weight: ['400', '500', '600', '700'],
   display: 'swap',
+  // ระหว่างโหลดฟอนต์ ใช้ฟอนต์ไทยไม่มีหัวของเครื่องแทน (ไม่กะพริบเป็นตัวมีหัว)
+  fallback: ['Sukhumvit Set', 'Leelawadee UI', 'Noto Sans Thai', 'sans-serif'],
   variable: '--font-thai'
 });
 
