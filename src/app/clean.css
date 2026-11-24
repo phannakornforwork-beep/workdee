@@ -193,7 +193,7 @@ main.page > .page-head:not(.plain):first-child, .page-anim > .page-head:not(.pla
 .hero .btn.ghost:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
 .search-bar { display: flex; flex-wrap: wrap; gap: 10px; max-width: 900px; }
 .search-bar .input { flex: 1 1 320px; background: #fff; color: #1b2232; border: none; min-height: 54px; }
-.search-bar .select { flex: 0 1 190px; background-color: #fff; color: #1b2232; border: none; min-height: 54px; }
+.search-bar .select { flex: 0 1 165px; background-color: #fff; color: #1b2232; border: none; min-height: 54px; }
 .search-bar .btn { min-height: 54px; padding: 0 28px; }
 .search-bar .clear-link { align-self: center; color: inherit; font-size: 15px; }
 .page-search { width: 100%; }
@@ -434,3 +434,6 @@ details.legal:not([open]) { gap: 0; }
 
 /* ช่องกรอก ปุ่ม และตารางใช้ฟอนต์เดียวกับเนื้อหา (บางเบราว์เซอร์ใช้ฟอนต์ระบบกับ input) */
 button, input, select, textarea, table { font-family: inherit; }
+
+/* คำสัญญาบนการ์ดงาน: จุดต่างของ WorkDee (สีแบรนด์ แถบเดียว ไม่ใช่ป้ายหลายสี) */
+.job-card .promise { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 4px 18px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); color: var(--brand-ink); font-size: 15px; font-weight: 500; }

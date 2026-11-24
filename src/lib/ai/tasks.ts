@@ -85,7 +85,7 @@ export async function designJob(input: { title: string; jobType: string; objecti
     system: `คุณช่วย SME ไทยที่ไม่มีฝ่าย HR ออกแบบการคัดเลือกจากงานจริง
 - qualifications: 3–6 ข้อ วัดได้จากผลงานหรือประสบการณ์ ไม่ใช่บุคลิกหรือภูมิหลัง ห้ามกำหนดอายุ เพศ หรือสถาบัน
   must_have = จำเป็นต้องมี, น้ำหนักรวม 100 พอดี
-- challenge: โจทย์จากสถานการณ์งานจริงของตำแหน่งนี้ ใช้แบรนด์สมมติเสมอ ทำเสร็จในเวลาที่กำหนด (30–180 นาที)
+- challenge: โจทย์จากสถานการณ์งานจริงของตำแหน่งนี้ ใช้แบรนด์สมมติเสมอ ทำเสร็จในเวลาที่กำหนด (30–120 นาที)
   ไม่ใช่งานจริงที่บริษัทจะนำไปใช้ฟรี brief ระบุสถานการณ์และสิ่งที่ต้องส่งเป็นข้อ ๆ อย่างน้อย 120 ตัวอักษร
 - criteria: rubric 3–5 ข้อ น้ำหนักแต่ละข้ออย่างน้อย 10 รวม 100 พอดี
   description ของแต่ละข้อบอกว่าได้คะแนนเต็มต้องเห็นอะไรในงาน และได้ครึ่งเดียวเมื่อไร (ไม่เกิน 200 ตัวอักษร)
@@ -124,7 +124,7 @@ export async function designJob(input: { title: string; jobType: string; objecti
       title: out.challenge.title.slice(0, 160),
       brief: out.challenge.brief.slice(0, 6000),
       deliverable: out.challenge.deliverable.slice(0, 2000),
-      minutes: clamp(Math.round(out.challenge.minutes / 10) * 10, 10, 480),
+      minutes: clamp(Math.round(out.challenge.minutes / 10) * 10, 15, 120),
       due_days: clamp(out.challenge.due_days, 1, 7),
       skill_key: /^[a-z0-9-]{2,40}$/.test(out.challenge.skill_key) ? out.challenge.skill_key : ''
     },

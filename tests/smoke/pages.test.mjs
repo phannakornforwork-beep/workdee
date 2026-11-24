@@ -55,12 +55,16 @@ test('public pages render', async () => {
     ['/signup', 'สมัคร'],
     ['/forgot-password', 'รหัสผ่าน'],
     ['/privacy', 'นโยบายความเป็นส่วนตัว'],
-    ['/terms', 'เงื่อนไขการใช้งาน']
+    ['/terms', 'เงื่อนไขการใช้งาน'],
+    ['/saved', 'งานที่บันทึก'],
+    ['/manifest.webmanifest', 'WorkDee']
   ]) {
     await expectPage(path, null, text);
   }
   const missing = await get('/this-page-does-not-exist');
   assert.equal(missing.status, 404);
+  const noCompany = await get('/companies/00000000-0000-0000-0000-000000000000');
+  assert.equal(noCompany.status, 404);
 });
 
 test('private areas need a login and background endpoints need their secrets', async () => {
@@ -126,6 +130,7 @@ test('company, candidate and admin pages render with real data', async () => {
   }
   await expectPage(`/join/${code}`, cand, 'บริษัท ทดสอบหน้าเว็บ จำกัด');
   await expectPage(`/jobs/${jobId}`, null);
+  await expectPage(`/companies/${companyId}`, null, 'สัญญากับผู้สมัคร');
 
   const notAdmin = await expectPage('/admin', cand);
   assert.ok(notAdmin.body.includes('ผู้ดูแลระบบ WorkDee เท่านั้น'));

@@ -4,10 +4,11 @@ import { requireUser } from '@/lib/auth';
 import { JobFilters, JobList } from '@/components/JobList';
 import { PageTitle, SectionHead } from '@/components/ui';
 import type { JobCard } from '@/lib/types';
+import { bySalary } from '@/lib/format';
 
 export const metadata: Metadata = { title: 'งานที่ตรงกับฉัน' };
 
-export default async function MyFeed({ searchParams }: { searchParams: Promise<{ q?: string; type?: string; province?: string }> }) {
+export default async function MyFeed({ searchParams }: { searchParams: Promise<{ q?: string; type?: string; province?: string; salary?: string }> }) {
   const sp = await searchParams;
   const { supabase, user } = await requireUser('/me');
   const [{ data: jobs }, { data: profile }, { data: apps }] = await Promise.all([
@@ -23,7 +24,7 @@ export default async function MyFeed({ searchParams }: { searchParams: Promise<{
       <PageTitle
         title="งานที่ตรงกับฉัน"
         sub="เรียงตามความตรงกับโปรไฟล์ของคุณ"
-        search={<JobFilters action="/me" q={sp.q} type={sp.type} province={sp.province} />}
+        search={<JobFilters action="/me" q={sp.q} type={sp.type} province={sp.province} salary={sp.salary} />}
       />
       {!profile?.full_name ? (
         <div className="alert warn">
@@ -50,7 +51,7 @@ export default async function MyFeed({ searchParams }: { searchParams: Promise<{
         </section>
       ) : null}
       <SectionHead title="งานแนะนำสำหรับคุณ" />
-      <JobList jobs={(jobs || []) as JobCard[]} showMatch />
+      <JobList jobs={bySalary((jobs || []) as JobCard[], sp.salary)} showMatch />
     </>
   );
 }

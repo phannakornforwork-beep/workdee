@@ -65,9 +65,9 @@ const EXTRA: BankChallenge[] = [
   },
   {
     title: 'สร้างหน้าแสดงรายการสินค้าด้วย React',
-    brief: 'ร้านสมมติ "ของดีชุมชน" ต้องการหน้ารายการสินค้าที่ค้นหาและกรองตามหมวดได้ ใช้ข้อมูลสินค้าตัวอย่าง 20 รายการ (JSON ที่ให้)',
-    deliverable: 'ลิงก์ GitHub + ลิงก์เดโม + README สั้น ๆ',
-    minutes: 180, due_days: 5, skill_key: 'frontend-react',
+    brief: 'ร้านสมมติ "ของดีชุมชน" ต้องการหน้ารายการสินค้าที่ค้นหาและกรองตามหมวดได้ ใช้ข้อมูลสินค้าตัวอย่าง 20 รายการ (JSON ที่ให้) ไม่ต้องตกแต่งหน้าตา',
+    deliverable: 'ลิงก์ GitHub + README สั้น ๆ',
+    minutes: 120, due_days: 4, skill_key: 'frontend-react',
     tags: ['react', 'javascript', 'typescript', 'เว็บ', 'โปรแกรม', 'developer', 'frontend', 'code'],
     criteria: [
       { name: 'ทำงานได้ครบตามโจทย์', weight: 40, description: 'ค้นหาและกรองถูกต้อง' },

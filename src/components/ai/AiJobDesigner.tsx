@@ -23,6 +23,7 @@ export function AiJobDesigner({
   const [objective, setObjective] = useState(initialObjective);
   const [quals, setQuals] = useState<Qual[]>(initialQuals);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [demo, setDemo] = useState(false);
   const [pending, start] = useTransition();
   const [picks, setPicks] = useState<BankChallenge[]>([]);
   const [chosen, setChosen] = useState<number | null>(null);
@@ -69,11 +70,16 @@ export function AiJobDesigner({
     setChosen(null);
     start(async () => {
       const [res] = await Promise.all([designJobAction(companyId, title, jobType, objective), new Promise((r) => setTimeout(r, 1400))]);
-      if (res.ok && res.data) {
+      if (!res.ok) {
+        setMsg({ ok: false, text: res.error });
+        return;
+      }
+      if (res.data) {
         setQuals(res.data.qualifications);
         setField(form, 'requirements', res.data.requirements, true);
         setField(form, 'skills', res.data.skills.join(', '), true);
       }
+      setDemo(Boolean(res.demo));
       setPicks(pickChallenges(`${title} ${objective}`));
       setMsg({ ok: true, text: locked ? 'AI เสนอคุณสมบัติแล้ว (เปลี่ยนโจทย์ไม่ได้)' : 'เลือกโจทย์ที่ชอบด้านล่าง' });
     });
@@ -107,6 +113,7 @@ export function AiJobDesigner({
           {pending ? 'AI กำลังคิดโจทย์…' : picks.length ? 'ให้ AI คิดใหม่' : 'ให้ AI คิดโจทย์'}
         </button>
         {msg ? <span className={msg.ok ? 'ok-text' : 'error-text'} role="status">{msg.text}</span> : null}
+        {demo && msg?.ok ? <span className="badge orange">โหมดสาธิต: ร่างจากพจนานุกรมทักษะ ยังไม่ได้ใช้ AI จริง</span> : null}
       </div>
 
       {quals.length ? (

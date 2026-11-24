@@ -178,7 +178,8 @@ export function JobForm({
         <div className="form-row">
           <div className="field">
             <label htmlFor="ch_minutes">เวลาที่แนะนำ (นาที)</label>
-            <input id="ch_minutes" name="ch_minutes" className="input" inputMode="numeric" defaultValue={v(challenge?.time_limit_minutes) || '60'} />
+            <input id="ch_minutes" name="ch_minutes" type="number" min={15} max={120} step={5} className="input" inputMode="numeric" defaultValue={v(challenge?.time_limit_minutes) || '60'} />
+            <span className="hint">ไม่เกิน 120 นาที</span>
           </div>
           <div className="field">
             <label htmlFor="ch_due_days">ส่งภายใน (วัน)</label>

@@ -228,7 +228,7 @@ const CH = {
     ]
   },
   react: {
-    title: 'หน้ารายการสินค้าค้นหาและกรองได้ด้วย React', skill_key: 'frontend-react', minutes: 180, due_days: 5,
+    title: 'หน้ารายการสินค้าค้นหาและกรองได้ด้วย React', skill_key: 'frontend-react', minutes: 120, due_days: 4,
     brief: 'แอปสมมติ "ออมดี" ต้องการหน้าแสดงแพ็กเกจเงินออม 20 รายการ (JSON ที่ให้) ที่ค้นหาและกรองตามระยะเวลาได้ บนมือถือต้องใช้ง่าย',
     deliverable: 'ลิงก์ GitHub + ลิงก์เดโม + README สั้น ๆ',
     criteria: [

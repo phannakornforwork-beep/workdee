@@ -159,3 +159,32 @@ export const EVENT_LABEL: Record<string, string> = {
   rejected: 'แจ้งผลพร้อมเหตุผล', auto_closed: 'ระบบปิดใบสมัคร (เลย 7 วัน)', withdrawn: 'ถอนใบสมัคร', expired: 'หมดเวลา',
   access_revoked: 'ถอนสิทธิ์เข้าถึงโปรไฟล์', message: 'ข้อความ'
 };
+
+// อัตราการตอบผู้สมัคร: แสดงเป็นตัวเลขเมื่อมีใบสมัครที่ครบกำหนดตอบแล้วอย่างน้อยเท่านี้
+// ถ้าน้อยกว่านี้ ตัวเลขแกว่งมาก (เช่น 1 ใน 3 = 33%) และทำให้ผู้สมัครเข้าใจผิด
+export const MIN_RESPONSE_SAMPLE = 10;
+// ตัวเลขอัตราการตอบ (null = ข้อมูลยังน้อยเกินจะแสดง)
+export function responseRateText(rate: number | null | undefined, sample: number | null | undefined): string | null {
+  if (rate === null || rate === undefined || (sample || 0) < MIN_RESPONSE_SAMPLE) return null;
+  return `ตอบตรงเวลา ${rate}%`;
+}
+export function responseText(rate: number | null | undefined, sample: number | null | undefined): string {
+  if (rate === null || rate === undefined || (sample || 0) < MIN_RESPONSE_SAMPLE) return 'บริษัทใหม่ · ตอบทุกคนใน 7 วัน';
+  return `ตอบตรงเวลา ${rate}%`;
+}
+
+// เวลาทำโจทย์: ไม่ให้กลายเป็นการทำงานฟรี (หน้าช่วยเหลือแนะนำ 1–2 ชั่วโมง)
+export const MIN_CHALLENGE_MINUTES = 15;
+export const MAX_CHALLENGE_MINUTES = 120;
+
+// ตัวกรองเงินเดือนขั้นต่ำ (เฉพาะงานรายเดือน งานรายชั่วโมง/รายโปรเจกต์ไม่ถูกกรองออก)
+export const SALARY_FILTERS: [string, string][] = [
+  ['15000', '15,000 บาทขึ้นไป'],
+  ['20000', '20,000 บาทขึ้นไป'],
+  ['30000', '30,000 บาทขึ้นไป']
+];
+export function bySalary<T extends { salary_min: number | null; salary_max: number | null; pay_unit: string }>(jobs: T[], min?: string): T[] {
+  const m = Number(min || 0);
+  if (!m) return jobs;
+  return jobs.filter((j) => j.pay_unit !== 'month' || (j.salary_max ?? j.salary_min ?? 0) >= m);
+}
