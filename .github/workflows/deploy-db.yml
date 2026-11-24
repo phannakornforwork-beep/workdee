@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: 'ดูก่อนว่าจะรันอะไร (ไม่แก้ฐานข้อมูล)'
+        description: 'ดูก่อนว่าจะรันอะไร (ไม่แก้ฐานข้อมูล) — เอาเครื่องหมายถูกออกเพื่อรันจริง'
         type: boolean
         default: true
 
@@ -15,9 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # ปักเวอร์ชันไว้: "latest" ต้องถามเวอร์ชันล่าสุดจาก GitHub ทุกครั้ง และล้มเมื่อโดนจำกัดจำนวนครั้ง (rate limit)
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 2.84.2
       - name: Push migrations
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
