@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Avatar, Badge } from '@/components/ui';
 import { mediaUrl } from '@/lib/env';
-import { JOB_TYPE, PROVINCES, WORK_MODE, relative, salaryRange } from '@/lib/format';
+import { JOB_TYPE, PROVINCES, WORK_MODE, hasResponseStat, relative, salaryRange } from '@/lib/format';
 import type { JobCard } from '@/lib/types';
 
 export type JobQuery = { q?: string; type?: string; province?: string; salary?: string; sort?: string };
@@ -93,7 +93,7 @@ export function JobList({ jobs, base = '/jobs', showMatch = false }: { jobs: Job
           <div className="job-promise">
             <span>✓ ได้คำตอบใน 7 วัน</span>
             {j.has_challenge ? <span>✓ เห็นเกณฑ์ก่อนทำโจทย์</span> : null}
-            {j.response_rate !== null ? <span className={j.response_rate < 80 ? 'low' : ''}>บริษัทตอบตรงเวลา {j.response_rate}%</span> : <span>บริษัทใหม่</span>}
+            {hasResponseStat(j.response_rate, j.response_sample) ? <span className={j.response_rate < 80 ? 'low' : ''}>บริษัทตอบตรงเวลา {j.response_rate}%</span> : <span>บริษัทใหม่</span>}
           </div>
           <div className="job-foot">
             <span>{relative(j.published_at)}</span>

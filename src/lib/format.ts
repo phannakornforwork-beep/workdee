@@ -162,3 +162,10 @@ export const EVENT_LABEL: Record<string, string> = {
 
 // โจทย์ต้องไม่ใช่การให้ทำงานฟรี: เวลาที่แนะนำไม่เกิน 2 ชั่วโมง (ตรงกับคู่มือในหน้าช่วยเหลือ)
 export const MAX_CHALLENGE_MINUTES = 120;
+
+// อัตราการตอบผู้สมัคร: แสดงเป็นตัวเลขเมื่อมีใบสมัครที่ครบกำหนดตอบแล้วอย่างน้อยเท่านี้
+// น้อยกว่านี้ตัวเลขแกว่งมาก (เช่น 1 ใน 3 = 33%) ทำให้ผู้สมัครเข้าใจผิดและขัดกับจุดขาย "ได้คำตอบใน 7 วัน"
+export const MIN_RESPONSE_SAMPLE = 10;
+export function hasResponseStat(rate: number | null | undefined, sample: number | null | undefined): rate is number {
+  return rate !== null && rate !== undefined && (sample || 0) >= MIN_RESPONSE_SAMPLE;
+}

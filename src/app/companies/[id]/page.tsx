@@ -8,7 +8,7 @@ import { JobList } from '@/components/JobList';
 import { ShowMore } from '@/components/ShowMore';
 import { Avatar, Badge, PageTitle, SectionHead } from '@/components/ui';
 import { mediaUrl } from '@/lib/env';
-import { thaiDate } from '@/lib/format';
+import { hasResponseStat, thaiDate } from '@/lib/format';
 import type { JobCard } from '@/lib/types';
 
 // หน้าบริษัทสาธารณะแบบ JobsDB: ข้อมูลบริษัทเป็นตาราง + เกี่ยวกับ (ตัดข้อความ) + งานที่เปิดรับ
@@ -93,7 +93,7 @@ export default async function CompanyPage({ params }: { params: Promise<{ id: st
           <aside className="side">
             <section className="card highlight">
               <h2>การตอบผู้สมัคร</h2>
-              {c.response_rate !== null ? (
+              {hasResponseStat(c.response_rate, c.response_sample) ? (
                 <>
                   <div className="stat">
                     <span className="value">{c.response_rate}%</span>

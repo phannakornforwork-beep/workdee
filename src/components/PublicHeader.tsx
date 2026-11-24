@@ -14,6 +14,9 @@ export async function PublicHeader() {
         <Link href="/jobs" className="tlink">
           หางาน
         </Link>
+        <Link href="/saved" className="tlink">
+          งานที่บันทึก
+        </Link>
         <Link href="/#companies" className="tlink">
           สำหรับบริษัท
         </Link>
