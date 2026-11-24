@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { can, requireCompany } from '@/lib/auth';
 import { ActionForm, SubmitButton } from '@/components/forms';
-import { Alert, Badge, Empty, NoAccess } from '@/components/ui';
+import { Alert, Badge, Empty, NoAccess, PageTitle } from '@/components/ui';
 import { inviteTalentAction } from '@/lib/actions/talent';
 import { JOB_TYPE, PROVINCES } from '@/lib/format';
 
@@ -39,8 +39,8 @@ export default async function TalentPage({
   if (access.company.status !== 'verified')
     return (
       <>
-        <h1>ค้นหาผู้หางาน</h1>
-        <Empty>ค้นหาผู้หางานได้หลังบริษัทได้รับการยืนยัน</Empty>
+        <PageTitle title="ค้นหาผู้หางาน" />
+        <Empty>ใช้ได้หลังยืนยันบริษัท</Empty>
       </>
     );
 
@@ -56,17 +56,12 @@ export default async function TalentPage({
 
   return (
     <>
-      <div className="stack-sm">
-        <h1>ค้นหาผู้หางาน</h1>
-        <p className="muted">
-          เห็นเฉพาะคนที่เปิดให้บริษัทค้นหาได้ ไม่เห็นชื่อหรือช่องทางติดต่อ ถ้าสนใจ เชิญให้สมัครประกาศของคุณ แล้วจะเห็นโปรไฟล์เต็มเมื่อเขากดสมัคร
-        </p>
-      </div>
+      <PageTitle title="ค้นหาผู้หางาน" sub="ไม่เห็นชื่อจนกว่าเขาจะกดสมัคร" />
 
       <form className="card talent-filters" method="get">
         <div className="field">
           <label htmlFor="q">ทักษะหรือคำค้น</label>
-          <input id="q" name="q" className="input" defaultValue={q} placeholder="เช่น Content Writing, Excel, TikTok" />
+          <input id="q" name="q" className="input" defaultValue={q} placeholder="เช่น Excel, TikTok" />
         </div>
         <div className="field">
           <label htmlFor="province">จังหวัด</label>
@@ -87,14 +82,14 @@ export default async function TalentPage({
       {error ? <Alert tone="error">{error.message}</Alert> : null}
       {openJobs.length === 0 ? (
         <Alert tone="warn">
-          ยังไม่มีประกาศที่เปิดรับ เชิญผู้หางานได้หลัง <Link href={`/c/${cid}/jobs/new`}>ลงประกาศ</Link>
+          <Link href={`/c/${cid}/jobs/new`}>ลงประกาศ</Link> ก่อนเชิญผู้หางาน
         </Alert>
       ) : null}
 
       <p className="small muted">
-        พบ {rows.length} คน{q || province ? ' ตามตัวกรอง' : ''} · เรียงจากผลโจทย์ที่ผ่านเกณฑ์มากที่สุด
+        พบ {rows.length} คน
       </p>
-      {rows.length === 0 ? <Empty>ยังไม่มีผู้หางานที่ตรงกับตัวกรอง ลองเปลี่ยนคำค้น</Empty> : null}
+      {rows.length === 0 ? <Empty>ไม่พบ ลองเปลี่ยนคำค้น</Empty> : null}
 
       <div className="talent-grid">
         {rows.map((t) => {
@@ -155,7 +150,7 @@ export default async function TalentPage({
                     </div>
                     <div className="field">
                       <label htmlFor={`msg-${t.handle}`}>ข้อความถึงผู้หางาน (ไม่บังคับ)</label>
-                      <textarea id={`msg-${t.handle}`} name="message" className="textarea" rows={2} maxLength={500} placeholder="เช่น เห็นผลโจทย์ด้านคอนเทนต์ของคุณแล้วสนใจมาก" />
+                      <textarea id={`msg-${t.handle}`} name="message" className="textarea" rows={2} maxLength={500} placeholder="ข้อความสั้นๆ" />
                     </div>
                     <SubmitButton className="btn" pendingText="กำลังส่งคำเชิญ…">
                       ส่งคำเชิญ

@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: 'ลืมรหัสผ่าน' }
 
 export default function ForgotPasswordPage() {
   return (
-    <AuthShell title="ลืมรหัสผ่าน" sub="ใส่อีเมลที่ใช้สมัคร เราจะส่งลิงก์ตั้งรหัสผ่านใหม่ให้">
+    <AuthShell title="ลืมรหัสผ่าน" sub="เราจะส่งลิงก์ตั้งรหัสใหม่ทางอีเมล">
       <ActionForm action={requestResetAction}>
         <div className="field">
           <label htmlFor="email">อีเมล</label>

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { requireCompany, can } from '@/lib/auth';
 import { ActionForm, ConfirmSubmit, SubmitButton } from '@/components/forms';
-import { Alert, Avatar, Badge, Empty, Progress } from '@/components/ui';
+import { Alert, Avatar, Badge, Empty, PageTitle, Progress } from '@/components/ui';
 import { cancelLeaveAction, deleteTaskAction, requestLeaveAction, saveProjectAction, saveTaskAction, toggleFollowAction } from '@/lib/actions/work';
 import { thaiDate } from '@/lib/format';
 
@@ -72,7 +72,7 @@ function TaskRow({ t, cid, members, projects, canEdit }: { t: Task; cid: string;
               </option>
             ))}
           </select>
-          <input name="blocked_note" className="input" defaultValue={t.blocked_note || ''} placeholder="ถ้าติดปัญหา บอกว่าติดอะไร" aria-label="ติดปัญหาเรื่อง" style={{ minHeight: 36, flex: '1 1 160px', width: 'auto' }} />
+          <input name="blocked_note" className="input" defaultValue={t.blocked_note || ''} placeholder="ติดอะไร" aria-label="ติดปัญหาเรื่อง" style={{ minHeight: 36, flex: '1 1 160px', width: 'auto' }} />
           <SubmitButton className="btn small">อัปเดต</SubmitButton>
         </ActionForm>
         <form action={toggleFollowAction}>
@@ -168,16 +168,10 @@ export default async function WorkPage({ params, searchParams }: { params: Promi
 
   return (
     <>
-      <div className="stack-sm">
-        <h1>งานของทีม</h1>
-        <p className="muted">
-          {seesTeam
-            ? access.perms.team === 2 || access.is_owner
-              ? 'คุณเห็นงานของทุกคนในบริษัท'
-              : 'คุณเห็นงานของคนในแผนกของคุณ'
-            : 'คุณเห็นงานของตัวเองและงานที่คุณมอบหมาย'}
-        </p>
-      </div>
+      <PageTitle
+        title="งานของทีม"
+        sub={seesTeam ? (access.perms.team === 2 || access.is_owner ? 'งานของทุกคนในบริษัท' : 'งานของคนในแผนก') : 'งานของคุณและงานที่คุณมอบหมาย'}
+      />
       <div className="grid-sm">
         <div className="card tight">
           <div className="stat">
@@ -241,7 +235,7 @@ export default async function WorkPage({ params, searchParams }: { params: Promi
               <>
                 {blocked.length ? (
                   <Alert tone="warn">
-                    มี {blocked.length} งานที่ติดปัญหา: {blocked.map((t) => `${t.title} (${t.assignee_name || '-'})`).join(', ')}
+                    ติดปัญหา {blocked.length} งาน
                   </Alert>
                 ) : null}
                 {[...byPerson.entries()].map(([uid, tasks]) => (
@@ -264,7 +258,7 @@ export default async function WorkPage({ params, searchParams }: { params: Promi
                     </div>
                   </section>
                 ))}
-                {w.tasks.length === 0 ? <Empty>ยังไม่มีงานในขอบเขตที่คุณดูแล เพิ่มงานแรกด้านขวา</Empty> : null}
+                {w.tasks.length === 0 ? <Empty>ยังไม่มีงาน</Empty> : null}
               </>
             )}
           </div>
@@ -274,7 +268,7 @@ export default async function WorkPage({ params, searchParams }: { params: Promi
               <input type="hidden" name="company_id" value={cid} />
               <div className="field">
                 <label htmlFor="title">ชื่องาน</label>
-                <input id="title" name="title" className="input" placeholder="เช่น ทำโพสต์โปรโมชันเดือนหน้า 3 ชิ้น" required />
+                <input id="title" name="title" className="input" placeholder="ชื่องาน" required />
               </div>
               <div className="field">
                 <label htmlFor="assignee_id">ผู้รับผิดชอบ</label>
@@ -285,7 +279,7 @@ export default async function WorkPage({ params, searchParams }: { params: Promi
                     </option>
                   ))}
                 </select>
-                {!seesTeam ? <span className="hint">มอบหมายให้คนอื่นได้เมื่อตำแหน่งมีสิทธิ์ดูงานของทีม</span> : null}
+                {!seesTeam ? <span className="hint">ต้องมีสิทธิ์ดูงานของทีม</span> : null}
               </div>
               <div className="form-row">
                 <div className="field">
@@ -340,7 +334,7 @@ export default async function WorkPage({ params, searchParams }: { params: Promi
       {tab === 'projects' ? (
         <div className="split">
           <div className="main">
-            {w.projects.length === 0 ? <Empty>ยังไม่มีโปรเจกต์ ใช้โปรเจกต์รวมงานหลายชิ้นที่มีกำหนดเดียวกัน เช่น งานเปิดตัวสินค้า</Empty> : null}
+            {w.projects.length === 0 ? <Empty>ยังไม่มีโปรเจกต์</Empty> : null}
             {w.projects.map((p) => (
               <section key={p.id} className="card">
                 <div className="row-between">
@@ -484,7 +478,7 @@ export default async function WorkPage({ params, searchParams }: { params: Promi
               <div className="field">
                 <label htmlFor="reason">เหตุผล (ไม่บังคับ)</label>
                 <input id="reason" name="reason" className="input" />
-                <span className="hint">ลาป่วยไม่ต้องบอกอาการ เหตุผลเห็นเฉพาะคุณและหัวหน้าที่ดูแลคุณ</span>
+                <span className="hint">ลาป่วยไม่ต้องบอกอาการ</span>
               </div>
               <SubmitButton>ส่งคำขอ</SubmitButton>
             </ActionForm>

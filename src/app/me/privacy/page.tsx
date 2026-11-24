@@ -5,6 +5,7 @@ import { ActionForm, SubmitButton } from '@/components/forms';
 import { savePrivacyAction } from '@/lib/actions/candidate';
 import { thaiDate } from '@/lib/format';
 import { DeleteAccount } from './DeleteAccount';
+import { PageTitle } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'ความเป็นส่วนตัว' };
 
@@ -20,15 +21,12 @@ export default async function PrivacyPage() {
   const myCompanies = (spaces || []) as { company_id: string; company_name: string }[];
   return (
     <>
-      <div className="stack-sm">
-        <h1>ความเป็นส่วนตัวและข้อมูลของฉัน</h1>
-        <p className="muted">คุณเป็นเจ้าของข้อมูล ดู แก้ ถอนสิทธิ์ ดาวน์โหลด หรือลบได้ตลอด</p>
-      </div>
+      <PageTitle title="ความเป็นส่วนตัว" sub="ข้อมูลเป็นของคุณ" />
       <div className="split">
         <div className="main">
           <section className="card">
             <h2>ใครเห็นโปรไฟล์ของฉัน</h2>
-            <p className="small muted">บริษัทเห็นสำเนาโปรไฟล์เฉพาะใบสมัครที่คุณส่ง ถอนสิทธิ์ได้ในหน้าใบสมัครแต่ละใบ</p>
+            
             {((consents || []) as { id: string; detail: { job_title?: string; share_plan?: boolean }; application_id: string | null; granted_at: string; revoked_at: string | null }[]).map((c) => (
               <div key={c.id} className="row-between small">
                 <span>
@@ -42,7 +40,7 @@ export default async function PrivacyPage() {
                 ) : null}
               </div>
             ))}
-            {(consents || []).length === 0 ? <p className="muted small">ยังไม่มีบริษัทใดเห็นโปรไฟล์ของคุณ</p> : null}
+            {(consents || []).length === 0 ? <p className="muted small">ยังไม่มีบริษัทใดเห็น</p> : null}
           </section>
           <ActionForm action={savePrivacyAction} className="card">
             <h2>การตั้งค่า</h2>
@@ -52,11 +50,11 @@ export default async function PrivacyPage() {
             </label>
             <label className="check">
               <input type="checkbox" name="discoverable" defaultChecked={Boolean(cp?.discoverable)} />
-              <span>ให้บริษัทค้นเจอแบบไม่เห็นชื่อ เพื่อส่งคำเชิญสมัคร (บริษัทที่ฉันทำงานอยู่จะค้นไม่เจอเสมอ)</span>
+              <span>ให้บริษัทค้นเจอแบบไม่เห็นชื่อ</span>
             </label>
             {myCompanies.length ? (
               <fieldset>
-                <legend>ซ่อนจากบริษัทเหล่านี้เพิ่มเติม</legend>
+                <legend>ซ่อนจากบริษัท</legend>
                 {myCompanies.map((c) => (
                   <label key={c.company_id} className="check">
                     <input type="checkbox" name="hidden_company_ids" value={c.company_id} defaultChecked={hidden.includes(c.company_id)} />
@@ -71,7 +69,7 @@ export default async function PrivacyPage() {
         <aside className="side">
           <section className="card">
             <h2>ดาวน์โหลดข้อมูลของฉัน</h2>
-            <p className="small muted">ไฟล์ JSON รวมโปรไฟล์ การศึกษา แผนอาชีพ ใบสมัคร คะแนน และการให้สิทธิ์ทั้งหมด</p>
+            <p className="small muted">ไฟล์ JSON ข้อมูลทั้งหมด</p>
             <a className="btn outline small" href="/api/me/export">
               ดาวน์โหลด
             </a>

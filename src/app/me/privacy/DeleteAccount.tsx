@@ -23,9 +23,9 @@ export function DeleteAccount({ blockers }: { blockers: string[] }) {
   return (
     <section className="card">
       <h2>ลบบัญชี</h2>
-      <p className="small muted">ลบโปรไฟล์ การศึกษา แผนอาชีพ ใบสมัคร และไฟล์ทั้งหมดอย่างถาวร บริษัทจะไม่เห็นข้อมูลของคุณอีก กู้คืนไม่ได้</p>
+      <p className="small muted">ลบข้อมูลทั้งหมดถาวร กู้คืนไม่ได้</p>
       {blockers.length ? (
-        <div className="alert warn small">คุณเป็นเจ้าของคนเดียวของ {blockers.join(', ')} แต่งตั้งเจ้าของคนใหม่ในหน้าทีมและตำแหน่งก่อน</div>
+        <div className="alert warn small">ตั้งเจ้าของคนใหม่ของ {blockers.join(', ')} ก่อน</div>
       ) : (
         <>
           <label className="field">

@@ -55,7 +55,7 @@ export function AiJobDesigner({
       if (descs[j]) descs[j].value = cr?.description || '';
     });
     setChosen(i);
-    setMsg({ ok: true, text: `ใส่โจทย์ "${c.title}" และเกณฑ์ให้คะแนนลงฟอร์มแล้ว แก้ได้ทุกช่องก่อนกดบันทึก` });
+    setMsg({ ok: true, text: `ใส่โจทย์ "${c.title}" ลงฟอร์มแล้ว` });
     form.querySelector('[name="ch_title"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
@@ -75,7 +75,7 @@ export function AiJobDesigner({
         setField(form, 'skills', res.data.skills.join(', '), true);
       }
       setPicks(pickChallenges(`${title} ${objective}`));
-      setMsg({ ok: true, text: locked ? 'AI เสนอคุณสมบัติแล้ว (มีผู้สมัครส่งโจทย์แล้ว จึงเปลี่ยนโจทย์ไม่ได้)' : 'AI เสนอคุณสมบัติและโจทย์ 5 แบบ เลือกโจทย์ที่ชอบด้านล่าง' });
+      setMsg({ ok: true, text: locked ? 'AI เสนอคุณสมบัติแล้ว (เปลี่ยนโจทย์ไม่ได้)' : 'เลือกโจทย์ที่ชอบด้านล่าง' });
     });
   }
 
@@ -89,7 +89,7 @@ export function AiJobDesigner({
         <h2>ให้ AI คิดโจทย์และคุณสมบัติ</h2>
         <span className="badge ai">AI</span>
       </div>
-      <p className="muted">เล่าแบบพูดปกติ AI เสนอคุณสมบัติและโจทย์ให้ แก้ได้ทุกช่อง</p>
+      <p className="muted">เล่างานแบบพูดปกติ AI ร่างให้</p>
       <div className="field">
         <label htmlFor="ai_objective">อยากได้คนแบบไหน</label>
         <textarea
@@ -99,7 +99,7 @@ export function AiJobDesigner({
           maxLength={3000}
           value={objective}
           onChange={(e) => setObjective(e.target.value)}
-          placeholder="เช่น ดูแลเพจร้านกาแฟ 3 สาขา ยิงแอดเป็น เขียนโพสต์ได้ ตัดคลิปได้ยิ่งดี"
+          placeholder="เช่น ดูแลเพจร้านกาแฟ ยิงแอดเป็น"
         />
       </div>
       <div className="row">
@@ -145,7 +145,7 @@ export function AiJobDesigner({
               {quals.filter((q) => q.description).map((q, i) => (
                 <p key={i} className="small"><span className="strong">{q.name}:</span> {q.description}</p>
               ))}
-              <p className="small muted">ข้อ &ldquo;ต้องมี&rdquo; ที่ผู้สมัครไม่มีจะขึ้นธงเตือน ระบบไม่ตัดผู้สมัครทิ้งเอง</p>
+              <p className="small muted">ระบบเตือน แต่ไม่ตัดผู้สมัครทิ้ง</p>
             </div>
           </details>
         </div>

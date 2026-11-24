@@ -81,7 +81,7 @@ export function PhotoUpload({
               ลบรูป
             </button>
           ) : null}
-          <span className="hint">PNG, JPG, WEBP หรือ SVG ไม่เกิน 2 MB · กดบันทึกด้านล่างเพื่อใช้รูปนี้</span>
+          <span className="hint">ไม่เกิน 2 MB</span>
           {error ? (
             <span className="hint" style={{ color: 'var(--danger)' }}>
               {error}

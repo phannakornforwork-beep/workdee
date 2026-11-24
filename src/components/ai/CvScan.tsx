@@ -198,7 +198,7 @@ export function CvScan() {
         <h2>สแกน CV กรอกโปรไฟล์ให้</h2>
         <span className="badge ai">สแกน</span>
       </div>
-      <p className="muted">แนบ CV แล้วระบบกรอกช่องให้ คุณแค่ตรวจก่อนบันทึก</p>
+      <p className="muted">แนบ CV แล้วระบบกรอกให้</p>
       <div className="field">
         <label htmlFor="cv_file">ไฟล์ CV (PDF, Word หรือรูปถ่าย)</label>
         <input id="cv_file" type="file" className="input" accept="application/pdf,.docx,image/jpeg,image/png,.txt" onChange={onFile} disabled={Boolean(stage)} />
@@ -232,7 +232,7 @@ export function CvScan() {
               {data.languages.length ? (<><dt>ภาษา</dt><dd>{lines(data.languages).replace(/\n/g, ' · ')}</dd></>) : null}
               {data.normalized.length ? (<><dt>แปลงคำ</dt><dd>{data.normalized.slice(0, 6).map((n) => `"${n.as_written}" → ${n.skill}`).join(' · ')}</dd></>) : null}
             </dl>
-            <p className="small muted">ไฟล์ไม่ถูกอัปโหลดขึ้นเซิร์ฟเวอร์ · ข้อมูลจาก CV แสดงเป็น &ldquo;ระบุเอง&rdquo;</p>
+            <p className="small muted">ไฟล์ไม่ถูกอัปโหลด</p>
           </details>
           <label className="check">
             <input type="checkbox" checked={replace} onChange={(e) => setReplace(e.target.checked)} />

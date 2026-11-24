@@ -28,7 +28,7 @@ html, body { margin: 0; padding: 0; }
 body {
   background: var(--bg);
   color: var(--ink);
-  font-family: var(--font-thai), 'IBM Plex Sans Thai', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-family: var(--font-thai, 'IBM Plex Sans Thai'), 'IBM Plex Sans Thai', 'Sukhumvit Set', 'Leelawadee UI', 'Noto Sans Thai', 'Noto Sans Thai UI', sans-serif;
   font-size: 15px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;

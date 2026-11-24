@@ -16,7 +16,7 @@ export default async function JoinPage({ params }: { params: Promise<{ code: str
   if (!p.valid) {
     return (
       <AuthShell title="ลิงก์เชิญใช้ไม่ได้">
-        <p className="muted">ลิงก์หมดอายุ ถูกยกเลิก หรือใช้ครบจำนวนแล้ว ขอลิงก์ใหม่จากหัวหน้าหรือ HR ของบริษัท</p>
+        <p className="muted">ลิงก์หมดอายุ ขอลิงก์ใหม่จากหัวหน้าหรือ HR</p>
         <Link href="/" className="btn ghost">
           กลับหน้าแรก
         </Link>
@@ -26,8 +26,7 @@ export default async function JoinPage({ params }: { params: Promise<{ code: str
   return (
     <AuthShell title={`เข้าร่วมทีม ${p.company_name}`} sub={`ตำแหน่ง ${p.position_title} · ลิงก์ใช้ได้ถึง ${thaiDate(p.expires_at)}`}>
       <div className="alert privacy small">
-        เมื่อเข้าร่วม คุณจะเห็นพื้นที่บริษัทนี้แยกจากพื้นที่ส่วนตัว บริษัทจะเห็นชื่อที่ใช้แสดงและงานในพื้นที่บริษัทเท่านั้น
-        ไม่เห็นโปรไฟล์หางาน ใบสมัคร หรือแผนอาชีพของคุณ
+        บริษัทไม่เห็นการหางานหรือแผนอาชีพของคุณ
       </div>
       {auth.user ? (
         <ActionForm action={acceptInviteAction}>
@@ -36,7 +35,7 @@ export default async function JoinPage({ params }: { params: Promise<{ code: str
         </ActionForm>
       ) : (
         <div className="stack">
-          {p.for_email ? <p className="small muted">คำเชิญนี้ส่งถึงอีเมลเฉพาะ สมัครหรือเข้าสู่ระบบด้วยอีเมลนั้น</p> : null}
+          {p.for_email ? <p className="small muted">ใช้อีเมลที่ได้รับคำเชิญ</p> : null}
           <Link href={`/signup?next=${encodeURIComponent(`/join/${code}`)}`} className="btn block">
             สมัครบัญชีแล้วเข้าร่วม
           </Link>

@@ -4,7 +4,7 @@
 export default function GlobalError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return (
     <html lang="th">
-      <body style={{ fontFamily: 'system-ui, sans-serif', padding: 24 }}>
+      <body style={{ fontFamily: "'IBM Plex Sans Thai', 'Sukhumvit Set', 'Leelawadee UI', 'Noto Sans Thai', sans-serif", padding: 24 }}>
         <h1>เกิดข้อผิดพลาด</h1>
         <p>ระบบขัดข้องชั่วคราว ลองโหลดหน้าใหม่อีกครั้ง</p>
         <button type="button" onClick={() => reset()}>

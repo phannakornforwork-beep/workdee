@@ -5,7 +5,7 @@ import { ActionForm, ConfirmSubmit, SubmitButton } from '@/components/forms';
 import { FileUpload } from '@/components/FileUpload';
 import { PhotoUpload } from '@/components/PhotoUpload';
 import { mediaUrl } from '@/lib/env';
-import { Alert, Badge } from '@/components/ui';
+import { Alert, Badge, PageTitle } from '@/components/ui';
 import { setCertificateAction, setRuleAction, updateCompanyAction } from '@/lib/actions/company';
 import { deleteTemplateAction, saveTemplateFormAction } from '@/lib/actions/hiring';
 import { PROVINCES, RULES, thaiDateTime } from '@/lib/format';
@@ -39,14 +39,11 @@ export default async function SettingsPage({ params, searchParams }: { params: P
 
   return (
     <>
-      <div className="stack-sm">
-        <h1>ตั้งค่าบริษัท</h1>
-        <p className="muted">{c.name}</p>
-      </div>
+      <PageTitle title="ตั้งค่าบริษัท" sub={c.name} />
 
       {sp.new ? (
         <Alert tone="success">
-          สร้างพื้นที่บริษัทแล้ว ขั้นต่อไป: แนบหนังสือรับรองบริษัทเพื่อยืนยันตัวตน ระหว่างรอตรวจ ร่างประกาศงานและชวนทีมเข้ามาได้เลย{' '}
+          สร้างบริษัทแล้ว ขั้นต่อไป: แนบหนังสือรับรอง หรือ{' '}
           <Link href={`/c/${cid}/team?tab=invite`}>ชวนทีม</Link>
         </Alert>
       ) : null}
@@ -69,10 +66,10 @@ export default async function SettingsPage({ params, searchParams }: { params: P
               )}
             </div>
             <p className="small muted">
-              ผู้สมัครจะเห็นป้าย &ldquo;ยืนยันบริษัทแล้ว&rdquo; และประกาศงานเผยแพร่ได้หลังยืนยัน เราตรวจชื่อและเลขทะเบียน {c.reg_no.replace(/^(\d)(\d{4})(\d{5})(\d{2})(\d)$/, '$1-$2-$3-$4-$5')} กับหนังสือรับรองที่ออกไม่เกิน 6 เดือน
+              ใช้หนังสือรับรองอายุไม่เกิน 6 เดือน · เลขทะเบียน {c.reg_no.replace(/^(\d)(\d{4})(\d{5})(\d{2})(\d)$/, '$1-$2-$3-$4-$5')}
             </p>
             {c.review_note && c.status !== 'verified' ? <Alert tone="warn">หมายเหตุจากทีมตรวจ: {c.review_note}</Alert> : null}
-            {c.status === 'suspended' ? <Alert tone="error">บัญชีบริษัทถูกระงับชั่วคราว ประกาศถูกซ่อนจากผู้สมัคร ติดต่อทีมงาน WorkDee</Alert> : null}
+            {c.status === 'suspended' ? <Alert tone="error">บัญชีถูกระงับชั่วคราว ติดต่อทีม WorkDee</Alert> : null}
             {c.status !== 'verified' && c.status !== 'suspended' && access.is_owner ? (
               <ActionForm action={setCertificateAction}>
                 <input type="hidden" name="company_id" value={cid} />
@@ -99,7 +96,7 @@ export default async function SettingsPage({ params, searchParams }: { params: P
               />
               <div className="field">
                 <label htmlFor="about">เกี่ยวกับบริษัท</label>
-                <textarea id="about" name="about" className="textarea" rows={5} defaultValue={c.about} maxLength={3000} placeholder="ทำอะไร ลูกค้าเป็นใคร ทีมทำงานแบบไหน เด็กจบใหม่จะได้เรียนรู้อะไร" />
+                <textarea id="about" name="about" className="textarea" rows={5} defaultValue={c.about} maxLength={3000} placeholder="ทำอะไร และเด็กจบใหม่จะได้เรียนรู้อะไร" />
               </div>
               <div className="form-row">
                 <div className="field">
@@ -143,10 +140,7 @@ export default async function SettingsPage({ params, searchParams }: { params: P
           {canEditCompany ? (
             <ActionForm action={updateCompanyAction} className="card">
               <h2>เวลางานและช่วงเวลาเงียบ</h2>
-              <p className="small muted">
-                นอกช่วงนี้ แชตและงานยังเข้าระบบตามปกติ แต่ LINE/อีเมลจะรอส่งตอนเริ่มงาน ยกเว้นเรื่องด่วนกับคนที่ยินยอมไว้เอง
-                (ตามแนวทางสิทธิปฏิเสธการติดต่อนอกเวลางาน) ผู้สมัครไม่ได้รับผลกระทบจากช่วงนี้
-              </p>
+              <p className="small muted">นอกเวลางาน LINE/อีเมลจะรอส่งตอนเช้า ยกเว้นเรื่องด่วน</p>
               <input type="hidden" name="company_id" value={cid} />
               <div className="form-row">
                 <div className="field">
@@ -165,7 +159,7 @@ export default async function SettingsPage({ params, searchParams }: { params: P
           {access.is_owner ? (
             <section className="card">
               <h2>กฎการอนุมัติ</h2>
-              <p className="small muted">เปิดเฉพาะที่จำเป็น ยิ่งน้อยยิ่งเร็ว ทุกการเปลี่ยนถูกบันทึกในประวัติ</p>
+              <p className="small muted">เปิดเท่าที่จำเป็น</p>
               <div className="list">
                 {RULES.map((r) => {
                   const on = ruleMap.get(r.key) ?? false;
@@ -192,7 +186,7 @@ export default async function SettingsPage({ params, searchParams }: { params: P
 
           <section className="card" id="templates">
             <h2>ข้อความสำเร็จรูป</h2>
-            <p className="small muted">ใช้ตอนตอบผู้สมัครหลายคนพร้อมกัน ใส่ {'{ชื่อ}'} {'{ตำแหน่ง}'} {'{บริษัท}'} แล้วระบบเติมให้แต่ละคน</p>
+            <p className="small muted">ใช้ {'{ชื่อ}'} {'{ตำแหน่ง}'} {'{บริษัท}'} แทนข้อมูลแต่ละคน</p>
             {Object.entries(TPL_KIND).map(([kind, label]) => {
               const list = tpls.filter((t) => t.kind === kind);
               if (!list.length) return null;
@@ -256,11 +250,10 @@ export default async function SettingsPage({ params, searchParams }: { params: P
             <h2>แพ็กเกจ</h2>
             {access.is_owner ? (
               <>
-                <p className="small">ช่วงนำร่อง: ใช้ได้ทุกฟีเจอร์โดยไม่มีค่าใช้จ่าย</p>
-                <p className="tiny muted">ระบบชำระเงินจะเปิดหลังจบช่วงนำร่อง และจะแจ้งล่วงหน้าอย่างน้อย 30 วัน</p>
+                <p className="small">ช่วงนำร่อง: ใช้ฟรีทุกฟีเจอร์</p>
               </>
             ) : (
-              <p className="small muted">เรื่องแพ็กเกจและการชำระเงินเป็นของเจ้าของกิจการ</p>
+              <p className="small muted">เจ้าของกิจการเป็นผู้ดูแล</p>
             )}
           </section>
           <section className="card">

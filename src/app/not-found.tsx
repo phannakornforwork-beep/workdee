@@ -7,7 +7,7 @@ export default function NotFound() {
       <Logo />
       <div className="card stack">
         <h1>ไม่พบหน้านี้</h1>
-        <p className="muted">ลิงก์อาจหมดอายุ ถูกปิดไปแล้ว หรือคุณไม่มีสิทธิ์เข้าถึงจากบัญชีนี้</p>
+        <p className="muted">ลิงก์อาจหมดอายุ หรือคุณไม่มีสิทธิ์</p>
         <div className="row">
           <Link href="/spaces" className="btn">
             ไปที่พื้นที่ของฉัน

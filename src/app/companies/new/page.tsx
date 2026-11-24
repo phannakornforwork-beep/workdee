@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { requireUser } from '@/lib/auth';
-import { Logo } from '@/components/ui';
+import { Logo, PageTitle } from '@/components/ui';
 import { ActionForm, SubmitButton } from '@/components/forms';
 import { createCompanyAction } from '@/lib/actions/company';
 import { PROVINCES } from '@/lib/format';
@@ -26,10 +26,7 @@ export default async function NewCompanyPage() {
       <main className="container page">
         <div className="split">
           <div className="main">
-            <div className="stack-sm">
-              <h1>สร้างพื้นที่บริษัท</h1>
-              <p className="muted">คุณจะเป็นเจ้าของพื้นที่นี้ เชิญหัวหน้าแผนกและทีมได้ทันทีหลังสร้าง</p>
-            </div>
+            <PageTitle plain title="สร้างพื้นที่บริษัท" sub="คุณจะเป็นเจ้าของพื้นที่นี้" />
             <ActionForm action={createCompanyAction} className="card">
               <div className="field">
                 <label htmlFor="name">ชื่อบริษัท (ตามหนังสือรับรอง)</label>
@@ -72,7 +69,7 @@ export default async function NewCompanyPage() {
               </div>
               <label className="check">
                 <input type="checkbox" name="template" defaultChecked />
-                <span>เริ่มจากผังตัวอย่างของ SME (HR และธุรการ · หัวหน้าแผนก · พนักงาน) แก้ชื่อและสิทธิ์ได้ภายหลัง</span>
+                <span>เริ่มจากผังตัวอย่าง (แก้ได้ภายหลัง)</span>
               </label>
               <SubmitButton pendingText="กำลังสร้าง…">สร้างพื้นที่บริษัท</SubmitButton>
             </ActionForm>
@@ -80,19 +77,16 @@ export default async function NewCompanyPage() {
           <aside className="side">
             <section className="card">
               <h2>ทำไมต้องยืนยันบริษัท</h2>
-              <p className="small muted">
-                เพื่อกันประกาศงานปลอมที่หลอกเด็กจบใหม่ ผู้สมัครจะเห็นป้าย &ldquo;บริษัทยืนยันแล้ว&rdquo; ในทุกประกาศ ขั้นต่อไปคุณจะแนบหนังสือรับรองบริษัท (อายุไม่เกิน 6 เดือน)
-              </p>
+              <p className="small muted">กันประกาศปลอม ขั้นต่อไปแนบหนังสือรับรอง (ไม่เกิน 6 เดือน)</p>
             </section>
             <section className="card">
               <h2>ลำดับชั้นในพื้นที่บริษัท</h2>
               <div className="stack-sm small">
-                <span><strong>เจ้าของกิจการ</strong> · เห็นทุกอย่างในพื้นที่บริษัท ตั้งตำแหน่ง มอบสิทธิ์ การชำระเงิน</span>
-                <span><strong>หัวหน้าแผนก</strong> · เห็นและอนุมัติเรื่องในแผนกตามสิทธิ์ที่ได้รับ แต่งตั้งคนในแผนกต่อได้</span>
-                <span><strong>HR</strong> · ลงประกาศ คัดผู้สมัคร ดูแลรายชื่อพนักงาน</span>
-                <span><strong>พนักงาน</strong> · เห็นงานของตัวเอง แชตกับทีม ยื่นลา</span>
+                <span><strong>เจ้าของ</strong> · ทุกอย่าง</span>
+                <span><strong>หัวหน้าแผนก</strong> · เรื่องในแผนก</span>
+                <span><strong>HR</strong> · ประกาศและผู้สมัคร</span>
+                <span><strong>พนักงาน</strong> · งานตัวเอง แชต ลา</span>
               </div>
-              <p className="tiny muted">ไม่มีใครในบริษัทเห็นพื้นที่ส่วนตัวของพนักงาน รวมถึงเจ้าของ</p>
             </section>
           </aside>
         </div>

@@ -55,7 +55,7 @@ export function JobForm({
               ))}
             </select>
             {status !== 'draft' && job?.id ? <input type="hidden" name="department_id" value={v(job?.department_id)} /> : null}
-            <span className="hint">หัวหน้าแผนกนี้จะเห็นและอนุมัติประกาศ (ถ้าเปิดกฎ)</span>
+            <span className="hint">หัวหน้าแผนกเป็นผู้อนุมัติ</span>
           </div>
         </div>
         <div className="form-row">
@@ -107,7 +107,7 @@ export function JobForm({
             </select>
           </div>
         </div>
-        <span className="hint">ผู้สมัครเห็นช่วงค่าตอบแทนตั้งแต่แรก ถ้าเสนอเกินช่วงนี้ต้องให้เจ้าของอนุมัติ (ถ้าเปิดกฎ)</span>
+        <span className="hint">ผู้สมัครเห็นช่วงนี้ตั้งแต่แรก</span>
         <div className="form-row">
           <div className="field">
             <label htmlFor="gig_days">จ็อบระยะสั้น: จำนวนวัน</label>
@@ -137,7 +137,7 @@ export function JobForm({
           </div>
         </div>
         <div className="field">
-          <label htmlFor="skills">สกิลที่ใช้ (คั่นด้วยจุลภาค ใช้คำนวณความตรงกับผู้สมัคร)</label>
+          <label htmlFor="skills">สกิล (คั่นด้วย ,)</label>
           <input id="skills" name="skills" className="input" defaultValue={Array.isArray(job?.skills) ? job?.skills?.join(', ') : v(job?.skills)} />
         </div>
         <div className="form-row">
@@ -148,7 +148,7 @@ export function JobForm({
           <div className="field">
             <label htmlFor="challenge_seats">ที่นั่งรอบโจทย์</label>
             <input id="challenge_seats" name="challenge_seats" className="input" inputMode="numeric" defaultValue={v(job?.challenge_seats) || '10'} />
-            <span className="hint">จำนวนคนสูงสุดที่เชิญทำโจทย์ได้ ตั้งให้ตรวจทันใน 7 วัน</span>
+            <span className="hint">ตั้งให้ตรวจทันใน 7 วัน</span>
           </div>
           <div className="field">
             <label htmlFor="closes_at">ปิดรับวันที่ (ไม่บังคับ)</label>
@@ -160,15 +160,15 @@ export function JobForm({
       <section className="card">
         <h2>โจทย์พิสูจน์สกิล</h2>
         <p className="muted small">
-          ใช้แบรนด์สมมติเสมอ ห้ามใช้งานจริงของบริษัท ผลงานเป็นของผู้สมัคร บริษัทนำไปใช้เชิงพาณิชย์ไม่ได้ งานประจำ สัญญาจ้าง และฝึกงานต้องมีโจทย์
-          {locked ? ' · มีผู้สมัครส่งโจทย์แล้ว เปลี่ยนเกณฑ์ไม่ได้' : ''}
+          ใช้แบรนด์สมมติ ผลงานเป็นของผู้สมัคร
+          {locked ? ' · มีคนส่งแล้ว เปลี่ยนเกณฑ์ไม่ได้' : ''}
         </p>
         <div className="field">
           <label htmlFor="ch_title">ชื่อโจทย์</label>
           <input id="ch_title" name="ch_title" className="input" defaultValue={v(challenge?.title)} maxLength={160} />
         </div>
         <div className="field">
-          <label htmlFor="ch_brief">สถานการณ์ (เปิดให้ผู้สมัครเห็นเมื่อได้รับเชิญ)</label>
+          <label htmlFor="ch_brief">สถานการณ์</label>
           <textarea id="ch_brief" name="ch_brief" className="textarea" defaultValue={v(challenge?.brief)} maxLength={6000} />
         </div>
         <div className="field">
@@ -207,12 +207,12 @@ export function JobForm({
         </fieldset>
         <div className="form-row">
           <div className="field">
-            <label htmlFor="ch_skill_key">รหัสสกิล (ใช้ผลโจทย์ซ้ำข้ามบริษัท เช่น content-marketing)</label>
+            <label htmlFor="ch_skill_key">รหัสสกิล (เช่น content-marketing)</label>
             <input id="ch_skill_key" name="ch_skill_key" className="input" defaultValue={v(challenge?.skill_key)} pattern="[a-z0-9\-]{2,40}" />
           </div>
           <label className="check" style={{ alignSelf: 'flex-end' }}>
             <input type="checkbox" name="ch_accept_reuse" defaultChecked={challenge ? Boolean(challenge.accept_reuse) : true} />
-            <span>รับผลโจทย์เดิมของสกิลเดียวกัน (คะแนน 75 ขึ้นไป ภายใน 12 เดือน)</span>
+            <span>รับผลโจทย์เดิม (75+ ใน 12 เดือน)</span>
           </label>
         </div>
       </section>

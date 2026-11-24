@@ -13,7 +13,7 @@ export default async function SignupPage({ searchParams }: { searchParams: Promi
   return (
     <AuthShell
       title="สมัครใช้งาน WorkDee"
-      sub={sp.as === 'company' ? 'สร้างบัญชีก่อน แล้วสร้างพื้นที่บริษัทต่อได้ทันที' : 'ฟรีสำหรับคนหางาน ข้อมูลของคุณเป็นของคุณ'}
+      sub={sp.as === 'company' ? 'สร้างบัญชี แล้วสร้างบริษัทต่อ' : 'ฟรีสำหรับคนหางาน'}
     >
       <GoogleSignIn next={next} />
       <ActionForm action={signUpAction}>

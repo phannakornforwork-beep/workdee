@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { Footer, PublicHeader } from '@/components/PublicHeader';
-import { Alert } from '@/components/ui';
+import { Alert, PageTitle } from '@/components/ui';
 import { SUPPORT_EMAIL } from '@/lib/env';
 import { LEGAL_UPDATED, OPERATOR_ADDRESS, OPERATOR_NAME } from '@/lib/legal';
 
@@ -13,16 +13,24 @@ export default function PrivacyPage() {
     <>
       <PublicHeader />
       <main className="container page" style={{ maxWidth: 820 }}>
-        <div className="stack-sm">
-          <h1>นโยบายความเป็นส่วนตัว</h1>
-          <p className="muted">ปรับปรุงล่าสุด {LEGAL_UPDATED}</p>
-        </div>
-        <Alert tone="warn">
-          ฉบับร่างสำหรับช่วงนำร่อง ผู้ให้บริการต้องให้ผู้เชี่ยวชาญกฎหมายตรวจ และระบุชื่อและที่อยู่ผู้ควบคุมข้อมูลให้ครบ ก่อนเปิดให้บุคคลทั่วไปใช้งาน
-        </Alert>
+        <PageTitle plain title="นโยบายความเป็นส่วนตัว" sub={`ปรับปรุงล่าสุด ${LEGAL_UPDATED}`} />
+        <Alert tone="warn">ฉบับร่างช่วงนำร่อง รอผู้เชี่ยวชาญกฎหมายตรวจ</Alert>
 
-        <section className="card stack-sm">
-          <h2>1. เราคือใคร</h2>
+        <section className="card">
+          <h2>สรุปสั้น</h2>
+          <ul className="stack-sm">
+            <li>บริษัทเห็นโปรไฟล์เฉพาะเมื่อคุณกดสมัคร</li>
+            <li>นายจ้างปัจจุบันไม่เห็นว่าคุณหางาน</li>
+            <li>ไม่มีบัญชีดำ ไม่ขายข้อมูล</li>
+            <li>ดาวน์โหลดหรือลบข้อมูลได้เอง</li>
+          </ul>
+          <p className="small muted">แตะหัวข้อด้านล่างเพื่ออ่านรายละเอียด</p>
+        </section>
+
+        <details className="card stack-sm legal">
+          <summary>
+            <h2>1. เราคือใคร</h2>
+          </summary>
           <p>
             {operator}
             {OPERATOR_ADDRESS ? ` (${OPERATOR_ADDRESS})` : ''} เป็นผู้ควบคุมข้อมูลส่วนบุคคลของบริการ WorkDee ตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA)
@@ -37,10 +45,12 @@ export default function PrivacyPage() {
             ข้อมูลที่อยู่ใน &ldquo;พื้นที่บริษัท&rdquo; (งานที่มอบหมาย การลา แชตของบริษัท ใบสมัครที่บริษัทได้รับ) บริษัทนั้นเป็นผู้ควบคุมข้อมูลร่วม หรือเป็นผู้ควบคุมข้อมูลของตนเอง
             และ WorkDee ทำหน้าที่ผู้ประมวลผลข้อมูลแทนบริษัท
           </p>
-        </section>
+        </details>
 
-        <section className="card stack-sm">
-          <h2>2. หลักที่เรายึด</h2>
+        <details className="card stack-sm legal">
+          <summary>
+            <h2>2. หลักที่เรายึด</h2>
+          </summary>
           <ul className="stack-sm">
             <li>ข้อมูลเป็นของคุณ บริษัทเห็นโปรไฟล์เต็มเฉพาะเมื่อคุณกดสมัครหรือตอบรับคำเชิญ และคุณถอนสิทธิ์การเข้าถึงได้เอง</li>
             <li>บัญชีเดียว แต่พื้นที่ส่วนตัวแยกจากพื้นที่บริษัท นายจ้างปัจจุบันไม่มีทางเห็นว่าคุณกำลังหางาน สมัครที่ไหน หรือวางแผนอาชีพอย่างไร</li>
@@ -48,10 +58,12 @@ export default function PrivacyPage() {
             <li>เราไม่มีและจะไม่ทำรายชื่อบุคคลที่ไม่ควรจ้าง (บัญชีดำ) แชร์ระหว่างบริษัท</li>
             <li>เราไม่ขายข้อมูลส่วนบุคคล และไม่ใช้ข้อมูลของคุณโฆษณาให้บุคคลภายนอก</li>
           </ul>
-        </section>
+        </details>
 
-        <section className="card stack-sm">
-          <h2>3. ข้อมูลที่เราเก็บ</h2>
+        <details className="card stack-sm legal">
+          <summary>
+            <h2>3. ข้อมูลที่เราเก็บ</h2>
+          </summary>
           <dl className="kv">
             <dt>บัญชี</dt>
             <dd>ชื่อที่แสดง อีเมล รหัสผ่าน (เก็บแบบเข้ารหัสทางเดียว เราอ่านไม่ได้)</dd>
@@ -71,10 +83,12 @@ export default function PrivacyPage() {
           <p className="small muted">
             เราไม่ขอข้อมูลอ่อนไหว เช่น ศาสนา เชื้อชาติ สุขภาพ ความพิการ ประวัติอาชญากรรม หรือข้อมูลชีวภาพ และขอให้ไม่ใส่ข้อมูลเหล่านี้ในโปรไฟล์ เอกสาร หรือข้อความ
           </p>
-        </section>
+        </details>
 
-        <section className="card stack-sm">
-          <h2>4. ใช้ข้อมูลเพื่ออะไร และอาศัยฐานทางกฎหมายใด</h2>
+        <details className="card stack-sm legal">
+          <summary>
+            <h2>4. ใช้ข้อมูลเพื่ออะไร และอาศัยฐานทางกฎหมายใด</h2>
+          </summary>
           <div className="table-wrap">
             <table className="table">
               <thead>
@@ -104,10 +118,12 @@ export default function PrivacyPage() {
             </table>
           </div>
           <p className="small">ระบบไม่ตัดสินผลการสมัครงานโดยอัตโนมัติ คะแนนความตรงกับงานเป็นตัวช่วยเรียงลำดับ คนในบริษัทเป็นผู้ตัดสินและต้องแจ้งเหตุผลทุกครั้ง</p>
-        </section>
+        </details>
 
-        <section className="card stack-sm">
-          <h2>5. ใครเห็นข้อมูลของคุณ</h2>
+        <details className="card stack-sm legal">
+          <summary>
+            <h2>5. ใครเห็นข้อมูลของคุณ</h2>
+          </summary>
           <ul className="stack-sm">
             <li>
               <strong>บริษัทที่คุณสมัคร</strong> เห็นสำเนาโปรไฟล์ ณ วันที่สมัคร โดยไม่มีอีเมล เบอร์โทร ที่อยู่ หรือวันเกิด และเห็นเฉพาะคนในบริษัทที่ตำแหน่งมีสิทธิ์ดูแลประกาศนั้น
@@ -126,28 +142,34 @@ export default function PrivacyPage() {
               <strong>หน่วยงานรัฐ</strong> เมื่อกฎหมายกำหนดหรือมีคำสั่งที่ชอบด้วยกฎหมาย
             </li>
           </ul>
-        </section>
+        </details>
 
-        <section className="card stack-sm">
-          <h2>6. การส่งข้อมูลไปต่างประเทศ</h2>
+        <details className="card stack-sm legal">
+          <summary>
+            <h2>6. การส่งข้อมูลไปต่างประเทศ</h2>
+          </summary>
           <p>
             เซิร์ฟเวอร์ของผู้ให้บริการบางรายอาจอยู่นอกประเทศไทย (เช่น สิงคโปร์) เราเลือกผู้ให้บริการที่มีมาตรฐานการคุ้มครองข้อมูลที่เพียงพอ
             และมีข้อตกลงคุ้มครองข้อมูลตามที่ PDPA มาตรา 28 และ 29 กำหนด
           </p>
-        </section>
+        </details>
 
-        <section className="card stack-sm">
-          <h2>7. เก็บนานเท่าไร</h2>
+        <details className="card stack-sm legal">
+          <summary>
+            <h2>7. เก็บนานเท่าไร</h2>
+          </summary>
           <ul className="stack-sm">
             <li>ข้อมูลบัญชีและโปรไฟล์ เก็บตลอดที่คุณมีบัญชี</li>
             <li>เมื่อคุณลบบัญชี เราลบโปรไฟล์ แผนอาชีพ ใบสมัคร ผลงานโจทย์ และไฟล์ที่คุณอัปโหลดทันที</li>
             <li>รหัสเชื่อม LINE หมดอายุใน 15 นาที ลิงก์ดูเอกสารที่ส่งให้บริษัทหมดอายุใน 10 นาที</li>
             <li>บันทึกด้านความปลอดภัยและบันทึกการเปลี่ยนสิทธิ์ในพื้นที่บริษัท เก็บเท่าที่จำเป็นต่อการตรวจสอบหรือตามที่กฎหมายกำหนด</li>
           </ul>
-        </section>
+        </details>
 
-        <section className="card stack-sm">
-          <h2>8. สิทธิของคุณ</h2>
+        <details className="card stack-sm legal">
+          <summary>
+            <h2>8. สิทธิของคุณ</h2>
+          </summary>
           <p>คุณมีสิทธิตาม PDPA มาตรา 30–42 และใช้หลายข้อได้เองทันทีในระบบ</p>
           <ul className="stack-sm">
             <li>ขอเข้าถึงและรับสำเนาข้อมูล: ดาวน์โหลดข้อมูลทั้งหมดเป็นไฟล์ได้ที่ <Link href="/me/privacy">ความเป็นส่วนตัว</Link></li>
@@ -157,28 +179,34 @@ export default function PrivacyPage() {
             <li>คัดค้าน ขอระงับการใช้ หรือขอให้โอนข้อมูล: ติดต่อเรา{SUPPORT_EMAIL ? `ที่ ${SUPPORT_EMAIL}` : ''} เราจะตอบภายใน 30 วัน</li>
             <li>ร้องเรียนต่อสำนักงานคณะกรรมการคุ้มครองข้อมูลส่วนบุคคล (สคส.) ได้ หากเห็นว่าเราไม่ปฏิบัติตามกฎหมาย</li>
           </ul>
-        </section>
+        </details>
 
-        <section className="card stack-sm">
-          <h2>9. ความปลอดภัย</h2>
+        <details className="card stack-sm legal">
+          <summary>
+            <h2>9. ความปลอดภัย</h2>
+          </summary>
           <p>
             เชื่อมต่อแบบเข้ารหัส (HTTPS) จำกัดสิทธิ์การเข้าถึงข้อมูลในระดับฐานข้อมูลแยกตามผู้ใช้และตำแหน่ง ไฟล์เก็บแบบส่วนตัวและเปิดดูผ่านลิงก์ที่หมดอายุ
             บันทึกการเปลี่ยนสิทธิ์ทุกครั้ง หากเกิดเหตุละเมิดข้อมูลที่มีความเสี่ยง เราจะแจ้ง สคส. ภายใน 72 ชั่วโมง และแจ้งคุณโดยไม่ชักช้าเมื่อมีความเสี่ยงสูง
           </p>
-        </section>
+        </details>
 
-        <section className="card stack-sm">
-          <h2>10. ผู้เยาว์</h2>
+        <details className="card stack-sm legal">
+          <summary>
+            <h2>10. ผู้เยาว์</h2>
+          </summary>
           <p>
             บริการนี้ออกแบบสำหรับนักศึกษาชั้นปีสุดท้ายและผู้หางาน หากคุณอายุต่ำกว่า 20 ปี และยังไม่บรรลุนิติภาวะ
             การให้ความยินยอมบางเรื่องต้องได้รับความยินยอมจากผู้ใช้อำนาจปกครองตามที่กฎหมายกำหนด
           </p>
-        </section>
+        </details>
 
-        <section className="card stack-sm">
-          <h2>11. การเปลี่ยนแปลงนโยบาย</h2>
+        <details className="card stack-sm legal">
+          <summary>
+            <h2>11. การเปลี่ยนแปลงนโยบาย</h2>
+          </summary>
           <p>หากเปลี่ยนแปลงสาระสำคัญ เราจะแจ้งในระบบล่วงหน้าอย่างน้อย 7 วัน และขอความยินยอมใหม่ในเรื่องที่ต้องใช้ความยินยอม</p>
-        </section>
+        </details>
         <p className="small">
           อ่านต่อ: <Link href="/terms">เงื่อนไขการใช้งาน</Link>
         </p>

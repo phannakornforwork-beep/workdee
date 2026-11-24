@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { ActionForm, SubmitButton } from '@/components/forms';
-import { Badge, Empty } from '@/components/ui';
+import { Badge, Empty, PageTitle } from '@/components/ui';
 import { createLineCodeAction, markAllReadAction, savePrefsAction, setQuietConsentAction, unlinkLineAction } from '@/lib/actions/notify';
 import { LINE_ADD_FRIEND_URL } from '@/lib/env';
 import { relative } from '@/lib/format';
@@ -28,15 +28,14 @@ export async function NotificationsView({ userId, companyId, quiet }: { userId: 
   return (
     <div className="split">
       <div className="main">
-        <div className="row-between">
-          <h1>การแจ้งเตือน</h1>
+        <PageTitle title="การแจ้งเตือน" plain>
           <form action={markAllReadAction}>
             <input type="hidden" name="company_id" value={companyId || ''} />
             <button type="submit" className="btn ghost small">
               อ่านทั้งหมดแล้ว
             </button>
           </form>
-        </div>
+        </PageTitle>
         {list.length === 0 ? <Empty>ยังไม่มีการแจ้งเตือน</Empty> : null}
         <div className="stack">
           {list.map((n) => {
@@ -46,7 +45,7 @@ export async function NotificationsView({ userId, companyId, quiet }: { userId: 
                   <span className={n.read_at ? '' : 'strong'}>
                     {n.urgent ? <Badge tone="orange">ด่วน</Badge> : null} {n.title}
                   </span>
-                  {n.body ? <span className="small muted prewrap">{n.body}</span> : null}
+                  {n.body ? <span className="small muted clamp-2">{n.body}</span> : null}
                 </div>
                 <span className="tiny muted">{relative(n.created_at)}</span>
               </div>
@@ -68,7 +67,7 @@ export async function NotificationsView({ userId, companyId, quiet }: { userId: 
           <h2>LINE</h2>
           {linked ? (
             <>
-              <p className="small">เชื่อมแล้ว ระบบจะส่งเรื่องสำคัญเข้า LINE ของคุณ</p>
+              <p className="small">เชื่อมแล้ว</p>
               <form action={unlinkLineAction}>
                 <button type="submit" className="btn small ghost">
                   ยกเลิกการเชื่อม
@@ -79,7 +78,7 @@ export async function NotificationsView({ userId, companyId, quiet }: { userId: 
             <ActionForm action={createLineCodeAction}>
               <p className="small muted">
                 1) เพิ่มเพื่อนบัญชี LINE ของ WorkDee {LINE_ADD_FRIEND_URL ? <a href={LINE_ADD_FRIEND_URL} target="_blank" rel="noreferrer">เปิดใน LINE</a> : null}
-                <br />2) กดสร้างรหัส แล้วพิมพ์รหัส 6 หลักในแชตกับ WorkDee
+                <br />2) สร้างรหัส แล้วพิมพ์ในแชต
               </p>
               <SubmitButton className="btn small">สร้างรหัสเชื่อม LINE</SubmitButton>
             </ActionForm>
@@ -89,13 +88,13 @@ export async function NotificationsView({ userId, companyId, quiet }: { userId: 
           <section className="card">
             <h2>ช่วงเวลาเงียบ</h2>
             <p className="small muted">
-              ข้อความหลัง {quiet.start.slice(0, 5)} ถึง {quiet.end.slice(0, 5)} จะส่งเข้า LINE หรืออีเมลตอนเช้า ตามแนวทางสิทธิปฏิเสธการติดต่อนอกเวลางาน
+              {quiet.start.slice(0, 5)}–{quiet.end.slice(0, 5)} แจ้งเตือนจะรอส่งตอนเช้า
             </p>
             <form action={setQuietConsentAction} className="stack-sm">
               <input type="hidden" name="company_id" value={companyId} />
               <label className="check">
                 <input type="checkbox" name="consent" defaultChecked={quiet.consent} />
-                <span>ยินยอมรับเรื่องด่วนนอกเวลางาน (เปลี่ยนใจได้ทุกเมื่อ ไม่มีผลต่อการประเมิน)</span>
+                <span>รับเรื่องด่วนนอกเวลางาน</span>
               </label>
               <button type="submit" className="btn small ghost">
                 บันทึก
@@ -105,7 +104,7 @@ export async function NotificationsView({ userId, companyId, quiet }: { userId: 
         ) : null}
         <ActionForm action={savePrefsAction} className="card">
           <h2>ตั้งค่าช่องทาง</h2>
-          <p className="small muted">ในแอปเปิดเสมอ · SMS ใช้กับเรื่องด่วนเท่านั้น · LINE ใช้ได้หลังเชื่อม</p>
+          <p className="small muted">SMS ใช้กับเรื่องด่วนเท่านั้น</p>
           <input type="hidden" name="kinds" value={kindList.map((k) => k.kind).join(',')} />
           <div className="table-wrap">
             <table className="table">
@@ -125,7 +124,6 @@ export async function NotificationsView({ userId, companyId, quiet }: { userId: 
                     <tr key={k.kind}>
                       <td>
                         <div className="small strong">{k.label}</div>
-                        {k.description ? <div className="tiny muted">{k.description}</div> : null}
                       </td>
                       <td>
                         <input type="checkbox" name={`${k.kind}:email`} aria-label={`${k.label} ทางอีเมล`} defaultChecked={p ? p.email : def(k.default_email)} />
@@ -147,7 +145,7 @@ export async function NotificationsView({ userId, companyId, quiet }: { userId: 
               <input type="hidden" name="digest_present" value="1" />
               <label className="check">
                 <input type="checkbox" name="digest_enabled" defaultChecked={settings ? Boolean(settings.digest_enabled) : true} />
-                <span>รับสรุปประจำวันตอนเช้า (เรื่องที่ต้องตอบ โจทย์รอให้คะแนน นัดสัมภาษณ์ และเรื่องรออนุมัติ)</span>
+                <span>รับสรุปประจำวันตอนเช้า</span>
               </label>
             </>
           ) : null}

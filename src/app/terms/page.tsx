@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { Footer, PublicHeader } from '@/components/PublicHeader';
-import { Alert } from '@/components/ui';
+import { Alert, PageTitle } from '@/components/ui';
 import { SUPPORT_EMAIL } from '@/lib/env';
 import { LEGAL_UPDATED, OPERATOR_NAME } from '@/lib/legal';
 
@@ -13,40 +13,56 @@ export default function TermsPage() {
     <>
       <PublicHeader />
       <main className="container page" style={{ maxWidth: 820 }}>
-        <div className="stack-sm">
-          <h1>เงื่อนไขการใช้งาน</h1>
-          <p className="muted">ปรับปรุงล่าสุด {LEGAL_UPDATED}</p>
-        </div>
-        <Alert tone="warn">ฉบับร่างสำหรับช่วงนำร่อง ต้องให้ผู้เชี่ยวชาญกฎหมายตรวจก่อนเปิดให้บุคคลทั่วไปใช้งาน</Alert>
+        <PageTitle plain title="เงื่อนไขการใช้งาน" sub={`ปรับปรุงล่าสุด ${LEGAL_UPDATED}`} />
+        <Alert tone="warn">ฉบับร่างช่วงนำร่อง รอผู้เชี่ยวชาญกฎหมายตรวจ</Alert>
 
-        <section className="card stack-sm">
-          <h2>1. บริการนี้คืออะไร</h2>
+        <section className="card">
+          <h2>สรุปสั้น</h2>
+          <ul className="stack-sm">
+            <li>ผู้หางานใช้ฟรี ผลงานโจทย์เป็นของคุณ</li>
+            <li>บริษัทต้องตอบผู้สมัครใน 7 วัน</li>
+            <li>ห้ามแอบอ้าง ห้ามเก็บเงินจากผู้หางาน</li>
+            <li>WorkDee เป็นตัวกลาง ไม่ใช่นายจ้าง</li>
+          </ul>
+          <p className="small muted">แตะหัวข้อด้านล่างเพื่ออ่านรายละเอียด</p>
+        </section>
+
+        <details className="card stack-sm legal">
+          <summary>
+            <h2>1. บริการนี้คืออะไร</h2>
+          </summary>
           <p>
             WorkDee ให้บริการโดย {operator} เป็นแพลตฟอร์มที่ช่วยให้ผู้หางาน โดยเฉพาะเด็กจบใหม่ พิสูจน์ความสามารถผ่านโจทย์จากงานจริง และช่วยให้บริษัทจัดการการสรรหาและทีมงาน
             การใช้บริการถือว่าคุณยอมรับเงื่อนไขนี้และ <Link href="/privacy">นโยบายความเป็นส่วนตัว</Link>
           </p>
-        </section>
+        </details>
 
-        <section className="card stack-sm">
-          <h2>2. บัญชีของคุณ</h2>
+        <details className="card stack-sm legal">
+          <summary>
+            <h2>2. บัญชีของคุณ</h2>
+          </summary>
           <ul className="stack-sm">
             <li>ใช้ชื่อจริงและข้อมูลที่ถูกต้อง หนึ่งคนหนึ่งบัญชี และดูแลรหัสผ่านของตนเอง</li>
             <li>บัญชีเดียวใช้ได้ทั้งพื้นที่ส่วนตัวและพื้นที่บริษัท ข้อมูลสองพื้นที่แยกจากกัน</li>
             <li>ห้ามแอบอ้างเป็นบุคคลอื่น บริษัทอื่น หรือสถาบันการศึกษา และห้ามอัปโหลดเอกสารปลอม</li>
           </ul>
-        </section>
+        </details>
 
-        <section className="card stack-sm">
-          <h2>3. สำหรับผู้หางาน</h2>
+        <details className="card stack-sm legal">
+          <summary>
+            <h2>3. สำหรับผู้หางาน</h2>
+          </summary>
           <ul className="stack-sm">
             <li>ผลงานโจทย์เป็นของคุณ บริษัทใช้ได้เพื่อประเมินการสมัครครั้งนั้นเท่านั้น ไม่มีสิทธิ์นำไปใช้เชิงพาณิชย์ เว้นแต่ตกลงกับคุณเป็นลายลักษณ์อักษร</li>
             <li>บอกตามจริงว่าใช้ AI หรือความช่วยเหลือจากผู้อื่นส่วนไหน ตามนโยบายที่แต่ละโจทย์กำหนด</li>
             <li>คุณถอนใบสมัครหรือถอนสิทธิ์บริษัทในการเข้าถึงโปรไฟล์ได้ทุกเมื่อ</li>
           </ul>
-        </section>
+        </details>
 
-        <section className="card stack-sm">
-          <h2>4. สำหรับบริษัท</h2>
+        <details className="card stack-sm legal">
+          <summary>
+            <h2>4. สำหรับบริษัท</h2>
+          </summary>
           <ul className="stack-sm">
             <li>ต้องเป็นนิติบุคคลที่จดทะเบียนในประเทศไทยและผ่านการยืนยันก่อนเผยแพร่ประกาศ</li>
             <li>ประกาศต้องเป็นตำแหน่งที่มีอยู่จริง ระบุค่าตอบแทนตามจริง และไม่เลือกปฏิบัติด้วยเหตุแห่งเพศ อายุ ศาสนา ความพิการ หรือเหตุอื่นที่กฎหมายห้าม</li>
@@ -55,42 +71,52 @@ export default function TermsPage() {
             <li>ใช้ข้อมูลผู้สมัครเพื่อการสรรหาตำแหน่งนั้นเท่านั้น ห้ามคัดลอกออกไปเก็บ ห้ามติดต่อผู้สมัครเพื่อเรื่องอื่น และห้ามจัดทำหรือแลกเปลี่ยนรายชื่อบุคคลที่ไม่ควรจ้าง</li>
             <li>ผู้ดูแลบริษัทรับผิดชอบการมอบสิทธิ์ในพื้นที่บริษัท และต้องไม่ใช้ระบบติดตามพนักงานเกินกว่าที่จำเป็นต่อการทำงาน</li>
           </ul>
-        </section>
+        </details>
 
-        <section className="card stack-sm">
-          <h2>5. สิ่งที่ห้ามทำ</h2>
+        <details className="card stack-sm legal">
+          <summary>
+            <h2>5. สิ่งที่ห้ามทำ</h2>
+          </summary>
           <ul className="stack-sm">
             <li>ส่งข้อความหรือเนื้อหาที่ผิดกฎหมาย หมิ่นประมาท คุกคาม ล่วงละเมิด หรือเลือกปฏิบัติ</li>
             <li>เก็บข้อมูลจากระบบด้วยโปรแกรมอัตโนมัติ เจาะระบบ หรือพยายามเข้าถึงข้อมูลที่ไม่ได้รับสิทธิ์</li>
             <li>เรียกเก็บเงินจากผู้หางานเพื่อแลกกับการพิจารณาหรือรับเข้าทำงาน</li>
           </ul>
-        </section>
+        </details>
 
-        <section className="card stack-sm">
-          <h2>6. การระงับบัญชี</h2>
+        <details className="card stack-sm legal">
+          <summary>
+            <h2>6. การระงับบัญชี</h2>
+          </summary>
           <p>
             เราอาจระงับประกาศหรือบัญชีที่ละเมิดเงื่อนไข โดยแจ้งเหตุผลให้ทราบ ยกเว้นกรณีที่การแจ้งอาจเป็นอันตรายต่อผู้อื่นหรือขัดต่อกฎหมาย
             คุณโต้แย้งได้โดยติดต่อเรา{SUPPORT_EMAIL ? `ที่ ${SUPPORT_EMAIL}` : ''}
           </p>
-        </section>
+        </details>
 
-        <section className="card stack-sm">
-          <h2>7. ความรับผิด</h2>
+        <details className="card stack-sm legal">
+          <summary>
+            <h2>7. ความรับผิด</h2>
+          </summary>
           <p>
             WorkDee เป็นตัวกลางในการเชื่อมต่อ ไม่ใช่นายจ้างหรือตัวแทนจัดหางาน และไม่รับประกันผลการสมัครงาน การจ้างงานเป็นข้อตกลงระหว่างผู้สมัครกับบริษัทโดยตรง
             เราให้บริการตามสภาพที่เป็นอยู่ในช่วงนำร่อง และจะพยายามอย่างเหมาะสมให้บริการต่อเนื่องและปลอดภัย
           </p>
-        </section>
+        </details>
 
-        <section className="card stack-sm">
-          <h2>8. ค่าบริการ</h2>
+        <details className="card stack-sm legal">
+          <summary>
+            <h2>8. ค่าบริการ</h2>
+          </summary>
           <p>ผู้หางานใช้ได้ฟรี บริษัทใช้ได้ฟรีในช่วงนำร่อง หากเริ่มเก็บค่าบริการ เราจะแจ้งอัตราและเงื่อนไขล่วงหน้าอย่างน้อย 30 วัน</p>
-        </section>
+        </details>
 
-        <section className="card stack-sm">
-          <h2>9. กฎหมายที่ใช้บังคับ</h2>
+        <details className="card stack-sm legal">
+          <summary>
+            <h2>9. กฎหมายที่ใช้บังคับ</h2>
+          </summary>
           <p>เงื่อนไขนี้อยู่ภายใต้กฎหมายไทย หากเปลี่ยนแปลงสาระสำคัญ เราจะแจ้งในระบบล่วงหน้าอย่างน้อย 7 วัน</p>
-        </section>
+        </details>
       </main>
       <Footer />
     </>

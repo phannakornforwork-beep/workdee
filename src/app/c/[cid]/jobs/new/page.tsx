@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { can, requireCompany } from '@/lib/auth';
-import { NoAccess } from '@/components/ui';
+import { NoAccess, PageTitle } from '@/components/ui';
 import { JobForm } from '@/components/JobForm';
 import { JOB_TEMPLATES } from '@/lib/templates';
 
@@ -20,10 +20,7 @@ export default async function NewJob({ params, searchParams }: { params: Promise
   const t = JOB_TEMPLATES.find((x) => x.key === sp.template);
   return (
     <>
-      <Link href={`/c/${cid}/jobs`} className="small">
-        ← ประกาศทั้งหมด
-      </Link>
-      <h1>ลงประกาศใหม่</h1>
+      <PageTitle plain back={{ href: `/c/${cid}/jobs`, label: 'ประกาศงาน' }} title="ลงประกาศใหม่" />
       <div className="card soft tight">
         <span className="strong">เริ่มจากเทมเพลต</span>
         <div className="chips">

@@ -5,7 +5,8 @@ import { requireCompany } from '@/lib/auth';
 import { ActionForm, SubmitButton } from '@/components/forms';
 import { ChatRoom, type ChatMessage } from '@/components/ChatRoom';
 import { afterChatSendAction } from '@/lib/actions/chat';
-import { Alert, Avatar, Badge, StageBadge, VerifyBadge } from '@/components/ui';
+import { Alert, Avatar, Badge, PageTitle, StageBadge, VerifyBadge } from '@/components/ui';
+import { ShowMore } from '@/components/ShowMore';
 import { mediaUrl } from '@/lib/env';
 import { GradeForm } from './GradeForm';
 import { AiScorePanel, type AppAi } from '@/components/ai/AiScorePanel';
@@ -99,28 +100,29 @@ export default async function ApplicantPage({ params }: { params: Promise<{ cid:
 
   return (
     <>
-      <Link href={`/c/${cid}/pipeline?job=${d.job.id}`} className="small">
-        ← กลับไปกระดานผู้สมัคร
-      </Link>
-      <div className="row-between">
-        <div className="stack-sm">
-          <Avatar src={mediaUrl(snap?.photo_path)} name={a.candidate_name} size={72} />
-          <span className="muted">{d.job.title} · สมัครเมื่อ {thaiDateTime(a.created_at)}</span>
-          <h1>{a.candidate_name}</h1>
-          <div className="chips">
-            <StageBadge stage={a.stage} />
-            <VerifyBadge level={a.verify_level} />
-            <Badge tone="teal">ตรงกับงาน {a.match_score}%</Badge>
-            {a.sla_due_at ? <Badge tone={(new Date(a.sla_due_at).getTime() - Date.now()) / 86400000 <= 2 ? 'red' : 'gray'}>ต้องตอบ{dueText(a.sla_due_at)}</Badge> : null}
-          </div>
-        </div>
+      <PageTitle
+        plain
+        back={{ href: `/c/${cid}/pipeline?job=${d.job.id}`, label: 'ผู้สมัคร' }}
+        title={
+          <span className="card-head">
+            <Avatar src={mediaUrl(snap?.photo_path)} name={a.candidate_name} size={56} />
+            {a.candidate_name}
+          </span>
+        }
+        sub={`${d.job.title} · สมัคร ${thaiDateTime(a.created_at)}`}
+      />
+      <div className="chips">
+        <StageBadge stage={a.stage} />
+        <VerifyBadge level={a.verify_level} />
+        <Badge tone="teal">ตรงกับงาน {a.match_score}%</Badge>
+        {a.sla_due_at ? <Badge tone={(new Date(a.sla_due_at).getTime() - Date.now()) / 86400000 <= 2 ? 'red' : 'gray'}>ต้องตอบ{dueText(a.sla_due_at)}</Badge> : null}
       </div>
-      {!snap ? <Alert tone="warn">ผู้สมัครถอนสิทธิ์การเข้าถึงโปรไฟล์แล้ว เหลือเฉพาะประวัติการดำเนินการ</Alert> : null}
+      {!snap ? <Alert tone="warn">ผู้สมัครถอนสิทธิ์ดูโปรไฟล์แล้ว</Alert> : null}
       {a.stage === 'rejected' ? (
         <Alert tone="info">
           ปิดแล้ว · เหตุผล: {a.reject_labels}
           {a.reject_note ? ` · ${a.reject_note}` : ''}
-          {a.closed_by_system ? ' · ระบบปิดเพราะไม่ได้ตอบใน 7 วัน (นับในอัตราการตอบของบริษัท)' : ''}
+          {a.closed_by_system ? ' · ระบบปิดเพราะเลย 7 วัน' : ''}
         </Alert>
       ) : null}
 
@@ -138,13 +140,19 @@ export default async function ApplicantPage({ params }: { params: Promise<{ cid:
           ) : null}
           {snap ? (
             <section className="card">
-              <h2>โปรไฟล์ (สำเนา ณ วันที่สมัคร)</h2>
+              <h2>โปรไฟล์</h2>
               {snap.headline ? <p className="strong">{snap.headline}</p> : null}
-              {snap.intro ? <p className="prewrap">{snap.intro}</p> : null}
+              {snap.intro ? (
+                <ShowMore>
+                  <p className="prewrap">{snap.intro}</p>
+                </ShowMore>
+              ) : null}
               {a.intro_message ? (
                 <div className="card soft tight">
                   <span className="tiny muted">ข้อความถึงบริษัทนี้</span>
-                  <span className="prewrap">{a.intro_message}</span>
+                  <ShowMore>
+                    <span className="prewrap">{a.intro_message}</span>
+                  </ShowMore>
                 </div>
               ) : null}
               <dl className="kv">
@@ -196,15 +204,14 @@ export default async function ApplicantPage({ params }: { params: Promise<{ cid:
                   </>
                 ) : null}
                 <dt>ค่าตอบแทนที่คาดหวัง</dt>
-                <dd>{a.expected_salary ? `${money(a.expected_salary)} บาท` : 'ไม่ระบุ'} (ช่วงในประกาศ {salaryRange(d.job.salary_min, d.job.salary_max, d.job.pay_unit)})</dd>
+                <dd>{a.expected_salary ? `${money(a.expected_salary)} บาท` : 'ไม่ระบุ'} <span className="muted">(ประกาศ {salaryRange(d.job.salary_min, d.job.salary_max, d.job.pay_unit)})</span></dd>
                 <dt>จังหวัด / อายุ</dt>
                 <dd>
                   {snap.province || '-'} · {snap.age ? `${snap.age} ปี` : 'ไม่แสดงอายุ'}
                 </dd>
                 <dt>แผนอาชีพ</dt>
-                <dd>{snap.plan ? `${snap.plan.goal_title}${snap.plan.goal_detail ? ` · ${snap.plan.goal_detail}` : ''}` : 'ผู้สมัครเลือกไม่แชร์แผนอาชีพ'}</dd>
+                <dd>{snap.plan ? `${snap.plan.goal_title}${snap.plan.goal_detail ? ` · ${snap.plan.goal_detail}` : ''}` : 'ไม่แชร์'}</dd>
               </dl>
-              <p className="tiny muted">ไม่มีอีเมล เบอร์โทร ที่อยู่ หรือวันเกิด ติดต่อผู้สมัครผ่านแชตด้านล่าง</p>
             </section>
           ) : null}
 
@@ -214,8 +221,10 @@ export default async function ApplicantPage({ params }: { params: Promise<{ cid:
                 <h2>คำตอบโจทย์ {d.challenge ? `· ${d.challenge.title}` : ''}</h2>
                 <span className="small muted">ส่ง {thaiDateTime(d.submission.submitted_at)}</span>
               </div>
-              {d.submission.reused_from ? <Alert tone="info">ผู้สมัครใช้ผลโจทย์เดิมของสกิลเดียวกันจากอีกใบสมัคร</Alert> : null}
-              <p className="prewrap">{d.submission.answer || '(ส่งเป็นไฟล์หรือลิงก์)'}</p>
+              {d.submission.reused_from ? <Alert tone="info">ใช้ผลโจทย์เดิม</Alert> : null}
+              <ShowMore lines={6}>
+                <p className="prewrap">{d.submission.answer || '(ส่งเป็นไฟล์หรือลิงก์)'}</p>
+              </ShowMore>
               {d.submission.links?.length ? (
                 <div className="stack-sm">
                   {d.submission.links.map((l) => (
@@ -239,10 +248,11 @@ export default async function ApplicantPage({ params }: { params: Promise<{ cid:
                   <strong>การใช้ AI:</strong> {AI_USE[d.submission.ai_use]}
                   {d.submission.ai_detail ? ` · ${d.submission.ai_detail}` : ''}
                 </span>
-                <span className="small">
-                  <strong>เหตุผลที่เลือกทำแบบนี้:</strong> {d.submission.reasoning}
-                </span>
-                <span className="tiny muted">แนะนำ: ใช้ 10 นาทีแรกของการสัมภาษณ์ให้ผู้สมัครอธิบายคำตอบนี้</span>
+                <ShowMore lines={2}>
+                  <span className="small">
+                    <strong>เหตุผล:</strong> {d.submission.reasoning}
+                  </span>
+                </ShowMore>
               </div>
               {d.score ? (
                 <div className="card tight">
@@ -294,7 +304,7 @@ export default async function ApplicantPage({ params }: { params: Promise<{ cid:
                     : latestInterview.status === 'reschedule_requested'
                       ? `ผู้สมัครขอเลื่อน: ${latestInterview.candidate_note}`
                       : latestInterview.status === 'completed'
-                        ? 'สัมภาษณ์แล้ว ตัดสินใจขั้นต่อไปภายใน 7 วัน'
+                        ? 'สัมภาษณ์แล้ว ตัดสินใจใน 7 วัน'
                         : latestInterview.status === 'no_show'
                           ? 'ผู้สมัครไม่มาตามนัด'
                           : 'ยกเลิกแล้ว'}
@@ -356,7 +366,7 @@ export default async function ApplicantPage({ params }: { params: Promise<{ cid:
           {!closed && a.stage !== 'offer' ? (
             <section className="card highlight">
               <h2>ขั้นต่อไป</h2>
-              {ungraded ? <p className="small">ให้คะแนนโจทย์ก่อน แล้วจึงเชิญสัมภาษณ์หรือปฏิเสธได้</p> : null}
+              {ungraded ? <p className="small">ให้คะแนนโจทย์ก่อน</p> : null}
               {a.stage === 'applied' && d.challenge ? (
                 <ActionForm action={inviteChallengeOneAction}>
                   <input type="hidden" name="company_id" value={cid} />
@@ -420,7 +430,7 @@ export default async function ApplicantPage({ params }: { params: Promise<{ cid:
                         <input id="expires_days" name="expires_days" className="input" inputMode="numeric" defaultValue="5" />
                       </div>
                     </div>
-                    <textarea name="note" className="textarea" aria-label="รายละเอียดข้อเสนอ" placeholder="สวัสดิการ ระยะสัญญา เงื่อนไขทดลองงาน" />
+                    <textarea name="note" className="textarea" aria-label="รายละเอียดข้อเสนอ" placeholder="สวัสดิการ สัญญา ทดลองงาน" />
                     <span className="hint">เกิน {money(d.job.salary_max)} ต้องให้เจ้าของอนุมัติก่อนส่ง (ถ้าเปิดกฎ)</span>
                     <SubmitButton className="btn small">ส่งข้อเสนอ</SubmitButton>
                   </ActionForm>

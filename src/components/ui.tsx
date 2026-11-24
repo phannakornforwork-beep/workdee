@@ -89,14 +89,47 @@ export function Avatar({
   );
 }
 
-export function PageTitle({ title, sub, children }: { title: string; sub?: React.ReactNode; children?: React.ReactNode }) {
+// หัวหน้าแบบ JobsDB: แถบกรมท่าเต็มความกว้าง มีชื่อหน้า ประโยคสั้นหนึ่งบรรทัด และปุ่มหลักด้านขวา
+// plain = หัวหน้าแบบเรียบไม่มีพื้น (ใช้กับหน้าย่อย/หน้ารายละเอียด)
+export function PageTitle({
+  title,
+  sub,
+  children,
+  back,
+  search,
+  plain = false
+}: {
+  title: React.ReactNode;
+  sub?: React.ReactNode;
+  children?: React.ReactNode;
+  back?: { href: string; label: string };
+  search?: React.ReactNode;
+  plain?: boolean;
+}) {
   return (
-    <div className="row-between">
-      <div className="stack-sm">
+    <header className={`page-head${plain ? ' plain' : ''}`}>
+      <div className="stack-sm" style={{ minWidth: 0 }}>
+        {back ? (
+          <Link href={back.href} className="back-link">
+            ‹ {back.label}
+          </Link>
+        ) : null}
         <h1>{title}</h1>
-        {sub ? <p className="muted">{sub}</p> : null}
+        {sub ? <p className="sub">{sub}</p> : null}
       </div>
       {children ? <div className="row">{children}</div> : null}
+      {search ? <div className="page-search">{search}</div> : null}
+    </header>
+  );
+}
+
+// หัวข้อส่วน: ชื่อทางซ้าย ลิงก์ "ดูทั้งหมด" ทางขวา และคำอธิบายสั้นใต้ชื่อ (ไม่บังคับ)
+export function SectionHead({ title, sub, action }: { title: React.ReactNode; sub?: React.ReactNode; action?: React.ReactNode }) {
+  return (
+    <div className="section-head">
+      <h2>{title}</h2>
+      {action}
+      {sub ? <p className="sub">{sub}</p> : null}
     </div>
   );
 }

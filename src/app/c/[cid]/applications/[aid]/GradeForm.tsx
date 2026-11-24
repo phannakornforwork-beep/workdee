@@ -49,7 +49,7 @@ export function GradeForm({
               {aiPending ? 'AI กำลังตรวจ…' : ai ? 'ให้ AI ตรวจใหม่' : 'ร่างคะแนนด้วย AI'}
             </button>
           </div>
-          <span className="tiny muted">AI ให้คะแนนพร้อมเหตุผลทุกเกณฑ์ คุณปรับได้ คะแนนนับเมื่อคุณกด &ldquo;บันทึกคะแนน&rdquo; เท่านั้น</span>
+          <span className="tiny muted">AI ร่าง คุณปรับและกดบันทึก</span>
           {aiError ? <span className="small error-text" role="alert">{aiError}</span> : null}
           {aiNote ? <span className="small ok-text" role="status">{aiNote}</span> : null}
         </div>

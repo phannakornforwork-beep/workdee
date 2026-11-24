@@ -30,9 +30,9 @@ const TITLES: Record<ActionKind, string> = {
 };
 
 const TOUR = [
-  'คอลัมน์คือขั้นของการสมัคร จากซ้ายไปขวา ผู้สมัครทุกคนต้องได้คำตอบในทุกขั้นภายใน 7 วัน',
-  'ป้ายบนการ์ดบอกระดับการยืนยันวุฒิ สถานะโจทย์ และวันที่เหลือ ตัวเลขสีส้มคือใกล้ครบกำหนด',
-  'กด "เลือกหลายคน" เพื่อปฏิเสธ เชิญเข้ารอบโจทย์ เชิญสัมภาษณ์ หรือส่งข้อความหลายคนพร้อมกันด้วยข้อความเดียว'
+  'แต่ละคอลัมน์คือขั้นของการสมัคร ต้องตอบทุกคนใน 7 วัน',
+  'ตัวเลขสีส้มบนการ์ด = ใกล้ครบกำหนด',
+  'กด "เลือกหลายคน" เพื่อตอบหลายคนพร้อมกัน'
 ];
 
 function daysLeft(iso: string | null) {
@@ -255,7 +255,7 @@ export function PipelineBoard({
       {tour > 0 ? (
         <section className="alert info row-between" aria-live="polite">
           <span style={{ flex: '1 1 420px' }}>
-            <strong>ทัวร์สั้น · ขั้น {tour} จาก 3</strong>
+            <strong>แนะนำ {tour}/3</strong>
             <br />
             {TOUR[tour - 1]}
           </span>
@@ -272,19 +272,12 @@ export function PipelineBoard({
 
       <div className="row-between">
         <div className="row small">
-          {urgent ? <span className="badge red">{urgent} คนต้องได้คำตอบภายใน 2 วัน</span> : null}
-          {jobs
-            .filter((j) => j.has_challenge)
-            .map((j) => (
-              <span key={j.id} className="muted">
-                {j.title}: ที่นั่งรอบโจทย์ {j.seats_used}/{j.challenge_seats}
-              </span>
-            ))}
+          {urgent ? <span className="badge red">ต้องตอบใน 2 วัน {urgent} คน</span> : null}
         </div>
         <div className="row">
           {tour === 0 ? (
             <button type="button" className="btn link small" onClick={() => setTour(1)}>
-              ดูทัวร์อีกครั้ง
+              วิธีใช้
             </button>
           ) : null}
           <button
@@ -324,7 +317,7 @@ export function PipelineBoard({
           <span className="strong" style={{ flex: '1 1 140px' }}>
             เลือกแล้ว {selected.length} คน
           </span>
-          {selected.length === 0 ? <span className="small" style={{ color: '#d7dade' }}>แตะการ์ดเพื่อเลือก หรือกด &ldquo;เลือกทั้งคอลัมน์&rdquo;</span> : null}
+          {selected.length === 0 ? <span className="small" style={{ color: '#d7dade' }}>แตะการ์ดเพื่อเลือก</span> : null}
           <button type="button" className="btn small ghost" disabled={!selected.length} onClick={() => openAction('invite_challenge')}>
             เชิญเข้ารอบโจทย์
           </button>
@@ -335,7 +328,7 @@ export function PipelineBoard({
             ส่งข้อความ
           </button>
           <button type="button" className="btn small soft-danger" disabled={!selected.length} onClick={() => openAction('reject')}>
-            ปฏิเสธพร้อมเหตุผล
+            ปฏิเสธ
           </button>
         </div>
       ) : null}
@@ -349,12 +342,12 @@ export function PipelineBoard({
           {eligible.skipped.length ? (
             <p className="small muted">
               ข้าม {eligible.skipped.map((t) => t.candidate_name).join(', ')}{' '}
-              {action === 'invite_challenge' ? 'เพราะไม่ได้อยู่ขั้นรอคัด' : action === 'reject' ? 'เพราะอยู่ขั้นเสนองานแล้วหรือถอนสิทธิ์แล้ว' : action === 'invite_interview' ? 'เพราะไม่ได้อยู่ขั้นรอคัดหรือส่งโจทย์แล้ว' : 'เพราะถอนสิทธิ์แล้ว'}
+              (อยู่ขั้นที่ทำรายการนี้ไม่ได้)
             </p>
           ) : null}
           {eligible.blocked.length ? (
             <div className="alert warn row-between">
-              <span>ส่งโจทย์แล้วแต่ยังไม่ได้ให้คะแนน: {eligible.blocked.map((t) => t.candidate_name).join(', ')} · ต้องให้คะแนนก่อน เพื่อให้ผู้สมัครได้คะแนนรายเกณฑ์ตามที่สัญญาไว้</span>
+              <span>ให้คะแนนโจทย์ก่อน: {eligible.blocked.map((t) => t.candidate_name).join(', ')}</span>
               <button type="button" className="btn small ghost" onClick={() => setSelected((s) => s.filter((id) => !eligible.blocked.some((b) => b.id === id)))}>
                 เอาออกจากรายการ
               </button>
@@ -362,7 +355,7 @@ export function PipelineBoard({
           ) : null}
           {seatProblems.map((p) => (
             <div key={p} className="alert warn">
-              {p} · เลือกให้ไม่เกินที่นั่ง หรือเพิ่มที่นั่งในหน้าแก้ไขประกาศ
+              {p} · ลดจำนวนคน หรือเพิ่มที่นั่งในประกาศ
             </div>
           ))}
           {action === 'reject' ? (
@@ -431,7 +424,7 @@ export function PipelineBoard({
             </div>
           </div>
           <div className="field">
-            <label htmlFor="bulk-msg">ข้อความ (ส่งข้อความเดียวกันถึงทุกคน แก้ได้)</label>
+            <label htmlFor="bulk-msg">ข้อความถึงทุกคน</label>
             <textarea
               id="bulk-msg"
               className="textarea"
@@ -442,7 +435,7 @@ export function PipelineBoard({
                 setSavedTpl('');
               }}
             />
-            <span className="hint">พิมพ์ {'{ชื่อ}'} {'{ตำแหน่ง}'} {'{บริษัท}'} แล้วระบบแทนด้วยข้อมูลของแต่ละคนให้เอง</span>
+            <span className="hint">ใช้ {'{ชื่อ}'} {'{ตำแหน่ง}'} {'{บริษัท}'} แทนข้อมูลแต่ละคน</span>
           </div>
           {preview ? (
             <div className="card soft tight">
@@ -460,7 +453,7 @@ export function PipelineBoard({
               ยกเลิก
             </button>
             <button type="button" className="btn outline" onClick={saveTemplate} disabled={pending || msg.trim().length < 2}>
-              บันทึกเป็นข้อความสำเร็จรูป
+              บันทึกข้อความนี้
             </button>
             <button type="button" className={`btn ${action === 'reject' ? 'danger' : ''}`} onClick={send} disabled={!ready || pending}>
               {pending ? 'กำลังส่ง…' : `ส่งถึง ${eligible.targets.length} คน`}
@@ -510,7 +503,7 @@ export function PipelineBoard({
                     </span>
                     {d !== null ? (
                       <span className="tiny strong" style={{ color: d <= 2 ? 'var(--danger)' : 'var(--muted)' }}>
-                        ต้องตอบภายใน {Math.max(d, 0)} วัน
+                        เหลือ {Math.max(d, 0)} วัน
                       </span>
                     ) : null}
                   </>
@@ -522,9 +515,6 @@ export function PipelineBoard({
                 ) : (
                   <Link key={it.id} href={`/c/${companyId}/applications/${it.id}`} className="app-card">
                     {inner}
-                    <span className="tiny strong" style={{ color: 'var(--brand-ink)' }}>
-                      ดูใบสมัครเต็ม →
-                    </span>
                   </Link>
                 );
               })}
@@ -534,19 +524,19 @@ export function PipelineBoard({
       </div>
 
       {closed.length ? (
-        <section className="card">
-          <h2>ปิดใบสมัครแล้ว 14 วันล่าสุด ({closed.length})</h2>
+        <details className="card">
+          <summary className="strong" style={{ cursor: 'pointer' }}>ปิดแล้วใน 14 วัน ({closed.length})</summary>
           {closed.map((c) => (
             <div key={c.id} className="row-between small">
               <Link href={`/c/${companyId}/applications/${c.id}`}>{c.candidate_name}</Link>
               <span className="muted">
-                {c.job_title} · {c.stage === 'hired' ? 'รับเข้าทำงาน' : c.stage === 'rejected' ? `ไม่ผ่าน: ${c.reject_labels || ''}${c.closed_by_system ? ' (ระบบปิดเพราะเลย 7 วัน)' : ''}` : c.stage === 'withdrawn' ? 'ผู้สมัครถอน' : c.stage === 'declined' ? 'ปฏิเสธข้อเสนอ' : 'หมดเวลา'}
+                {c.job_title} · {c.stage === 'hired' ? 'รับเข้าทำงาน' : c.stage === 'rejected' ? `ไม่ผ่าน: ${c.reject_labels || ''}${c.closed_by_system ? ' (เลย 7 วัน)' : ''}` : c.stage === 'withdrawn' ? 'ผู้สมัครถอน' : c.stage === 'declined' ? 'ปฏิเสธข้อเสนอ' : 'หมดเวลา'}
               </span>
             </div>
           ))}
-        </section>
+        </details>
       ) : null}
-      {items.length === 0 ? <div className="empty">ยังไม่มีผู้สมัคร แชร์ลิงก์ประกาศลงเพจหรือกลุ่ม LINE เพื่อให้คนเห็นมากขึ้น</div> : null}
+      {items.length === 0 ? <div className="empty">ยังไม่มีผู้สมัคร ลองแชร์ลิงก์ประกาศในกลุ่ม LINE</div> : null}
     </div>
   );
 }

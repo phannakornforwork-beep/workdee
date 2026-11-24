@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { requireUser } from '@/lib/auth';
-import { Badge, Empty, Stat } from '@/components/ui';
+import { Badge, Empty, PageTitle, Stat } from '@/components/ui';
 import { PortfolioHideButton } from '@/components/ai/AiButtons';
 import { JOB_TYPE, thaiDate } from '@/lib/format';
 
@@ -57,10 +57,7 @@ export default async function PortfolioPage() {
 
   return (
     <>
-      <div className="stack-sm">
-        <h1>แฟ้มผลงาน</h1>
-        <p className="muted">งานที่จบบน WorkDee บันทึกที่นี่เอง ซ่อนได้ แต่แก้คะแนนไม่ได้</p>
-      </div>
+      <PageTitle title="แฟ้มผลงาน" sub="บันทึกอัตโนมัติ ซ่อนได้ แก้คะแนนไม่ได้" />
       <div className="grid-sm">
         <Stat label="โจทย์ที่ได้คะแนน" value={p.stats.done} />
         <Stat label="คะแนนเฉลี่ย" value={p.stats.avg ?? '–'} />
@@ -78,11 +75,10 @@ export default async function PortfolioPage() {
       <section className="card">
         <div className="row-between">
           <h2>ประวัติงาน</h2>
-
         </div>
         {p.items.length === 0 ? (
           <Empty>
-            ยังไม่มีผลงาน เมื่อบริษัทให้คะแนนโจทย์ของคุณ หรือคุณได้งานผ่าน WorkDee รายการจะขึ้นที่นี่เอง <Link href="/me">ดูงานที่ตรงกับคุณ</Link>
+            ยังไม่มีผลงาน <Link href="/me">หางาน</Link>
           </Empty>
         ) : (
           p.items.map((i) => (

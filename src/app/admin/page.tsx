@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { requireUser } from '@/lib/auth';
 import { ActionForm, SubmitButton } from '@/components/forms';
-import { Alert, Badge, Empty, Logo } from '@/components/ui';
+import { Alert, Badge, Empty, Logo, PageTitle } from '@/components/ui';
 import { reviewCompanyAction, reviewEducationAction, reviewLanguageCertAction, setCompanyStatusAction } from '@/lib/actions/admin';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { CERT_CHECK } from '@/lib/ai/labels';
@@ -85,7 +85,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         </div>
       </header>
       <main className="container page">
-        <h1>ผู้ดูแลระบบ</h1>
+        <PageTitle title="ผู้ดูแลระบบ" />
         <div className="grid-sm">
           {[
             ['ผู้ใช้ทั้งหมด', q.stats.users],
@@ -124,9 +124,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
                   <Badge tone="gray">ยังไม่แนบเอกสาร</Badge>
                 )}
               </div>
-              <p className="tiny muted">
-                ตรวจ: ชื่อและเลขทะเบียนตรงกับหนังสือรับรอง · ออกไม่เกิน 6 เดือน · สถานะนิติบุคคลยังดำเนินกิจการ (ตรวจซ้ำที่ระบบของกรมพัฒนาธุรกิจการค้าได้)
-              </p>
+              <p className="tiny muted">ตรวจ: ชื่อ/เลขทะเบียนตรง · ไม่เกิน 6 เดือน · ยังดำเนินกิจการ</p>
               {c.cert_path ? (
                 <ActionForm action={reviewCompanyAction}>
                   <input type="hidden" name="company_id" value={c.id} />
@@ -183,9 +181,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
 
         <section className="stack">
           <h2>ใบรับรองภาษารอตรวจ ({certs.length})</h2>
-          <p className="small muted">
-            AI อ่านไฟล์และตรวจชื่อ วันหมดอายุ เลขที่ผลสอบ แล้ว เทียบค่ากับไฟล์จริงก่อนยืนยัน ถ้าตรวจกับระบบของผู้จัดสอบได้ (เช่น หน้า TRF verification ของ IELTS) ใส่ลิงก์เพื่อให้เป็นระดับ &ldquo;ยืนยันกับผู้จัดสอบ&rdquo;
-          </p>
+          <p className="small muted">เทียบค่าที่ AI อ่านกับไฟล์จริง · ใส่ลิงก์ตรวจของผู้จัดสอบถ้ามี</p>
           {certs.length === 0 ? <Empty>ไม่มีใบรับรองรอตรวจ</Empty> : null}
           {certs.map((c, i) => (
             <div key={c.id} className="card">

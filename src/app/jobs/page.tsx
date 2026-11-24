@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { Footer, PublicHeader } from '@/components/PublicHeader';
 import { JobFilters, JobList } from '@/components/JobList';
+import { PageTitle, SectionHead } from '@/components/ui';
 import type { JobCard } from '@/lib/types';
 
 export const metadata: Metadata = { title: 'ประกาศงาน' };
@@ -14,11 +15,12 @@ export default async function JobsPage({ searchParams }: { searchParams: Promise
     <>
       <PublicHeader />
       <main className="container page">
-        <div className="stack-sm">
-          <h1>ประกาศงานจากบริษัทที่ยืนยันแล้ว</h1>
-          <p className="muted">ทุกประกาศบอกช่วงค่าตอบแทน และบริษัทต้องตอบผู้สมัครทุกคนภายใน 7 วัน</p>
-        </div>
-        <JobFilters action="/jobs" q={sp.q} type={sp.type} province={sp.province} />
+        <PageTitle
+          title="หางาน"
+          sub="ทุกประกาศบอกเงินเดือน และตอบผู้สมัครใน 7 วัน"
+          search={<JobFilters action="/jobs" q={sp.q} type={sp.type} province={sp.province} />}
+        />
+        <SectionHead title={sp.q || sp.type || sp.province ? `ผลการค้นหา ${(data || []).length} งาน` : 'งานล่าสุด'} />
         <JobList jobs={(data || []) as JobCard[]} />
       </main>
       <Footer />

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { requireUser } from '@/lib/auth';
 import { JobFilters, JobList } from '@/components/JobList';
+import { PageTitle, SectionHead } from '@/components/ui';
 import type { JobCard } from '@/lib/types';
 
 export const metadata: Metadata = { title: 'งานที่ตรงกับฉัน' };
@@ -19,13 +20,14 @@ export default async function MyFeed({ searchParams }: { searchParams: Promise<{
   );
   return (
     <>
-      <div className="stack-sm">
-        <h1>งานที่ตรงกับฉัน</h1>
-        <p className="muted">เรียงตามความตรงกับสกิล ประเภทงาน พื้นที่ และค่าตอบแทนที่คุณตั้งไว้</p>
-      </div>
+      <PageTitle
+        title="งานที่ตรงกับฉัน"
+        sub="เรียงตามความตรงกับโปรไฟล์ของคุณ"
+        search={<JobFilters action="/me" q={sp.q} type={sp.type} province={sp.province} />}
+      />
       {!profile?.full_name ? (
         <div className="alert warn">
-          ยังไม่มีโปรไฟล์ สร้างครั้งเดียวใช้สมัครได้ทุกงาน และทำให้คะแนนความตรงแม่นขึ้น <Link href="/me/profile">สร้างโปรไฟล์</Link>
+          ยังไม่มีโปรไฟล์ <Link href="/me/profile">สร้างโปรไฟล์</Link> เพื่อสมัครงานและให้คะแนนความตรงแม่นขึ้น
         </div>
       ) : null}
       {active.length ? (
@@ -47,7 +49,7 @@ export default async function MyFeed({ searchParams }: { searchParams: Promise<{
           ))}
         </section>
       ) : null}
-      <JobFilters action="/me" q={sp.q} type={sp.type} province={sp.province} />
+      <SectionHead title="งานแนะนำสำหรับคุณ" />
       <JobList jobs={(jobs || []) as JobCard[]} showMatch />
     </>
   );

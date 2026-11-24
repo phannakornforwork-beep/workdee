@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { requireCompany } from '@/lib/auth';
 import { JobForm } from '@/components/JobForm';
 import { ActionForm, ConfirmSubmit, SubmitButton } from '@/components/forms';
-import { Alert, Badge } from '@/components/ui';
+import { Alert, Badge, PageTitle } from '@/components/ui';
 import { closeJobAction, deleteJobAction } from '@/lib/actions/hiring';
 import { SITE_URL } from '@/lib/env';
 
@@ -30,51 +30,51 @@ export default async function JobPage({ params, searchParams }: { params: Promis
   const status = job.status as string;
   return (
     <>
-      <Link href={`/c/${cid}/jobs`} className="small">
-        ← ประกาศทั้งหมด
-      </Link>
-      <div className="row-between">
-        <div className="row">
-          <h1>{job.title as string}</h1>
+      <PageTitle
+        plain
+        back={{ href: `/c/${cid}/jobs`, label: 'ประกาศงาน' }}
+        title={job.title as string}
+        sub={
           <Badge tone={status === 'open' ? 'teal' : status === 'pending_approval' ? 'orange' : 'gray'}>
             {status === 'open' ? 'เปิดรับ' : status === 'pending_approval' ? 'รออนุมัติ' : status === 'draft' ? 'ร่าง' : 'ปิดแล้ว'}
           </Badge>
-        </div>
+        }
+      >
         {status === 'open' ? (
           <Link href={`/jobs/${jid}`} className="btn small ghost" target="_blank">
             ดูหน้าประกาศ
           </Link>
         ) : null}
-      </div>
-      {sp.published === 'open' ? <Alert tone="success">เผยแพร่แล้ว แชร์ลิงก์นี้ลงเพจหรือกลุ่ม LINE ได้: {SITE_URL}/jobs/{jid}</Alert> : null}
-      {sp.published === 'pending_approval' ? <Alert tone="info">ส่งให้หัวหน้าแผนกอนุมัติแล้ว ระบบแจ้งผู้อนุมัติให้ ถ้าไม่ตอบใน 24 ชั่วโมงจะส่งต่อหัวหน้าถัดขึ้นไป</Alert> : null}
+      </PageTitle>
+      {sp.published === 'open' ? <Alert tone="success">เผยแพร่แล้ว ลิงก์: {SITE_URL}/jobs/{jid}</Alert> : null}
+      {sp.published === 'pending_approval' ? <Alert tone="info">ส่งให้หัวหน้าแผนกอนุมัติแล้ว</Alert> : null}
       {sp.saved ? <Alert tone="success">บันทึกร่างแล้ว</Alert> : null}
       {status === 'draft' && job.approval_note ? <Alert tone="warn">ผู้อนุมัติไม่อนุมัติ: {job.approval_note as string}</Alert> : null}
 
       {status === 'closed' ? (
-        <Alert tone="info">ประกาศนี้ปิดแล้ว ดูผู้สมัครที่ยังอยู่ในรอบสัมภาษณ์หรือข้อเสนอได้ในหน้าผู้สมัคร</Alert>
+        <Alert tone="info">ประกาศนี้ปิดแล้ว</Alert>
       ) : status === 'pending_approval' ? (
-        <Alert tone="info">รออนุมัติอยู่ แก้ไขไม่ได้จนกว่าผู้อนุมัติจะตัดสิน หรือยกเลิกคำขอในหน้าทีมและตำแหน่ง</Alert>
+        <Alert tone="info">รออนุมัติ แก้ไขไม่ได้ชั่วคราว</Alert>
       ) : (
         <JobForm companyId={cid} departments={departments} job={job} challenge={challenge} status={status} locked={(submitted || 0) > 0} aiProfile={aiProfile} />
       )}
 
       {status === 'open' ? (
-        <section className="card warn">
-          <h2>ปิดรับประกาศ</h2>
-          <p className="small">ผู้สมัครที่ยังรอคัดหรืออยู่ในรอบโจทย์จะได้รับข้อความพร้อมเหตุผล &ldquo;ปิดรับตำแหน่งแล้ว&rdquo; ทันที โจทย์ที่ส่งแล้วต้องให้คะแนนก่อน</p>
+        <details className="card warn">
+          <summary className="strong" style={{ cursor: 'pointer' }}>ปิดรับประกาศ</summary>
+          <p className="small">ผู้สมัครที่รออยู่จะได้รับข้อความนี้ทันที</p>
           <ActionForm action={closeJobAction}>
             <input type="hidden" name="company_id" value={cid} />
             <input type="hidden" name="job_id" value={jid} />
             <div className="field">
-              <label htmlFor="message">ข้อความถึงผู้สมัครที่รออยู่ (ใช้ {'{ชื่อ}'} {'{ตำแหน่ง}'} {'{บริษัท}'} ได้)</label>
+              <label htmlFor="message">ข้อความ</label>
               <textarea id="message" name="message" className="textarea" defaultValue="สวัสดีค่ะคุณ{ชื่อ} ตำแหน่ง{ตำแหน่ง} ปิดรับแล้ว ขอบคุณที่สนใจ{บริษัท} ข้อมูลและผลงานของคุณยังอยู่ในโปรไฟล์ ใช้สมัครงานอื่นได้ทันที" />
             </div>
             <SubmitButton className="btn danger" pendingText="กำลังปิด…">
-              ปิดรับและตอบผู้สมัครที่รออยู่
+              ปิดรับประกาศ
             </SubmitButton>
           </ActionForm>
-        </section>
+        </details>
       ) : null}
       {status === 'draft' ? (
         <form action={deleteJobAction}>
