@@ -40,7 +40,7 @@ export default async function Home() {
               <Link href="/signup" className="btn ghost">
                 สร้างโปรไฟล์ฟรี
               </Link>
-              <Link href="/for-companies" className="small" style={{ color: '#cdd5e6' }}>
+              <Link href="/for-companies" className="small" style={{ color: 'var(--on-navy-2)' }}>
                 สำหรับบริษัท →
               </Link>
             </div>

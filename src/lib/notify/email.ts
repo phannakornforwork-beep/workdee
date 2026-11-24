@@ -8,7 +8,7 @@ export async function sendEmail(to: string | null, subject: string, text: string
   const html = `<div style="font-family:system-ui,sans-serif;font-size:15px;line-height:1.6;color:#1c1f23">
     <p style="font-weight:700;font-size:17px;margin:0 0 8px">${escapeHtml(subject)}</p>
     ${text ? `<p style="white-space:pre-wrap;margin:0 0 16px">${escapeHtml(text)}</p>` : ''}
-    <p><a href="${url}" style="display:inline-block;background:#0f6e64;color:#fff;padding:10px 16px;border-radius:10px;text-decoration:none">เปิดใน WorkDee</a></p>
+    <p><a href="${url}" style="display:inline-block;background:#00a19b;color:#031312;padding:10px 16px;border-radius:10px;text-decoration:none">เปิดใน WorkDee</a></p>
     <p style="color:#5b6168;font-size:12px">ปรับการแจ้งเตือนได้ที่หน้าการแจ้งเตือนใน WorkDee</p></div>`;
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',

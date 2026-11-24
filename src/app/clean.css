@@ -10,36 +10,47 @@
    6. ข้อความยาวถูกตัดด้วย ... และ "แสดงเพิ่มเติม" บรรทัดยาวไม่เกิน ~70 ตัวอักษร
    7. ระยะห่างใช้สเกลเดียว (8/16/24/40) ระหว่างหัวข้อกว้าง ภายในกลุ่มชิด */
 
+/* ชุดสีแรงบันดาลใจจากรถแข่งสีเงิน: ดำ · เงิน · เขียวเปโตรนาส (#00A19B) · เทาเข้ม
+   โหมดสว่าง: พื้นขาวนวล การ์ดขาวนวลอ่อน แถบหัวดำ
+   โหมดมืด: พื้นดำ การ์ดเทาเข้ม ตัวรองสีเงิน
+   แถบหัวทุกหน้ามีเส้นเขียวใต้ขอบ = ลายเซ็นของแบรนด์ */
 :root {
-  --ink: #1b2232;
-  --ink-2: #333c4e;
-  --muted: #4d5668;
-  --line: #e3e6ec;
-  --line-2: #cdd2db;
-  --bg: #f5f6f8;
-  --bg-2: #eceef2;
-  --card: #ffffff;
-  --fill: #eef0f4;
-  --fill-2: #e2e5eb;
-  --brand: #0f7a6e;
-  --brand-ink: #0b5f56;
-  --brand-soft: #e3f3ef;
+  --ink: #0b0c0d;
+  --ink-2: #2e3236;
+  --muted: #565f64;
+  --line: #e3dfd5;
+  --line-2: #cfcabe;
+  --bg: #f7f4ec;
+  --bg-2: #efebe1;
+  --card: #fffdf8;
+  --fill: #efebe2;
+  --fill-2: #e3ded2;
+  --brand: #00a19b;
+  --brand-hover: #008f8a;
+  --brand-ink: #00756f;
+  --brand-soft: #dcf2ef;
+  --on-brand: #031312;
+  --silver: #c8ccce;
   --accent: #c2410c;
   --accent-ink: #8a2c07;
-  --accent-soft: #fff2e8;
+  --accent-soft: #fdeee2;
   --blue: #1f4fa3;
-  --blue-soft: #e8effb;
+  --blue-soft: #e6edf8;
   --danger: #c62828;
-  --danger-soft: #fdecec;
-  --navy: #0d1d42;
-  --navy-2: #16295a;
+  --danger-soft: #fbe9e7;
+  --navy: #0b0c0d;
+  --navy-2: #1a1d20;
   --on-navy: #ffffff;
-  --on-navy-2: #cdd5e6;
+  --on-navy-2: #c8ccce;
+  --paper: #fffdf8;
+  --paper-ink: #0b0c0d;
+  --paper-muted: #565f64;
+  --paper-fill: #efebe2;
   --radius: 14px;
   --shadow: none;
   --ai: #5b46c8;
   --ai-ink: #3f2e9e;
-  --ai-soft: #eeebfb;
+  --ai-soft: #ecebf8;
   --mark: #fbe7a1;
   --measure: 70ch;
   color-scheme: light;
@@ -47,31 +58,33 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --ink: #eef0f5; --ink-2: #cfd4de; --muted: #a3aab8;
-    --line: #2a303c; --line-2: #3a4250;
-    --bg: #0f1218; --bg-2: #1a1f28; --card: #161b23;
-    --fill: #1f2530; --fill-2: #2a313d;
-    --brand: #3cc4b0; --brand-ink: #7fe0d1; --brand-soft: rgba(60, 196, 176, 0.14);
+    --ink: #f2f3f3; --ink-2: #c8ccce; --muted: #9aa1a6;
+    --line: #2a2e32; --line-2: #3a3f44;
+    --bg: #0b0c0d; --bg-2: #15181a; --card: #15181a;
+    --fill: #1e2124; --fill-2: #2a2e32;
+    --brand: #00a19b; --brand-hover: #1fb8b1; --brand-ink: #2fd1c9; --brand-soft: rgba(0, 161, 155, 0.16); --on-brand: #031312;
     --accent: #ff9f5a; --accent-ink: #ffc49a; --accent-soft: rgba(255, 159, 90, 0.14);
     --blue: #8db6ff; --blue-soft: rgba(80, 140, 255, 0.16);
     --danger: #ff6b6b; --danger-soft: rgba(255, 90, 90, 0.14);
-    --navy: #121d36; --navy-2: #1b2a4d; --on-navy-2: #b7c1d6;
+    --navy: #000000; --navy-2: #15181a; --on-navy-2: #c8ccce;
+    --paper: #1e2124; --paper-ink: #f2f3f3; --paper-muted: #9aa1a6; --paper-fill: #2a2e32;
     --ai: #b2a4ff; --ai-ink: #d2c9ff; --ai-soft: rgba(150, 130, 255, 0.14); --mark: rgba(245, 205, 80, 0.28);
     color-scheme: dark;
   }
 }
 :root[data-theme='dark'] {
-  --ink: #eef0f5; --ink-2: #cfd4de; --muted: #a3aab8;
-  --line: #2a303c; --line-2: #3a4250;
-  --bg: #0f1218; --bg-2: #1a1f28; --card: #161b23;
-  --fill: #1f2530; --fill-2: #2a313d;
-  --brand: #3cc4b0; --brand-ink: #7fe0d1; --brand-soft: rgba(60, 196, 176, 0.14);
-  --accent: #ff9f5a; --accent-ink: #ffc49a; --accent-soft: rgba(255, 159, 90, 0.14);
-  --blue: #8db6ff; --blue-soft: rgba(80, 140, 255, 0.16);
-  --danger: #ff6b6b; --danger-soft: rgba(255, 90, 90, 0.14);
-  --navy: #121d36; --navy-2: #1b2a4d; --on-navy-2: #b7c1d6;
-  --ai: #b2a4ff; --ai-ink: #d2c9ff; --ai-soft: rgba(150, 130, 255, 0.14); --mark: rgba(245, 205, 80, 0.28);
-  color-scheme: dark;
+    --ink: #f2f3f3; --ink-2: #c8ccce; --muted: #9aa1a6;
+    --line: #2a2e32; --line-2: #3a3f44;
+    --bg: #0b0c0d; --bg-2: #15181a; --card: #15181a;
+    --fill: #1e2124; --fill-2: #2a2e32;
+    --brand: #00a19b; --brand-hover: #1fb8b1; --brand-ink: #2fd1c9; --brand-soft: rgba(0, 161, 155, 0.16); --on-brand: #031312;
+    --accent: #ff9f5a; --accent-ink: #ffc49a; --accent-soft: rgba(255, 159, 90, 0.14);
+    --blue: #8db6ff; --blue-soft: rgba(80, 140, 255, 0.16);
+    --danger: #ff6b6b; --danger-soft: rgba(255, 90, 90, 0.14);
+    --navy: #000000; --navy-2: #15181a; --on-navy-2: #c8ccce;
+    --paper: #1e2124; --paper-ink: #f2f3f3; --paper-muted: #9aa1a6; --paper-fill: #2a2e32;
+    --ai: #b2a4ff; --ai-ink: #d2c9ff; --ai-soft: rgba(150, 130, 255, 0.14); --mark: rgba(245, 205, 80, 0.28);
+    color-scheme: dark;
 }
 :root[data-theme='light'] { color-scheme: light; }
 
@@ -93,7 +106,7 @@ h2 { font-size: 22px; font-weight: 700; }
 h3 { font-size: 18px; font-weight: 600; }
 a { color: var(--brand-ink); }
 a:hover { color: var(--brand); }
-:focus-visible { outline: 3px solid rgba(15, 122, 110, 0.45); outline-offset: 2px; }
+:focus-visible { outline: 3px solid rgba(0, 161, 155, 0.5); outline-offset: 2px; }
 p { max-width: var(--measure); }
 .small { font-size: 15px; }
 .tiny { font-size: 14px; }
@@ -116,7 +129,7 @@ p { max-width: var(--measure); }
 }
 .topbar .inner { padding: 10px 20px; gap: 12px; }
 .brand, .brand:hover { color: var(--ink); font-size: 20px; }
-.brand-mark { background: var(--navy); border-radius: 50%; }
+.brand-mark { background: var(--navy); border-radius: 9px; }
 .topbar a.tlink { color: var(--ink-2); font-size: 16px; font-weight: 500; }
 .topbar a.tlink:hover { background: var(--fill); color: var(--ink); }
 .icon-btn, .switch-btn {
@@ -124,7 +137,7 @@ p { max-width: var(--measure); }
 }
 .icon-btn:hover, .switch-btn:hover { background: var(--fill); color: var(--ink); }
 .switch-btn { font-size: 15px; font-weight: 500; }
-.count-dot { background: #e0245e; border: 2px solid var(--card); top: -3px; right: -3px; }
+.count-dot { background: var(--danger); border: 2px solid var(--card); top: -3px; right: -3px; }
 .space-pill { font-size: 14px; background: var(--accent-soft); color: var(--accent-ink); }
 .space-pill.personal { background: var(--brand-soft); color: var(--brand-ink); }
 .topbar .btn.ghost { background: transparent; border: 1px solid var(--line-2); color: var(--ink); }
@@ -192,8 +205,8 @@ main.page > .page-head:not(.plain):first-child, .page-anim > .page-head:not(.pla
 .hero .btn.ghost { background: transparent; color: #fff; border: 1px solid rgba(255, 255, 255, 0.55); }
 .hero .btn.ghost:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
 .search-bar { display: flex; flex-wrap: wrap; gap: 10px; max-width: 900px; }
-.search-bar .input { flex: 1 1 320px; background: #fff; color: #1b2232; border: none; min-height: 54px; }
-.search-bar .select { flex: 0 1 190px; background-color: #fff; color: #1b2232; border: none; min-height: 54px; }
+.search-bar .input { flex: 1 1 320px; background: var(--paper); color: var(--paper-ink); border: none; min-height: 54px; }
+.search-bar .select { flex: 0 1 190px; background-color: var(--paper); color: var(--paper-ink); border: none; min-height: 54px; }
 .search-bar .btn { min-height: 54px; padding: 0 28px; }
 .search-bar .clear-link { align-self: center; color: inherit; font-size: 15px; }
 .page-search { width: 100%; }
@@ -231,10 +244,10 @@ a.card:active { transform: none; }
 /* ---------- ปุ่ม: ปุ่มหลักสีเดียว ปุ่มรองเป็นขอบ ---------- */
 .btn {
   min-height: 48px; padding: 0 20px; border-radius: 10px; border: 1px solid transparent;
-  font-size: 17px; font-weight: 600; background: var(--brand); color: #fff; box-shadow: none;
+  font-size: 17px; font-weight: 600; background: var(--brand); color: var(--on-brand); box-shadow: none;
   transition: background 0.15s ease;
 }
-.btn:hover { background: var(--brand-ink); color: #fff; }
+.btn:hover { background: var(--brand-hover); color: var(--on-brand); }
 .btn:active { transform: none; }
 .btn:disabled, .btn[aria-disabled='true'] { background: var(--fill-2); color: var(--muted); box-shadow: none; }
 .btn.outline { background: var(--card); color: var(--brand-ink); border-color: var(--brand); box-shadow: none; }
@@ -346,7 +359,7 @@ details.disclosure[open] summary::after { content: '⌃'; transform: none; }
 /* ---------- แชต ---------- */
 .chat { padding: 16px; }
 .bubble .text { background: var(--fill); color: var(--ink); border-radius: 16px; box-shadow: none; }
-.bubble.me .text { background: var(--brand); color: #fff; }
+.bubble.me .text { background: var(--brand); color: var(--on-brand); }
 .bubble.announce .text { background: var(--blue-soft); color: var(--ink); border: none; }
 .bubble .meta { font-size: 13px; }
 
@@ -462,7 +475,7 @@ button, input, select, textarea, table { font-family: inherit; }
    ภาพประจำแบรนด์ = ใบผลงาน (คะแนนรายเกณฑ์) ใช้ซ้ำในหน้าแรก หน้าบริษัท และการ์ดงาน
    =================================================================== */
 .eyebrow { display: inline-block; font-size: 14px; font-weight: 600; letter-spacing: 0.04em; color: var(--brand-ink); }
-.hero .eyebrow { color: #7fe0d1; }
+.hero .eyebrow { color: var(--brand); }
 
 /* hero 2 คอลัมน์: ข้อความซ้าย ใบผลงานขวา */
 .hero .container.hero-grid, .hero-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 40px; align-items: center; }
@@ -470,20 +483,20 @@ button, input, select, textarea, table { font-family: inherit; }
 @media (max-width: 900px) { .hero .container.hero-grid, .hero-grid { grid-template-columns: 1fr; gap: 28px; } }
 
 /* ใบผลงาน */
-.result-card { margin: 0; background: #fff; color: #1b2232; border-radius: 16px; padding: 22px 24px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25); max-width: 440px; justify-self: end; width: 100%; }
+.result-card { margin: 0; background: var(--paper); color: var(--paper-ink); border-radius: 16px; padding: 22px 24px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25); max-width: 440px; justify-self: end; width: 100%; }
 .result-head { display: flex; flex-direction: column; gap: 4px; }
-.result-tag { align-self: flex-start; font-size: 13px; font-weight: 600; color: #0b5f56; background: #e3f3ef; padding: 2px 10px; border-radius: 6px; }
+.result-tag { align-self: flex-start; font-size: 13px; font-weight: 600; color: var(--brand-ink); background: var(--brand-soft); padding: 2px 10px; border-radius: 6px; }
 .result-title { font-weight: 600; font-size: 16px; }
 .result-total { display: flex; align-items: baseline; gap: 4px; }
-.result-total strong { font-size: 52px; line-height: 1; color: #0f7a6e; font-variant-numeric: tabular-nums; }
-.result-total span { color: #4d5668; font-size: 18px; }
+.result-total strong { font-size: 52px; line-height: 1; color: var(--brand-ink); font-variant-numeric: tabular-nums; }
+.result-total span { color: var(--paper-muted); font-size: 18px; }
 .rubric { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
 .rubric li { display: grid; grid-template-columns: minmax(0, 1fr) 90px 48px; gap: 10px; align-items: center; font-size: 15px; }
-.rubric-bar { height: 8px; background: #eceef2; border-radius: 999px; overflow: hidden; }
-.rubric-bar > span { display: block; height: 100%; background: #0f7a6e; border-radius: 999px; }
-.rubric-score { text-align: right; font-variant-numeric: tabular-nums; color: #4d5668; }
-.result-note { margin: 0; padding: 10px 12px; background: #f5f6f8; border-radius: 10px; font-size: 15px; color: #333c4e; }
-.result-foot { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 14px; font-weight: 600; color: #0b5f56; }
+.rubric-bar { height: 8px; background: var(--paper-fill); border-radius: 999px; overflow: hidden; }
+.rubric-bar > span { display: block; height: 100%; background: var(--brand); border-radius: 999px; }
+.rubric-score { text-align: right; font-variant-numeric: tabular-nums; color: var(--paper-muted); }
+.result-note { margin: 0; padding: 10px 12px; background: var(--paper-fill); border-radius: 10px; font-size: 15px; color: var(--paper-ink); }
+.result-foot { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 14px; font-weight: 600; color: var(--brand-ink); }
 @media (max-width: 900px) { .result-card { justify-self: stretch; max-width: none; } }
 
 /* แถบตัวเลขจริง */
@@ -519,11 +532,11 @@ button, input, select, textarea, table { font-family: inherit; }
 /* ขั้นตอนแบบมีเส้นเชื่อม */
 .how { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; counter-reset: how; }
 .how > div { position: relative; padding: 20px 22px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); display: flex; flex-direction: column; gap: 6px; }
-.how > div::before { counter-increment: how; content: counter(how); width: 32px; height: 32px; border-radius: 50%; background: var(--navy); color: #fff; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+.how > div::before { counter-increment: how; content: counter(how); width: 32px; height: 32px; border-radius: 50%; background: var(--brand); color: var(--on-brand); font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
 @media (max-width: 760px) { .how { grid-template-columns: 1fr; } }
 
 /* ภาพจำลองหน้าจอ (หน้าบริษัท) */
-.mock-window { background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: 0 20px 50px rgba(13, 29, 66, 0.12); }
+.mock-window { background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.14); }
 .mock-bar { display: flex; align-items: center; gap: 6px; padding: 10px 14px; background: var(--fill); border-bottom: 1px solid var(--line); }
 .mock-bar > span { width: 10px; height: 10px; border-radius: 50%; background: var(--line-2); }
 .mock-bar em { font-style: normal; font-size: 13px; color: var(--muted); margin-left: 8px; }
@@ -560,7 +573,7 @@ button, input, select, textarea, table { font-family: inherit; }
 .mini-rubric i:nth-child(2) { width: 75%; }
 .mini-rubric i:nth-child(3) { width: 55%; }
 
-.hero .result-card p.result-note { color: #333c4e; font-size: 15px; max-width: none; }
+.hero .result-card p.result-note { color: var(--paper-ink); font-size: 15px; max-width: none; }
 .section-head h2 .badge { vertical-align: middle; margin-left: 6px; }
 @media (max-width: 640px) { .topbar a.tlink.hide-sm { display: none; } }
 
@@ -596,9 +609,9 @@ button, input, select, textarea, table { font-family: inherit; }
 .auth-grid { display: grid; grid-template-columns: minmax(0, 480px) minmax(0, 1fr); gap: 48px; align-items: start; }
 .auth-brand { background: var(--navy); color: #fff; border-radius: 20px; padding: 36px; display: flex; flex-direction: column; gap: 18px; }
 .auth-brand h2 { color: #fff; font-size: 26px; line-height: 1.35; max-width: 22ch; }
-.auth-brand .eyebrow { color: #7fe0d1; }
+.auth-brand .eyebrow { color: var(--brand); }
 .auth-brand .result-card { justify-self: start; max-width: 420px; }
-.auth-brand .result-card p.result-note { color: #333c4e; max-width: none; }
+.auth-brand .result-card p.result-note { color: var(--paper-ink); max-width: none; }
 @media (max-width: 900px) { .auth-grid { grid-template-columns: 1fr; } .auth-brand { display: none; } .auth-form { max-width: 520px; } }
 
 /* คะแนนโจทย์ย่อบนการ์ดผู้สมัคร (ภาษาภาพเดียวกับใบผลงาน) */
@@ -606,3 +619,19 @@ button, input, select, textarea, table { font-family: inherit; }
 .mini-score .rubric-bar { height: 6px; background: var(--fill-2); border-radius: 999px; overflow: hidden; }
 .mini-score .rubric-bar > span { display: block; height: 100%; background: var(--brand); }
 .mini-score b { color: var(--brand-ink); font-variant-numeric: tabular-nums; }
+
+/* ลายเซ็นของแบรนด์: เส้นเขียวใต้แถบดำ (hero, หัวหน้า, แผงหน้าเข้าสู่ระบบ, แถบเรียกให้ลงมือ) */
+.hero, .page-head:not(.plain) { border-bottom: 4px solid var(--brand); }
+.auth-brand, .cta-band { border-bottom: 4px solid var(--brand); }
+/* เมนูที่เลือกและแท็บ: เส้นใต้สีเขียว */
+.navbar a[aria-current='page']::after, .tabs a[aria-current='page']::after, .nav-pill { background: var(--brand); }
+/* ปุ่มตัวเลข/โลโก้: วงกลมดำ ขีดเขียว */
+.brand-mark { background: var(--navy); }
+/* โหมดมืด: ใบผลงานบนแถบดำมีขอบเงินบาง */
+@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .result-card { border: 1px solid var(--line-2); } }
+:root[data-theme='dark'] .result-card { border: 1px solid var(--line-2); }
+.brand-mark { box-shadow: inset 0 0 0 1px var(--line-2); }
+
+/* ตัวอักษรแทนรูป: ผู้หางาน = เขียว, บริษัท = เทาเข้มของชุดสี (ไม่ใช้ส้มซึ่งสงวนไว้สำหรับคำเตือน) */
+.avatar { background: var(--brand); color: var(--on-brand); }
+.avatar.orange { background: #565f64; color: #ffffff; }

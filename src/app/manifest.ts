@@ -8,8 +8,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'หางานด้วยโจทย์สั้นๆ จากงานจริง ได้คำตอบทุกใบสมัครใน 7 วัน',
     start_url: '/spaces',
     display: 'standalone',
-    background_color: '#ffffff',
-    theme_color: '#0d1d42',
+    background_color: '#f7f4ec',
+    theme_color: '#0b0c0d',
     lang: 'th',
     icons: [{ src: '/icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' }]
   };
