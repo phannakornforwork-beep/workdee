@@ -532,8 +532,21 @@ export function PipelineBoard({
         })}
       </div>
 
+      {live.length === 0 && closed.length ? (
+        <div className="empty">
+          ไม่มีผู้สมัครที่รอคุณตอบ · ปิดแล้ว {closed.length} คนใน 14 วัน
+          {closed.filter((c) => c.closed_by_system).length ? (
+            <>
+              <br />
+              <span className="small">
+                ระบบปิดแทน {closed.filter((c) => c.closed_by_system).length} คนเพราะไม่ได้ตอบใน 7 วัน ซึ่งนับในอัตราการตอบที่ผู้สมัครเห็น
+              </span>
+            </>
+          ) : null}
+        </div>
+      ) : null}
       {closed.length ? (
-        <details className="card">
+        <details className="card" open={live.length === 0}>
           <summary className="strong" style={{ cursor: 'pointer' }}>ปิดแล้วใน 14 วัน ({closed.length})</summary>
           {closed.map((c) => (
             <div key={c.id} className="row-between small">
