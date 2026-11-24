@@ -4,9 +4,12 @@ import { STAGE, VERIFY } from '@/lib/format';
 export function Logo({ href = '/' }: { href?: string }) {
   return (
     <Link href={href} className="brand" aria-label="WorkDee หน้าแรก">
+      {/* โลโก้ = ใบผลงานย่อ: แถบคะแนน 3 เส้น (เขียว เงิน เงิน) บนพื้นดำ */}
       <span className="brand-mark" aria-hidden="true">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M5 12l5 5L20 7" />
+        <svg width="20" height="20" viewBox="0 0 24 24">
+          <rect x="3" y="5" width="18" height="3.2" rx="1.6" fill="#00A19B" />
+          <rect x="3" y="10.4" width="13.5" height="3.2" rx="1.6" fill="#C8CCCE" />
+          <rect x="3" y="15.8" width="9.5" height="3.2" rx="1.6" fill="#C8CCCE" />
         </svg>
       </span>
       WorkDee
