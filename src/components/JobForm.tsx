@@ -1,6 +1,6 @@
 import { ActionForm, SubmitButton } from '@/components/forms';
 import { saveJobAction } from '@/lib/actions/hiring';
-import { AI_POLICY, JOB_TYPE, PROVINCES, WORK_MODE } from '@/lib/format';
+import { AI_POLICY, JOB_TYPE, MAX_CHALLENGE_MINUTES, PROVINCES, WORK_MODE } from '@/lib/format';
 import type { Criterion } from '@/lib/types';
 import { AiJobDesigner } from '@/components/ai/AiJobDesigner';
 
@@ -178,7 +178,8 @@ export function JobForm({
         <div className="form-row">
           <div className="field">
             <label htmlFor="ch_minutes">เวลาที่แนะนำ (นาที)</label>
-            <input id="ch_minutes" name="ch_minutes" className="input" inputMode="numeric" defaultValue={v(challenge?.time_limit_minutes) || '60'} />
+            <input id="ch_minutes" name="ch_minutes" className="input" type="number" min={10} max={MAX_CHALLENGE_MINUTES} step={5} defaultValue={v(challenge?.time_limit_minutes) || '60'} />
+            <span className="hint">ไม่เกิน {MAX_CHALLENGE_MINUTES} นาที</span>
           </div>
           <div className="field">
             <label htmlFor="ch_due_days">ส่งภายใน (วัน)</label>

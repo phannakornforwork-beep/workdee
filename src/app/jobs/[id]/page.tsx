@@ -9,7 +9,8 @@ import { mediaUrl } from '@/lib/env';
 import { ShowMore } from '@/components/ShowMore';
 import { ActionForm, SubmitButton } from '@/components/forms';
 import { applyAction } from '@/lib/actions/candidate';
-import { AI_POLICY, JOB_TYPE, WORK_MODE, salaryRange, thaiDate } from '@/lib/format';
+import { AI_POLICY, JOB_TYPE, WORK_MODE, hasResponseStat, salaryRange, thaiDate } from '@/lib/format';
+import { SaveJobButton } from '@/components/SavedJobs';
 import type { Criterion } from '@/lib/types';
 
 type Job = {
@@ -60,9 +61,15 @@ export default async function JobDetail({ params }: { params: Promise<{ id: stri
             <div className="stack-sm">
               <span className="card-head">
                 <Avatar src={mediaUrl(job.company_logo_path)} name={job.company_name} tone="orange" size={48} square />
-                <span className="muted">{job.company_name}{job.company_industry ? ` · ${job.company_industry}` : ''}</span>
+                <span className="muted">
+                  <Link href={`/companies/${job.company_id}`}>{job.company_name}</Link>
+                  {job.company_industry ? ` · ${job.company_industry}` : ''}
+                </span>
               </span>
               <h1>{job.title}</h1>
+              <div className="row">
+                <SaveJobButton jobId={job.id} />
+              </div>
               <div className="chips">
                 <Badge tone="teal">บริษัทยืนยันแล้ว</Badge>
                 <Badge>{JOB_TYPE[job.job_type]}</Badge>
@@ -86,7 +93,7 @@ export default async function JobDetail({ params }: { params: Promise<{ id: stri
                 <dt>ปิดรับ</dt>
                 <dd>{job.closes_at ? thaiDate(job.closes_at) : 'จนกว่าจะได้คน'}</dd>
                 <dt>การตอบผู้สมัคร</dt>
-                <dd>{job.response_rate !== null ? `ตอบตรงเวลา ${job.response_rate}%` : 'ยังไม่มีสถิติ'}</dd>
+                <dd>{hasResponseStat(job.response_rate, job.response_sample) ? `ตอบตรงเวลา ${job.response_rate}%` : 'บริษัทใหม่ · ตอบทุกคนใน 7 วัน'}</dd>
               </div>
             </div>
             <section className="card">

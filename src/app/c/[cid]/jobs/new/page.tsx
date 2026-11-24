@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { can, requireCompany } from '@/lib/auth';
 import { NoAccess, PageTitle } from '@/components/ui';
+import { AiDemoNotice } from '@/components/ai/AiDemoNotice';
 import { JobForm } from '@/components/JobForm';
 import { JOB_TEMPLATES } from '@/lib/templates';
 
@@ -34,6 +35,7 @@ export default async function NewJob({ params, searchParams }: { params: Promise
           </Link>
         </div>
       </div>
+      <AiDemoNotice />
       <JobForm
         key={sp.template || 'blank'}
         companyId={cid}

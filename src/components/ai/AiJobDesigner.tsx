@@ -69,7 +69,11 @@ export function AiJobDesigner({
     setChosen(null);
     start(async () => {
       const [res] = await Promise.all([designJobAction(companyId, title, jobType, objective), new Promise((r) => setTimeout(r, 1400))]);
-      if (res.ok && res.data) {
+      if (!res.ok) {
+        setMsg({ ok: false, text: res.error });
+        return;
+      }
+      if (res.data) {
         setQuals(res.data.qualifications);
         setField(form, 'requirements', res.data.requirements, true);
         setField(form, 'skills', res.data.skills.join(', '), true);
