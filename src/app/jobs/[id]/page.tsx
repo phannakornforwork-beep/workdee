@@ -60,7 +60,10 @@ export default async function JobDetail({ params }: { params: Promise<{ id: stri
             <div className="stack-sm">
               <span className="card-head">
                 <Avatar src={mediaUrl(job.company_logo_path)} name={job.company_name} tone="orange" size={48} square />
-                <span className="muted">{job.company_name}{job.company_industry ? ` · ${job.company_industry}` : ''}</span>
+                <span className="muted">
+                  <Link href={`/companies/${job.company_id}`}>{job.company_name}</Link>
+                  {job.company_industry ? ` · ${job.company_industry}` : ''}
+                </span>
               </span>
               <h1>{job.title}</h1>
               <div className="chips">

@@ -5,6 +5,7 @@ import { NoAccess, PageTitle } from '@/components/ui';
 import { PipelineBoard } from './PipelineBoard';
 import type { PipelineItem, Template } from '@/lib/types';
 import { KeywordScreen, type ScreenApp } from '@/components/ai/KeywordScreen';
+import { AiDemoNotice } from '@/components/ai/AiDemoNotice';
 
 export const metadata: Metadata = { title: 'กระดานผู้สมัคร' };
 
@@ -52,6 +53,7 @@ export default async function PipelinePage({ params, searchParams }: { params: P
           </Link>
         ))}
       </nav>
+      {sp.job && screenApps ? <AiDemoNotice /> : null}
       {sp.job && screenApps ? <KeywordScreen companyId={cid} jobId={sp.job} q={sp.kw || ''} apps={screenApps as ScreenApp[]} /> : null}
       <PipelineBoard
         companyId={cid}

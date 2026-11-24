@@ -72,7 +72,10 @@ export function LanguageCerts({ userId, certs }: { userId: string; certs: LangCe
               <span className="strong">
                 {c.exam} {c.score_text}
               </span>
-              <span className={`badge ${t.tone}`}>{t.label}</span>
+              <span className="chips">
+                {c.checks?.demo ? <span className="badge orange">ข้อมูลสาธิต ไม่ได้อ่านจากไฟล์</span> : null}
+                <span className={`badge ${t.tone}`}>{t.label}</span>
+              </span>
             </div>
             <span className="small muted">
               {c.exam_date ? `สอบ ${c.exam_date}` : 'ไม่พบวันสอบ'}

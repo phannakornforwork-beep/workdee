@@ -9,6 +9,7 @@ import { deleteEducationAction, requestVerifyAction, saveEducationAction, savePr
 import { JOB_TYPE, PROVINCES } from '@/lib/format';
 import { CvScan } from '@/components/ai/CvScan';
 import { LanguageCerts, type LangCert } from '@/components/ai/LanguageCerts';
+import { AiDemoNotice } from '@/components/ai/AiDemoNotice';
 
 export const metadata: Metadata = { title: 'โปรไฟล์' };
 // AI อ่าน CV และผลสอบภาษาใช้เวลานานกว่าหน้าปกติ
@@ -254,6 +255,7 @@ export default async function ProfilePage() {
               </ActionForm>
             </details>
           </section>
+          <AiDemoNotice />
           <LanguageCerts userId={user.id} certs={(certs || []) as LangCert[]} />
         </aside>
       </div>

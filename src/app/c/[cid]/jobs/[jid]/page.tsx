@@ -5,6 +5,7 @@ import { requireCompany } from '@/lib/auth';
 import { JobForm } from '@/components/JobForm';
 import { ActionForm, ConfirmSubmit, SubmitButton } from '@/components/forms';
 import { Alert, Badge, PageTitle } from '@/components/ui';
+import { AiDemoNotice } from '@/components/ai/AiDemoNotice';
 import { closeJobAction, deleteJobAction } from '@/lib/actions/hiring';
 import { SITE_URL } from '@/lib/env';
 
@@ -56,7 +57,10 @@ export default async function JobPage({ params, searchParams }: { params: Promis
       ) : status === 'pending_approval' ? (
         <Alert tone="info">รออนุมัติ แก้ไขไม่ได้ชั่วคราว</Alert>
       ) : (
-        <JobForm companyId={cid} departments={departments} job={job} challenge={challenge} status={status} locked={(submitted || 0) > 0} aiProfile={aiProfile} />
+        <>
+          <AiDemoNotice />
+          <JobForm companyId={cid} departments={departments} job={job} challenge={challenge} status={status} locked={(submitted || 0) > 0} aiProfile={aiProfile} />
+        </>
       )}
 
       {status === 'open' ? (

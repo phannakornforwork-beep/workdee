@@ -434,3 +434,25 @@ details.legal:not([open]) { gap: 0; }
 
 /* ช่องกรอก ปุ่ม และตารางใช้ฟอนต์เดียวกับเนื้อหา (บางเบราว์เซอร์ใช้ฟอนต์ระบบกับ input) */
 button, input, select, textarea, table { font-family: inherit; }
+
+/* แถบ "สัญญาของ WorkDee" บนการ์ดงาน: สิ่งที่ JobsDB ไม่มี จึงต้องเห็นชัดตั้งแต่ในรายการ */
+.job-card .job-promise {
+  grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 10px; padding: 8px 12px;
+  border-radius: 8px; background: var(--brand-soft); color: var(--brand-ink); font-size: 15px; font-weight: 500;
+}
+.job-card .job-foot { margin-top: 6px; }
+.job-card .job-promise .low { color: var(--accent-ink); } /* ตอบช้า: ไม่ใช้สีเขียวให้เข้าใจผิดว่าดี */
+
+/* ช่องค้นหาแบบมีตัวกรอง: แถวบน = คำค้น + ปุ่ม, แถวล่าง = ตัวกรอง 4 ช่อง */
+.search-bar:has(.select) { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)) auto; gap: 10px; }
+.search-bar:has(.select) .input { grid-column: 1 / 5; }
+.search-bar:has(.select) .btn { grid-column: 5; grid-row: 1; }
+.search-bar:has(.select) .select { grid-row: 2; min-height: 48px; }
+.search-bar:has(.select) .clear-link { grid-column: 5; grid-row: 2; }
+@media (max-width: 640px) {
+  .search-bar:has(.select) { grid-template-columns: 1fr 1fr; }
+  .search-bar:has(.select) .input { grid-column: 1 / -1; }
+  .search-bar:has(.select) .select { grid-row: auto; }
+  .search-bar:has(.select) .btn { grid-column: 1 / -1; grid-row: auto; }
+  .search-bar:has(.select) .clear-link { grid-column: 1 / -1; grid-row: auto; }
+}
