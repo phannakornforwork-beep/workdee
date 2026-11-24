@@ -4,7 +4,7 @@ import { ActionForm, ConfirmSubmit, SubmitButton } from '@/components/forms';
 import { FileUpload } from '@/components/FileUpload';
 import { PhotoUpload } from '@/components/PhotoUpload';
 import { mediaUrl } from '@/lib/env';
-import { VerifyBadge } from '@/components/ui';
+import { PageTitle, VerifyBadge } from '@/components/ui';
 import { deleteEducationAction, requestVerifyAction, saveEducationAction, saveProfileAction } from '@/lib/actions/candidate';
 import { JOB_TYPE, PROVINCES } from '@/lib/format';
 import { CvScan } from '@/components/ai/CvScan';
@@ -33,7 +33,7 @@ function EducationFields({ e, institutions }: { e?: Edu; institutions: { id: str
     <>
       <div className="form-row">
         <div className="field">
-          <label>สถาบัน (ถ้าอยู่ในรายชื่อพาร์ตเนอร์)</label>
+          <label>สถาบัน (พาร์ตเนอร์)</label>
           <select name="institution_id" className="select" defaultValue={e?.institution_id || ''}>
             <option value="">ไม่อยู่ในรายชื่อ</option>
             {institutions.map((i) => (
@@ -107,10 +107,7 @@ export default async function ProfilePage() {
   const prefProvinces: string[] = cp?.pref_provinces || [];
   return (
     <>
-      <div className="stack-sm">
-        <h1>โปรไฟล์</h1>
-        <p className="muted">บริษัทเห็นสำเนาโปรไฟล์นี้เฉพาะตอนที่คุณกดสมัครหรือรับคำเชิญ ไม่เห็นอีเมล เบอร์โทร ที่อยู่ หรือวันเกิด</p>
-      </div>
+      <PageTitle title="โปรไฟล์" sub="บริษัทเห็นเฉพาะตอนคุณกดสมัคร" />
       <div className="split">
         <div className="main">
           <CvScan />
@@ -122,7 +119,7 @@ export default async function ProfilePage() {
               clearName="clear_photo"
               current={mediaUrl(cp?.photo_path)}
               displayName={cp?.full_name || prof?.display_name || ''}
-              label="รูปโปรไฟล์ (บริษัทเห็นเมื่อคุณกดสมัครงานเท่านั้น)"
+              label="รูปโปรไฟล์"
             />
             <div className="form-row">
               <div className="field">
@@ -130,13 +127,13 @@ export default async function ProfilePage() {
                 <input id="full_name" name="full_name" className="input" defaultValue={cp?.full_name || prof?.display_name || ''} required />
               </div>
               <div className="field">
-                <label htmlFor="phone">เบอร์โทร (ไม่แสดงให้บริษัท ใช้รับ SMS เรื่องด่วน)</label>
+                <label htmlFor="phone">เบอร์โทร (บริษัทไม่เห็น)</label>
                 <input id="phone" name="phone" className="input" inputMode="tel" defaultValue={prof?.phone || ''} />
               </div>
             </div>
             <div className="field">
               <label htmlFor="headline">พาดหัวสั้นๆ</label>
-              <input id="headline" name="headline" className="input" maxLength={160} defaultValue={cp?.headline || ''} placeholder="เช่น นักศึกษาการตลาดปี 4 ชอบเขียนคอนเทนต์ที่ขายของได้จริง" />
+              <input id="headline" name="headline" className="input" maxLength={160} defaultValue={cp?.headline || ''} placeholder="เช่น นักศึกษาการตลาดปี 4" />
             </div>
             <div className="field">
               <label htmlFor="intro">แนะนำตัว</label>
@@ -159,7 +156,7 @@ export default async function ProfilePage() {
             </div>
             <label className="check">
               <input type="checkbox" name="show_age" defaultChecked={Boolean(cp?.show_age)} />
-              <span>แสดงอายุให้บริษัทเห็น (ปิดไว้เป็นค่าเริ่มต้น บริษัทไม่เห็นวันเกิดเสมอ)</span>
+              <span>แสดงอายุให้บริษัทเห็น</span>
             </label>
             <div className="field">
               <label htmlFor="skills">สกิล (คั่นด้วยจุลภาค)</label>
@@ -203,7 +200,7 @@ export default async function ProfilePage() {
                 ))}
               </div>
               <div className="field">
-                <label htmlFor="expected_salary">ค่าตอบแทนที่คาดหวังต่อเดือน (บาท)</label>
+                <label htmlFor="expected_salary">เงินเดือนที่คาดหวัง (บาท)</label>
                 <input id="expected_salary" name="expected_salary" className="input" inputMode="numeric" defaultValue={cp?.expected_salary || ''} />
               </div>
             </fieldset>
@@ -238,7 +235,7 @@ export default async function ProfilePage() {
                     <input type="hidden" name="id" value={e.id} />
                     <EducationFields e={e} institutions={institutions} />
                     {e.verify_level === 'doc' || e.verify_level === 'inst' ? (
-                      <span className="hint">แก้ข้อมูลหลักหลังยืนยันแล้ว ป้ายจะกลับเป็น &ldquo;ยังไม่ยืนยัน&rdquo; และต้องยืนยันใหม่</span>
+                      <span className="hint">แก้แล้วต้องยืนยันใหม่</span>
                     ) : null}
                     <SubmitButton className="btn small">บันทึก</SubmitButton>
                   </ActionForm>

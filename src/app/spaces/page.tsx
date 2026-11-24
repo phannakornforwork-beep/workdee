@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { requireUser } from '@/lib/auth';
-import { Logo, Badge } from '@/components/ui';
+import { Logo, Badge, PageTitle } from '@/components/ui';
 import { signOutAction } from '@/lib/actions/auth';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
@@ -31,10 +31,7 @@ export default async function SpacesPage() {
         </div>
       </header>
       <main className="container page" style={{ maxWidth: 760 }}>
-        <div className="stack-sm">
-          <h1>สวัสดี {(profile?.display_name as string) || ''}</h1>
-          <p className="muted">บัญชีเดียว แยกพื้นที่ส่วนตัวกับพื้นที่บริษัทออกจากกันเสมอ บริษัทมองไม่เห็นอะไรในพื้นที่ส่วนตัวของคุณ</p>
-        </div>
+        <PageTitle plain title={`สวัสดี ${(profile?.display_name as string) || ''}`} sub="เลือกพื้นที่ที่จะใช้งาน" />
 
         <Link href="/me" className="card">
           <div className="row-between">
@@ -43,7 +40,7 @@ export default async function SpacesPage() {
                 พื้นที่ส่วนตัว
               </span>
               <h2>หางาน · โปรไฟล์ · แผนอาชีพ</h2>
-              <p className="muted small">ใบสมัครและการหางานของคุณอยู่ที่นี่ บริษัทที่คุณทำงานอยู่มองไม่เห็น</p>
+              <p className="muted small">บริษัทที่คุณทำงานอยู่มองไม่เห็น</p>
             </div>
             <span className="strong">เข้าใช้ →</span>
           </div>
@@ -68,7 +65,7 @@ export default async function SpacesPage() {
         <section className="stack">
           <h2>พื้นที่บริษัท</h2>
           {(spaces || []).length === 0 ? (
-            <p className="muted">ยังไม่ได้อยู่ในบริษัทใด ถ้าหัวหน้าส่งลิงก์เชิญมา เปิดลิงก์นั้นได้เลย</p>
+            <p className="muted">ยังไม่ได้อยู่ในบริษัทใด</p>
           ) : (
             (spaces as { company_id: string; company_name: string; company_status: string; position_title: string; is_owner: boolean }[]).map((s) => (
               <Link key={s.company_id} href={`/c/${s.company_id}`} className="card">

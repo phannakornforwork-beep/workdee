@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { requireUser } from '@/lib/auth';
 import { ActionForm, SubmitButton } from '@/components/forms';
 import { savePlanAction } from '@/lib/actions/candidate';
+import { PageTitle } from '@/components/ui';
 
 export const metadata: Metadata = { title: 'แผนอาชีพ' };
 
@@ -14,10 +15,7 @@ export default async function PlanPage() {
   const steps = ((plan?.steps || []) as { title: string }[]).map((s) => s.title).join('\n');
   return (
     <>
-      <div className="stack-sm">
-        <h1>แผนอาชีพ</h1>
-        <p className="muted">พื้นที่ลองคิด ไม่มีถูกผิด แชร์กับบริษัทเฉพาะเมื่อคุณเปิด และเลือกได้ทีละใบสมัคร</p>
-      </div>
+      <PageTitle title="แผนอาชีพ" sub="ไม่มีถูกผิด แชร์เฉพาะเมื่อคุณเลือก" />
       <ActionForm action={savePlanAction} className="split">
         <div className="main">
           <section className="card">
@@ -36,14 +34,14 @@ export default async function PlanPage() {
             </div>
             <label className="check">
               <input type="checkbox" name="share" defaultChecked={Boolean(plan?.share_with_companies)} />
-              <span>อนุญาตให้เลือกแชร์แผนนี้ตอนสมัครงาน (ปิดไว้เป็นค่าเริ่มต้น เปิดแล้วยังต้องติ๊กเลือกทีละใบสมัคร)</span>
+              <span>ให้เลือกแชร์ได้ตอนสมัครงาน</span>
             </label>
           </section>
         </div>
         <aside className="side">
           <section className="card">
             <h2>ชีวิตส่วนตัว</h2>
-            <p className="small muted">ช่องนี้ไม่แชร์ให้บริษัทใดเลย และไม่ใช้คัดกรองหรือคำนวณความตรงกับงาน ใช้จดสิ่งที่ต้องคิดประกอบ เช่น ดูแลครอบครัว การเดินทาง</p>
+            <p className="small muted">ไม่แชร์ให้บริษัทใดเลย</p>
             <label className="sr-only" htmlFor="life_notes">
               ชีวิตส่วนตัว
             </label>

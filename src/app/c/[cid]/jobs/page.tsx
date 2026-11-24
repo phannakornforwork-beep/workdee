@@ -27,14 +27,14 @@ export default async function CompanyJobs({ params }: { params: Promise<{ cid: s
   const rows = (data || []) as Row[];
   return (
     <>
-      <PageTitle title="ประกาศงาน" sub="ทุกประกาศต้องตอบผู้สมัครภายใน 7 วัน ประกาศที่ปิดแล้วระบบตอบคนที่รออยู่ให้อัตโนมัติ">
+      <PageTitle title="ประกาศงาน" sub="ตอบผู้สมัครทุกคนภายใน 7 วัน">
         {can(access, 'post') ? (
           <Link href={`/c/${cid}/jobs/new`} className="btn">
             + ลงประกาศใหม่
           </Link>
         ) : null}
       </PageTitle>
-      {rows.length === 0 ? <Empty>ยังไม่มีประกาศ เริ่มจากเทมเพลตได้เลย ไม่ต้องเขียนเองตั้งแต่ศูนย์</Empty> : null}
+      {rows.length === 0 ? <Empty>ยังไม่มีประกาศ เริ่มจากเทมเพลตได้เลย</Empty> : null}
       <div className="stack">
         {rows.map((j) => (
           <div key={j.id} className="card">
@@ -47,7 +47,6 @@ export default async function CompanyJobs({ params }: { params: Promise<{ cid: s
                 </div>
                 <span className="small muted">
                   {j.department_title} · {JOB_TYPE[j.job_type]} · {salaryRange(j.salary_min, j.salary_max, j.pay_unit)}
-                  {j.published_at ? ` · เผยแพร่ ${thaiDate(j.published_at)}` : ''}
                   {j.closes_at && j.status === 'open' ? ` · ปิดรับ ${thaiDate(j.closes_at)}` : ''}
                 </span>
                 {j.approval_note && j.status === 'draft' ? <span className="small" style={{ color: 'var(--danger)' }}>ไม่อนุมัติ: {j.approval_note}</span> : null}
@@ -66,13 +65,12 @@ export default async function CompanyJobs({ params }: { params: Promise<{ cid: s
               </div>
             </div>
             {j.status !== 'draft' ? (
-              <div className="row small muted">
-                <span>รอคัด {j.n_applied}</span>
-                <span>· รอบโจทย์ {j.n_challenge}</span>
-                <span>· สัมภาษณ์ {j.n_interview}</span>
-                <span>· เสนองาน {j.n_offer}</span>
-                <span>· รับแล้ว {j.n_hired}</span>
-                {j.has_challenge ? <span>· ที่นั่งรอบโจทย์ {j.seats_used}/{j.challenge_seats}</span> : null}
+              <div className="chips">
+                <Badge>รอคัด {j.n_applied}</Badge>
+                <Badge>โจทย์ {j.n_challenge}</Badge>
+                <Badge>สัมภาษณ์ {j.n_interview}</Badge>
+                <Badge>เสนองาน {j.n_offer}</Badge>
+                <Badge>รับแล้ว {j.n_hired}</Badge>
               </div>
             ) : null}
           </div>

@@ -61,7 +61,7 @@ export async function RoomView({ cid, roomId, knownRooms }: { cid: string; roomI
       <div className="split">
         <div className="main">
           {r.kind === 'candidate' ? (
-            <p className="small muted">ผู้สมัครเห็นข้อความในหน้าใบสมัครของเขา ห้องนี้เห็นเฉพาะคนที่ดูแลประกาศนี้</p>
+            <p className="small muted">ผู้สมัครเห็นข้อความในหน้าใบสมัคร</p>
           ) : null}
           <ChatRoom
             roomId={r.id}
@@ -74,7 +74,7 @@ export async function RoomView({ cid, roomId, knownRooms }: { cid: string; roomI
             quietNote={
               r.kind === 'candidate'
                 ? undefined
-                : `ส่งนอกเวลางาน (${quiet_start.slice(0, 5)}–${quiet_end.slice(0, 5)}) ข้อความเข้าแชตทันที แต่ LINE/อีเมลจะแจ้งตอนเริ่มงาน ยกเว้นติ๊ก "ด่วน" กับคนที่ยินยอมไว้`
+                : `นอกเวลางาน (${quiet_start.slice(0, 5)}–${quiet_end.slice(0, 5)}) แจ้งเตือนจะรอถึงเช้า ยกเว้น "ด่วน"`
             }
           />
           {statuses.length ? (

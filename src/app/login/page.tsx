@@ -10,7 +10,7 @@ export const metadata: Metadata = { title: 'เข้าสู่ระบบ' }
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string; error?: string }> }) {
   const sp = await searchParams;
   return (
-    <AuthShell title="เข้าสู่ระบบ" sub="บัญชีเดียว ใช้ได้ทั้งพื้นที่ส่วนตัวและพื้นที่บริษัท">
+    <AuthShell title="เข้าสู่ระบบ" sub="บัญชีเดียว ใช้ได้ทั้งหางานและบริษัท">
       {sp.error === 'oauth' ? (
         <div className="alert error">เข้าสู่ระบบด้วย Google ไม่สำเร็จหรือถูกยกเลิก ลองอีกครั้ง หรือใช้อีเมลแทน</div>
       ) : sp.error ? (

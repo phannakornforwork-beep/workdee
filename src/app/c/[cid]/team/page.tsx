@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { requireCompany } from '@/lib/auth';
 import { ActionForm, ConfirmSubmit, SubmitButton } from '@/components/forms';
-import { Alert, Badge, Empty } from '@/components/ui';
+import { Badge, Empty, PageTitle } from '@/components/ui';
 import {
   applyTemplateAction, assignMemberAction, cancelApprovalAction, createInviteAction, createPositionAction, decideApprovalAction,
   deletePositionAction, importInvitesAction, leaveCompanyAction, removeMemberAction, revokeInviteAction, saveGrantsAction
@@ -68,11 +68,7 @@ export default async function TeamPage({ params, searchParams }: { params: Promi
 
   return (
     <>
-      <div className="stack-sm">
-        <h1>ทีมและตำแหน่ง</h1>
-        <p className="muted">เจ้าของมอบสิทธิ์ให้หัวหน้าแผนก หัวหน้ามอบต่อให้ทีมได้ไม่เกินที่ตัวเองมี จัดการได้เฉพาะตำแหน่งที่อยู่ต่ำกว่า</p>
-      </div>
-      <Alert tone="privacy">ไม่มีใครในบริษัท รวมถึงเจ้าของ เห็นพื้นที่ส่วนตัวของพนักงาน เช่น การหางาน ใบสมัคร หรือแผนอาชีพ</Alert>
+      <PageTitle title="ทีมและตำแหน่ง" sub="มอบสิทธิ์ต่อได้ไม่เกินที่ตัวเองมี" />
       <nav className="tabs" aria-label="หัวข้อ">
         {TABS.map(([k, l]) => (
           <Link key={k} href={`/c/${cid}/team?tab=${k}`} aria-current={tab === k ? 'page' : undefined}>
@@ -127,9 +123,6 @@ export default async function TeamPage({ params, searchParams }: { params: Promi
               ))}
             </section>
           ))}
-          <p className="small muted">
-            นำคนออกแล้ว สิทธิ์ในพื้นที่บริษัทหมดทันที งานที่มอบหมายไว้ยังอยู่ให้ส่งต่อ พื้นที่ส่วนตัวของเขาไม่ได้รับผลกระทบ
-          </p>
           <ActionForm action={leaveCompanyAction} className="row">
             <input type="hidden" name="company_id" value={cid} />
             <ConfirmSubmit className="btn small ghost" confirmText="ยืนยันออกจากบริษัท">
@@ -144,17 +137,11 @@ export default async function TeamPage({ params, searchParams }: { params: Promi
           {o.me.is_owner && positions.length === 1 ? (
             <form action={applyTemplateAction} className="card soft tight row-between">
               <input type="hidden" name="company_id" value={cid} />
-              <span className="small">ยังมีแค่ตำแหน่งเจ้าของ ใช้ผังตัวอย่างของ SME เป็นจุดเริ่มต้นได้</span>
+              <span className="small">เริ่มจากผังตัวอย่างของ SME ได้</span>
               <SubmitButton className="btn small">ใช้ผังตัวอย่าง</SubmitButton>
             </form>
           ) : null}
-          <div className="card soft tight">
-            <p className="small">
-              ระดับสิทธิ์: <strong>ไม่มี</strong> · <strong>แผนกตัวเอง</strong> (เฉพาะแผนกที่ตำแหน่งนั้นสังกัด) · <strong>ทั้งบริษัท</strong>
-              <br />
-              ลดสิทธิ์ของตำแหน่งใด ตำแหน่งที่อยู่ใต้ลงไปจะถูกลดตามอัตโนมัติ · การชำระเงินเป็นของเจ้าของเท่านั้น
-            </p>
-          </div>
+          <p className="small muted">ระดับสิทธิ์: ไม่มี · แผนกตัวเอง · ทั้งบริษัท — ลดสิทธิ์ตำแหน่งไหน ตำแหน่งใต้ลงไปลดตาม</p>
           {positions.map((p) => (
             <section key={p.id} className="card tight" style={{ marginLeft: Math.min(p.depth, 3) * 14 }}>
               <div className="row-between">
@@ -174,7 +161,7 @@ export default async function TeamPage({ params, searchParams }: { params: Promi
                       {x.label}: {LEVEL[p.grants[x.key]]}
                     </Badge>
                   ))}
-                  {PERMS.every((x) => !(p.grants[x.key] > 0)) ? <span className="small muted">ยังไม่มีสิทธิ์จัดการเรื่องใด เห็นงานของตัวเอง</span> : null}
+                  {PERMS.every((x) => !(p.grants[x.key] > 0)) ? <span className="small muted">เห็นเฉพาะงานของตัวเอง</span> : null}
                 </div>
               )}
               {!p.is_owner && p.can_manage ? (
@@ -215,7 +202,7 @@ export default async function TeamPage({ params, searchParams }: { params: Promi
                   </ActionForm>
                 </details>
               ) : !p.is_owner ? (
-                <span className="tiny muted">อยู่ระดับเดียวกันหรือสูงกว่าคุณ แก้ไม่ได้</span>
+                <span className="tiny muted">แก้ไม่ได้</span>
               ) : null}
               <div className="row">
                 {p.can_add_child && myLevel('members') > 0 ? (
@@ -264,13 +251,13 @@ export default async function TeamPage({ params, searchParams }: { params: Promi
 
       {tab === 'invite' ? (
         canInviteTo.length === 0 ? (
-          <Empty>ตำแหน่งของคุณยังเชิญคนเข้าทีมไม่ได้ ขอสิทธิ์ &ldquo;จัดการทีม&rdquo; จากหัวหน้า</Empty>
+          <Empty>ขอสิทธิ์ &ldquo;จัดการทีม&rdquo; จากหัวหน้าเพื่อเชิญคน</Empty>
         ) : (
           <div className="split">
             <div className="main">
               <ActionForm action={createInviteAction} className="card">
                 <h2>ส่งลิงก์ในกลุ่ม LINE ของบริษัท</h2>
-                <p className="small muted">ลิงก์เดียวใช้ได้หลายคน ทุกคนกดเข้าร่วมเองด้วยบัญชีของตัวเอง</p>
+                <p className="small muted">ลิงก์เดียวใช้ได้หลายคน</p>
                 <input type="hidden" name="company_id" value={cid} />
                 <div className="form-row">
                   <div className="field">
@@ -317,10 +304,10 @@ export default async function TeamPage({ params, searchParams }: { params: Promi
               </ActionForm>
               <ActionForm action={importInvitesAction} className="card">
                 <h2>นำเข้าจาก Excel</h2>
-                <p className="small muted">ใน Excel ให้คอลัมน์ A เป็นอีเมล คอลัมน์ B เป็นชื่อตำแหน่ง (ตรงกับในระบบ) แล้วบันทึกเป็น CSV UTF-8</p>
+                <p className="small muted">คอลัมน์ A = อีเมล, B = ตำแหน่ง · บันทึกเป็น CSV UTF-8</p>
                 <input type="hidden" name="company_id" value={cid} />
                 <div className="field">
-                  <label>ตำแหน่งเริ่มต้น (ถ้าแถวไหนไม่ระบุหรือไม่ตรง)</label>
+                  <label>ตำแหน่งเริ่มต้น</label>
                   <select name="position_id" className="select">
                     {canInviteTo.map((p) => (
                       <option key={p.id} value={p.id}>
@@ -389,7 +376,7 @@ export default async function TeamPage({ params, searchParams }: { params: Promi
                 <ActionForm action={decideApprovalAction}>
                   <input type="hidden" name="company_id" value={cid} />
                   <input type="hidden" name="request_id" value={a.id} />
-                  <input name="note" className="input" placeholder="หมายเหตุถึงผู้ขอ (ไม่บังคับ ถ้าไม่อนุมัติควรบอกเหตุผล)" aria-label="หมายเหตุ" />
+                  <input name="note" className="input" placeholder="หมายเหตุ (ไม่บังคับ)" aria-label="หมายเหตุ" />
                   <div className="row">
                     <SubmitButton name="decision" value="approve" className="btn small">
                       อนุมัติ
@@ -421,10 +408,10 @@ export default async function TeamPage({ params, searchParams }: { params: Promi
 
       {tab === 'log' ? (
         !canSeeLog ? (
-          <Empty>ประวัติการเปลี่ยนแปลงดูได้เฉพาะคนที่มีสิทธิ์จัดการทีม</Empty>
+          <Empty>ต้องมีสิทธิ์จัดการทีม</Empty>
         ) : (
           <section className="card">
-            <p className="small muted">บันทึกทุกการเปลี่ยนแปลงสิทธิ์ ตำแหน่ง สมาชิก และการอนุมัติ ลบหรือแก้ไม่ได้</p>
+            <p className="small muted">บันทึกถาวร แก้หรือลบไม่ได้</p>
             <div className="table-wrap">
               <table className="table">
                 <thead>

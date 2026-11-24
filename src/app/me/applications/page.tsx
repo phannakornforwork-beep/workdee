@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { requireUser } from '@/lib/auth';
-import { Empty, StageBadge } from '@/components/ui';
+import { Empty, PageTitle, StageBadge } from '@/components/ui';
 import { CLOSED_STAGES, dueText, relative, shortDateTime } from '@/lib/format';
 
 export const metadata: Metadata = { title: 'ใบสมัครของฉัน' };
@@ -59,10 +59,7 @@ export default async function MyApplications() {
   };
   return (
     <>
-      <div className="stack-sm">
-        <h1>ใบสมัครของฉัน</h1>
-        <p className="muted">ทุกใบสมัครต้องได้คำตอบจากบริษัทภายใน 7 วันในทุกขั้น</p>
-      </div>
+      <PageTitle title="ใบสมัครของฉัน" sub="ได้คำตอบทุกขั้นภายใน 7 วัน" />
       {apps.length === 0 ? (
         <Empty>
           ยังไม่ได้สมัครงาน <Link href="/me">ดูงานที่ตรงกับคุณ</Link>

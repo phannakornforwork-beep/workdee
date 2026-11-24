@@ -17,8 +17,8 @@ export function KeywordScreen({ companyId, jobId, q, apps }: { companyId: string
   return (
     <section className="card ai-card">
       <div className="stack-sm">
-        <h2>คัดกรองผู้สมัครด้วยคีย์เวิร์ด</h2>
-        <span className="muted">ไม่ต้องอ่านทีละคน พิมพ์สิ่งที่ต้องการ ระบบหาคำที่ความหมายเดียวกันให้ (&ldquo;ยิงแอด&rdquo; = Meta Ads)</span>
+        <h2>คัดกรองด้วยคีย์เวิร์ด</h2>
+        <span className="muted">ระบบหาคำที่ความหมายเดียวกันให้</span>
       </div>
       <form method="get" className="row" role="search">
         <input type="hidden" name="job" value={jobId} />

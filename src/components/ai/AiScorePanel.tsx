@@ -94,8 +94,7 @@ export function AiScorePanel({
                 <Badge tone={EVIDENCE_TONE[v.trust] || 'gray'}>{v.trust === 'green' ? 'ยืนยันโดยระบบ' : 'ตรวจเอกสารแล้ว'}</Badge> {v.label} · {v.points} แต้ม
               </span>
             ))}
-            {!ai.verified_items.length ? <span className="small muted">ยังไม่มีหลักฐานที่ยืนยันได้ (ข้อมูลที่ผู้สมัครพิมพ์เองไม่นับ)</span> : null}
-            <span className="small muted">วุฒิยืนยันโดยสถาบัน 40 · ตรวจเอกสาร 28 · ผลโจทย์บน WorkDee งานละ 20 (สูงสุด 2 งาน) · ใบรับรองภาษายืนยันกับผู้จัดสอบ 20 · ตรวจเอกสาร 14</span>
+            {!ai.verified_items.length ? <span className="small muted">ยังไม่มีหลักฐานที่ยืนยันได้</span> : null}
           </div>
         </details>
       ) : null}

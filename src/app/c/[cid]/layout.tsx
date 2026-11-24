@@ -49,13 +49,13 @@ export default async function CompanyLayout({ children, params }: { children: Re
       {access.company.status !== 'verified' ? (
         <div className="container" style={{ paddingTop: 14 }}>
           <div className={`alert ${access.company.status === 'rejected' ? 'error' : 'warn'}`}>
-            {access.company.status === 'pending' && 'บริษัทกำลังรอการยืนยัน ร่างประกาศและชวนทีมเข้ามาได้เลย เผยแพร่ประกาศได้หลังยืนยันเสร็จ'}
+            {access.company.status === 'pending' && 'รอยืนยันบริษัท เผยแพร่ประกาศได้หลังยืนยัน'}
             {access.company.status === 'rejected' && (
               <>
                 ยืนยันบริษัทไม่ผ่าน <Link href={`${base}/settings`}>ดูเหตุผลและส่งเอกสารใหม่</Link>
               </>
             )}
-            {access.company.status === 'suspended' && 'บัญชีบริษัทถูกระงับชั่วคราว ติดต่อทีม WorkDee'}
+            {access.company.status === 'suspended' && 'บัญชีถูกระงับชั่วคราว ติดต่อทีม WorkDee'}
           </div>
         </div>
       ) : null}

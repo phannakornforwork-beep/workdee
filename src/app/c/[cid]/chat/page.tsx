@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { requireCompany } from '@/lib/auth';
-import { Empty } from '@/components/ui';
+import { Empty, PageTitle } from '@/components/ui';
 import { RoomList, type Room } from './RoomList';
 import { RoomView } from './RoomView';
 
@@ -19,8 +19,7 @@ export default async function ChatIndex({ params, searchParams }: { params: Prom
   }
   return (
     <>
-      <h1>แชต</h1>
-      <p className="muted">แชตของบริษัทแยกจากแชตส่วนตัว ข้อความที่ส่งนอกเวลางาน ระบบจะแจ้งเตือนตอนเช้า ยกเว้นเรื่องด่วนที่พนักงานยินยอมไว้</p>
+      <PageTitle title="แชต" sub="นอกเวลางาน แจ้งเตือนจะรอส่งตอนเช้า" />
       {rooms.length === 0 ? <Empty>ยังไม่มีห้องแชต</Empty> : <RoomList cid={cid} rooms={rooms} />}
     </>
   );

@@ -6,7 +6,7 @@ import { ActionForm, ConfirmSubmit, SubmitButton } from '@/components/forms';
 import { FileUpload } from '@/components/FileUpload';
 import { ChatRoom, type ChatMessage } from '@/components/ChatRoom';
 import { afterChatSendAction } from '@/lib/actions/chat';
-import { Alert, Badge, StageBadge } from '@/components/ui';
+import { Alert, Badge, PageTitle, StageBadge } from '@/components/ui';
 import {
   bookInterviewAction, rescheduleAction, respondOfferAction, reuseChallengeAction, revokeAccessAction, startChallengeAction,
   submitChallengeAction, withdrawAction
@@ -73,37 +73,30 @@ export default async function ApplicationPage({ params, searchParams }: { params
   const inChallenge = a.stage === 'challenge_invited';
   return (
     <>
-      <Link href="/me/applications" className="small">
-        ← ใบสมัครทั้งหมด
-      </Link>
-      <div className="row-between">
-        <div className="stack-sm">
-          <span className="muted">{d.job.company_name}</span>
-          <h1>{d.job.title}</h1>
-          <div className="chips">
-            <StageBadge stage={a.stage} />
-            <Badge>{JOB_TYPE[d.job.job_type]}</Badge>
-            <Badge>{salaryRange(d.job.salary_min, d.job.salary_max, d.job.pay_unit)}</Badge>
-          </div>
-        </div>
+      <PageTitle plain back={{ href: '/me/applications', label: 'ใบสมัครของฉัน' }} title={d.job.title} sub={d.job.company_name}>
         <Link href={`/jobs/${d.job.id}`} className="btn ghost small">
           ดูประกาศ
         </Link>
+      </PageTitle>
+      <div className="chips">
+        <StageBadge stage={a.stage} />
+        <Badge>{JOB_TYPE[d.job.job_type]}</Badge>
+        <Badge>{salaryRange(d.job.salary_min, d.job.salary_max, d.job.pay_unit)}</Badge>
       </div>
 
       {sp.applied ? (
-        <Alert tone="success">ส่งใบสมัครแล้ว บริษัทต้องตอบภายใน 7 วัน ({thaiDate(a.sla_due_at)}) เราจะแจ้งทางอีเมลหรือ LINE ทันทีที่มีความคืบหน้า</Alert>
+        <Alert tone="success">ส่งใบสมัครแล้ว บริษัทต้องตอบภายใน {thaiDate(a.sla_due_at)}</Alert>
       ) : null}
       {a.stage === 'rejected' ? (
         <Alert tone={a.closed_by_system ? 'warn' : 'info'}>
-          <strong>{a.closed_by_system ? 'ระบบปิดใบสมัครนี้ให้' : 'ผลการพิจารณา: ยังไม่ผ่านรอบนี้'}</strong>
+          <strong>{a.closed_by_system ? 'บริษัทไม่ได้ตอบใน 7 วัน' : 'ยังไม่ผ่านรอบนี้'}</strong>
           <br />
           เหตุผล: {a.reject_labels || '-'}
           {a.reject_note ? ` · ${a.reject_note}` : ''}
-          {a.closed_by_system ? <><br />ผลนี้ไม่ใช่การประเมินตัวคุณ และไม่กระทบโปรไฟล์ บริษัทถูกนับในอัตราการตอบผู้สมัคร</> : null}
+          {a.closed_by_system ? <><br />ผลนี้ไม่ใช่การประเมินตัวคุณ</> : null}
         </Alert>
       ) : null}
-      {a.stage === 'hired' ? <Alert tone="success">ยินดีด้วย! คุณตอบรับข้อเสนองานแล้ว บริษัทจะติดต่อเรื่องวันเริ่มงานในแชตด้านล่าง</Alert> : null}
+      {a.stage === 'hired' ? <Alert tone="success">ยินดีด้วย! บริษัทจะนัดวันเริ่มงานในแชต</Alert> : null}
 
       <div className="split">
         <div className="main">
@@ -129,7 +122,7 @@ export default async function ApplicationPage({ params, searchParams }: { params
                 ))}
               </div>
               <p className="small muted">
-                เวลาที่แนะนำ {ch.time_limit_minutes} นาที · {AI_POLICY[ch.ai_policy || 'allowed_declare']} · ผลงานเป็นของคุณ บริษัทนำไปใช้เชิงพาณิชย์ไม่ได้
+                ประมาณ {ch.time_limit_minutes} นาที · {AI_POLICY[ch.ai_policy || 'allowed_declare']} · ผลงานเป็นของคุณ
               </p>
 
               {inChallenge && !d.submission?.started_at ? (
@@ -141,7 +134,7 @@ export default async function ApplicationPage({ params, searchParams }: { params
 
               {inChallenge && d.reusable && d.reusable.length ? (
                 <div className="card soft tight">
-                  <span className="strong">ใช้ผลโจทย์เดิมของสกิลเดียวกันได้</span>
+                  <span className="strong">ใช้ผลโจทย์เดิมได้</span>
                   {d.reusable.map((r) => (
                     <form key={r.source_app} action={reuseChallengeAction} className="row-between">
                       <input type="hidden" name="app_id" value={a.id} />
@@ -154,7 +147,7 @@ export default async function ApplicationPage({ params, searchParams }: { params
                       </ConfirmSubmit>
                     </form>
                   ))}
-                  <span className="hint">บริษัทนี้จะเห็นคำตอบและคะแนนเดิมของโจทย์นั้น</span>
+                  <span className="hint">บริษัทจะเห็นคำตอบและคะแนนเดิม</span>
                 </div>
               ) : null}
 
@@ -189,7 +182,7 @@ export default async function ApplicationPage({ params, searchParams }: { params
                   </div>
                   <div className="field">
                     <label htmlFor="reasoning">ทำไมเลือกทำแบบนี้</label>
-                    <textarea id="reasoning" name="reasoning" className="textarea" maxLength={4000} placeholder="บริษัทใช้ส่วนนี้ประกอบการให้คะแนน และถามต่อใน 10 นาทีแรกของการสัมภาษณ์" required />
+                    <textarea id="reasoning" name="reasoning" className="textarea" maxLength={4000} placeholder="อธิบายสั้นๆ" required />
                   </div>
                   <SubmitButton pendingText="กำลังส่ง…">ส่งโจทย์</SubmitButton>
                 </ActionForm>
@@ -232,7 +225,7 @@ export default async function ApplicationPage({ params, searchParams }: { params
           ) : ch?.preview ? (
             <section className="card soft">
               <h2>โจทย์ของตำแหน่งนี้: {ch.title}</h2>
-              <p className="muted small">ถ้าบริษัทเชิญเข้ารอบโจทย์ ตัวโจทย์จะเปิดที่นี่ ใช้เวลาประมาณ {ch.time_limit_minutes} นาที</p>
+              <p className="muted small">โจทย์จะเปิดที่นี่เมื่อได้รับเชิญ (~{ch.time_limit_minutes} นาที)</p>
             </section>
           ) : null}
 
@@ -281,8 +274,8 @@ export default async function ApplicationPage({ params, searchParams }: { params
                   <SubmitButton>ยืนยันเวลานี้</SubmitButton>
                 </ActionForm>
               ) : null}
-              {d.interview.status === 'reschedule_requested' ? <p className="muted">ส่งคำขอเลื่อนแล้ว รอบริษัทเสนอเวลาใหม่</p> : null}
-              {d.interview.status === 'completed' ? <p className="muted">สัมภาษณ์เสร็จแล้ว บริษัทต้องแจ้งผล{dueText(a.sla_due_at)}</p> : null}
+              {d.interview.status === 'reschedule_requested' ? <p className="muted">รอบริษัทเสนอเวลาใหม่</p> : null}
+              {d.interview.status === 'completed' ? <p className="muted">รอผล{dueText(a.sla_due_at)}</p> : null}
               {['awaiting_candidate', 'confirmed'].includes(d.interview.status) ? (
                 <details className="disclosure">
                   <summary>ขอเลื่อนนัด</summary>
@@ -339,7 +332,7 @@ export default async function ApplicationPage({ params, searchParams }: { params
           {roomId ? (
             <section className="card">
               <h2>คุยกับบริษัท</h2>
-              <p className="muted small">ข้อความอยู่ในใบสมัครนี้เท่านั้น ไม่ต้องแลกเบอร์ส่วนตัว</p>
+              <p className="muted small">ไม่ต้องแลกเบอร์ส่วนตัว</p>
               <ChatRoom roomId={roomId} meId={user.id} initial={messages} afterSend={afterChatSendAction} placeholder="พิมพ์ถึงบริษัท" />
             </section>
           ) : null}
@@ -365,10 +358,10 @@ export default async function ApplicationPage({ params, searchParams }: { params
             <h2>ข้อมูลที่บริษัทเห็น</h2>
             {a.profile_snapshot ? (
               <p className="small muted">
-                สำเนาโปรไฟล์ ณ วันที่สมัคร{a.share_plan ? ' พร้อมแผนอาชีพ' : ''} ไม่มีอีเมล เบอร์โทร ที่อยู่ หรือวันเกิด
+                โปรไฟล์วันที่สมัคร{a.share_plan ? ' + แผนอาชีพ' : ''} (ไม่มีเบอร์โทร อีเมล ที่อยู่)
               </p>
             ) : (
-              <p className="small muted">ถอนสิทธิ์แล้ว บริษัทไม่เห็นโปรไฟล์ของคุณอีก</p>
+              <p className="small muted">ถอนสิทธิ์แล้ว</p>
             )}
             {!closed ? (
               <details className="disclosure">
@@ -379,14 +372,14 @@ export default async function ApplicationPage({ params, searchParams }: { params
                     <label htmlFor="reason-w">เหตุผล (ไม่บังคับ)</label>
                     <input id="reason-w" name="reason" className="input" maxLength={500} />
                   </div>
-                  <span className="hint">บริษัทจะไม่เห็นโปรไฟล์ของคุณอีก และยกเลิกนัดหรือข้อเสนอที่ค้างอยู่</span>
+                  <span className="hint">นัดและข้อเสนอที่ค้างจะถูกยกเลิก</span>
                   <SubmitButton className="btn small danger">ยืนยันถอนใบสมัคร</SubmitButton>
                 </ActionForm>
               </details>
             ) : a.profile_snapshot ? (
               <form action={revokeAccessAction}>
                 <input type="hidden" name="app_id" value={a.id} />
-                <ConfirmSubmit className="btn small ghost">ถอนสิทธิ์ที่บริษัทเห็นโปรไฟล์</ConfirmSubmit>
+                <ConfirmSubmit className="btn small ghost">ถอนสิทธิ์ดูโปรไฟล์</ConfirmSubmit>
               </form>
             ) : null}
           </section>

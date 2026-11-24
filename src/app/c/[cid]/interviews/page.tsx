@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { can, requireCompany } from '@/lib/auth';
 import { ActionForm, ConfirmSubmit, SubmitButton } from '@/components/forms';
-import { Badge, Empty, NoAccess } from '@/components/ui';
+import { Badge, Empty, NoAccess, PageTitle } from '@/components/ui';
 import { createSlotsAction, deleteSlotAction } from '@/lib/actions/hiring';
 import { shortDateTime } from '@/lib/format';
 
@@ -35,10 +35,7 @@ export default async function InterviewsPage({ params }: { params: Promise<{ cid
   const waiting = ivs.filter((i) => i.status !== 'confirmed');
   return (
     <>
-      <div className="stack-sm">
-        <h1>สัมภาษณ์</h1>
-        <p className="muted">เพิ่มเวลาว่างไว้ แล้วเชิญผู้สมัครให้เลือกเวลาเอง ไม่ต้องโทรนัดทีละคน</p>
-      </div>
+      <PageTitle title="สัมภาษณ์" sub="เปิดเวลาว่าง ให้ผู้สมัครเลือกเอง" />
       <div className="split">
         <div className="main">
           <section className="card">
@@ -56,7 +53,7 @@ export default async function InterviewsPage({ params }: { params: Promise<{ cid
             ))}
           </section>
           <section className="card">
-            <h2>รอผู้สมัครเลือกเวลา หรือขอเลื่อน ({waiting.length})</h2>
+            <h2>รอเลือกเวลา ({waiting.length})</h2>
             {waiting.map((i) => (
               <div key={i.id} className="row-between small">
                 <Link href={`/c/${cid}/applications/${i.application_id}`}>{i.applications?.candidate_name}</Link>
@@ -67,7 +64,7 @@ export default async function InterviewsPage({ params }: { params: Promise<{ cid
           </section>
           <section className="card">
             <h2>เวลาว่างที่เปิดไว้</h2>
-            {(slots || []).length === 0 ? <Empty>ยังไม่มีเวลาว่าง เพิ่มด้านขวา</Empty> : null}
+            {(slots || []).length === 0 ? <Empty>ยังไม่มีเวลาว่าง</Empty> : null}
             {((slots || []) as { id: string; starts_at: string; mode: string; location: string; capacity: number; job_id: string | null }[]).map((s) => {
               const booked = bySlot.get(s.id) || [];
               return (
@@ -142,7 +139,7 @@ export default async function InterviewsPage({ params }: { params: Promise<{ cid
               <input id="location" name="location" className="input" />
             </div>
             <div className="field">
-              <label htmlFor="meeting_url">ลิงก์ประชุม (ถ้าออนไลน์ ผู้สมัครเห็นหลังยืนยันเวลา)</label>
+              <label htmlFor="meeting_url">ลิงก์ประชุม (ถ้าออนไลน์)</label>
               <input id="meeting_url" name="meeting_url" className="input" type="url" placeholder="https://" />
             </div>
             <SubmitButton>เพิ่มเวลา</SubmitButton>

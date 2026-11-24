@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import { IBM_Plex_Sans_Thai } from 'next/font/google';
 import './globals.css';
-import './ios.css';
-import './readable.css';
+// ธีมเรียบตามหลัก JobsDB (ลดตาลาย) — กลับไปธีมกระจกเดิม: เปลี่ยนเป็น import './ios.css' และ './readable.css'
+import './clean.css';
 import { SITE_URL } from '@/lib/env';
 
 const font = IBM_Plex_Sans_Thai({
@@ -23,8 +23,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#eef2f6' },
-    { media: '(prefers-color-scheme: dark)', color: '#0b0d12' }
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#161b23' }
   ],
   colorScheme: 'light dark',
   width: 'device-width',

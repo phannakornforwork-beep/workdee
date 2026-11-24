@@ -49,10 +49,10 @@ export function LanguageCerts({ userId, certs }: { userId: string; certs: LangCe
   return (
     <section className="card">
       <div className="row-between">
-        <h2>ใบรับรองภาษาที่ตรวจสอบได้</h2>
+        <h2>ใบรับรองภาษา</h2>
         <span className="badge ai">AI</span>
       </div>
-      <p className="muted">คะแนนที่พิมพ์เองไม่นับ แนบผลสอบให้ AI ตรวจ แล้วทีมงานยืนยัน</p>
+      <p className="muted">แนบผลสอบ AI ตรวจ ทีมงานยืนยัน</p>
       <details className="disclosure">
         <summary>AI ตรวจอะไรบ้าง</summary>
         <p className="small">อ่านคะแนน เลขที่ผลสอบ วันสอบ และชื่อ แล้วตรวจว่าชื่อตรงกับบัญชีและยังไม่หมดอายุ รองรับ IELTS, TOEIC, CU-TEP, JLPT ฯลฯ</p>

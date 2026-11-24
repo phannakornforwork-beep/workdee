@@ -6,6 +6,7 @@ import { getUser } from '@/lib/auth';
 import { Footer, PublicHeader } from '@/components/PublicHeader';
 import { Avatar, Badge } from '@/components/ui';
 import { mediaUrl } from '@/lib/env';
+import { ShowMore } from '@/components/ShowMore';
 import { ActionForm, SubmitButton } from '@/components/forms';
 import { applyAction } from '@/lib/actions/candidate';
 import { AI_POLICY, JOB_TYPE, WORK_MODE, salaryRange, thaiDate } from '@/lib/format';
@@ -85,22 +86,28 @@ export default async function JobDetail({ params }: { params: Promise<{ id: stri
                 <dt>ปิดรับ</dt>
                 <dd>{job.closes_at ? thaiDate(job.closes_at) : 'จนกว่าจะได้คน'}</dd>
                 <dt>การตอบผู้สมัคร</dt>
-                <dd>{job.response_rate !== null ? `ตอบตรงเวลา ${job.response_rate}% (90 วันล่าสุด)` : 'บริษัทใหม่ ยังไม่มีสถิติ'} · ตอบทุกคนภายใน 7 วัน</dd>
+                <dd>{job.response_rate !== null ? `ตอบตรงเวลา ${job.response_rate}%` : 'ยังไม่มีสถิติ'}</dd>
               </div>
             </div>
             <section className="card">
               <h2>รายละเอียดงาน</h2>
-              <p className="prewrap">{job.description || '-'}</p>
+              <ShowMore lines={4}>
+                <p className="prewrap">{job.description || '-'}</p>
+              </ShowMore>
               {job.responsibilities ? (
                 <>
                   <h3>หน้าที่</h3>
-                  <p className="prewrap">{job.responsibilities}</p>
+                  <ShowMore lines={4}>
+                    <p className="prewrap">{job.responsibilities}</p>
+                  </ShowMore>
                 </>
               ) : null}
               {job.requirements ? (
                 <>
                   <h3>คุณสมบัติ</h3>
-                  <p className="prewrap">{job.requirements}</p>
+                  <ShowMore lines={4}>
+                    <p className="prewrap">{job.requirements}</p>
+                  </ShowMore>
                 </>
               ) : null}
               {job.skills?.length ? (
@@ -115,13 +122,15 @@ export default async function JobDetail({ params }: { params: Promise<{ id: stri
             </section>
             {job.has_challenge ? (
               <section className="card">
-                <h2>โจทย์พิสูจน์สกิล: {job.challenge_title}</h2>
-                <p className="muted">
-                  บริษัทจะเชิญเฉพาะคนที่ตรงกับงานเข้ารอบโจทย์ ใช้เวลาประมาณ {job.time_limit_minutes} นาที ส่งภายใน {job.due_days} วันหลังได้รับเชิญ
-                  ตัวโจทย์จะเปิดให้เห็นเมื่อได้รับเชิญ
-                </p>
+                <h2>โจทย์: {job.challenge_title}</h2>
+                <div className="kv">
+                  <dt>เวลาทำ</dt>
+                  <dd>ประมาณ {job.time_limit_minutes} นาที</dd>
+                  <dt>ส่งภายใน</dt>
+                  <dd>{job.due_days} วันหลังได้รับเชิญ</dd>
+                </div>
                 <div className="stack-sm">
-                  <span className="label">เกณฑ์ให้คะแนน (เห็นก่อนทำ)</span>
+                  <span className="label">เกณฑ์ให้คะแนน</span>
                   {(job.challenge_criteria || []).map((c) => (
                     <div key={c.name} className="row-between small">
                       <span>{c.name}</span>
@@ -130,8 +139,8 @@ export default async function JobDetail({ params }: { params: Promise<{ id: stri
                   ))}
                 </div>
                 <p className="small muted">
-                  {AI_POLICY[job.ai_policy || 'allowed_declare']} · ผลงานเป็นของคุณ บริษัทนำไปใช้เชิงพาณิชย์ไม่ได้
-                  {job.accept_reuse ? ' · รับผลโจทย์เดิมของสกิลเดียวกันได้' : ''}
+                  {AI_POLICY[job.ai_policy || 'allowed_declare']} · ผลงานเป็นของคุณ
+                  {job.accept_reuse ? ' · ใช้ผลโจทย์เดิมได้' : ''}
                 </p>
               </section>
             ) : null}
@@ -148,7 +157,6 @@ export default async function JobDetail({ params }: { params: Promise<{ id: stri
               ) : !user ? (
                 <>
                   <h2>สมัครงานนี้</h2>
-                  <p className="muted small">สมัครด้วยโปรไฟล์ที่สร้างครั้งเดียว ใช้ได้กับทุกงาน</p>
                   <Link href={`/login?next=${encodeURIComponent(`/jobs/${job.id}`)}`} className="btn">
                     เข้าสู่ระบบเพื่อสมัคร
                   </Link>
@@ -159,7 +167,6 @@ export default async function JobDetail({ params }: { params: Promise<{ id: stri
               ) : !hasProfile ? (
                 <>
                   <h2>สร้างโปรไฟล์ก่อนสมัคร</h2>
-                  <p className="muted small">บริษัทเห็นโปรไฟล์ของคุณเฉพาะตอนที่คุณกดสมัคร</p>
                   <Link href="/me/profile" className="btn">
                     สร้างโปรไฟล์
                   </Link>
@@ -170,7 +177,7 @@ export default async function JobDetail({ params }: { params: Promise<{ id: stri
                   <input type="hidden" name="job_id" value={job.id} />
                   <div className="field">
                     <label htmlFor="intro">แนะนำตัวสั้นๆ ถึงบริษัทนี้</label>
-                    <textarea id="intro" name="intro" className="textarea" maxLength={2000} placeholder="ทำไมสนใจงานนี้ และเคยทำอะไรที่ใกล้เคียง" />
+                    <textarea id="intro" name="intro" className="textarea" maxLength={2000} placeholder="ทำไมสนใจงานนี้" />
                   </div>
                   <div className="field">
                     <label htmlFor="expected_salary">ค่าตอบแทนที่คาดหวัง (บาท)</label>
@@ -189,7 +196,7 @@ export default async function JobDetail({ params }: { params: Promise<{ id: stri
                     </span>
                   </label>
                   <div className="alert privacy small">
-                    เมื่อกดสมัคร บริษัทนี้จะเห็นโปรไฟล์ การศึกษา และผลงานของคุณ ไม่เห็นอีเมล เบอร์โทร ที่อยู่ หรือวันเกิด และถอนสิทธิ์ได้ทุกเมื่อ
+                    บริษัทจะเห็นโปรไฟล์และผลงาน ไม่เห็นเบอร์โทร อีเมล หรือที่อยู่
                   </div>
                   <SubmitButton className="btn block" pendingText="กำลังส่งใบสมัคร…">
                     ยืนยันสมัครงาน

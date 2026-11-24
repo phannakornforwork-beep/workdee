@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { can, requireCompany } from '@/lib/auth';
-import { NoAccess } from '@/components/ui';
+import { NoAccess, PageTitle } from '@/components/ui';
 import { PipelineBoard } from './PipelineBoard';
 import type { PipelineItem, Template } from '@/lib/types';
 import { KeywordScreen, type ScreenApp } from '@/components/ai/KeywordScreen';
@@ -37,15 +37,11 @@ export default async function PipelinePage({ params, searchParams }: { params: P
   );
   return (
     <>
-      <div className="row-between">
-        <div className="stack-sm">
-          <h1>กระดานผู้สมัคร</h1>
-          <p className="muted">เชิญทำโจทย์เฉพาะคนที่ตรง ตอบให้ครบใน 7 วัน</p>
-        </div>
+      <PageTitle title="ผู้สมัคร" sub="ตอบทุกคนให้ครบใน 7 วัน">
         <Link href={`/c/${cid}/interviews`} className="btn ghost small">
           จัดเวลาสัมภาษณ์
         </Link>
-      </div>
+      </PageTitle>
       <nav className="tabs" aria-label="กรองตามประกาศ">
         <Link href={`/c/${cid}/pipeline`} aria-current={!sp.job ? 'page' : undefined}>
           ทุกประกาศ
@@ -57,7 +53,6 @@ export default async function PipelinePage({ params, searchParams }: { params: P
         ))}
       </nav>
       {sp.job && screenApps ? <KeywordScreen companyId={cid} jobId={sp.job} q={sp.kw || ''} apps={screenApps as ScreenApp[]} /> : null}
-      {!sp.job && jobList.length ? <p className="small muted">เลือกประกาศด้านบนเพื่อคัดกรองผู้สมัครด้วยคีย์เวิร์ด</p> : null}
       <PipelineBoard
         companyId={cid}
         companyName={(company?.name as string) || ''}
