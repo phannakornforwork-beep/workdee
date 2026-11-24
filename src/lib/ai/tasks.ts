@@ -2,7 +2,7 @@
 // ใช้ฝั่งเซิร์ฟเวอร์เท่านั้น
 import { aiDemo, aiJson, type AiFile } from '@/lib/ai/client';
 import { demoCv, demoDesignJob, demoGrade, demoScreen } from '@/lib/ai/demo';
-import { MAX_CHALLENGE_MINUTES } from '@/lib/format';
+import { MAX_CHALLENGE_MINUTES, MIN_CHALLENGE_MINUTES } from '@/lib/format';
 
 const conf = { type: 'number', minimum: 0, maximum: 1 };
 
@@ -125,7 +125,7 @@ export async function designJob(input: { title: string; jobType: string; objecti
       title: out.challenge.title.slice(0, 160),
       brief: out.challenge.brief.slice(0, 6000),
       deliverable: out.challenge.deliverable.slice(0, 2000),
-      minutes: clamp(Math.round(out.challenge.minutes / 10) * 10, 10, MAX_CHALLENGE_MINUTES),
+      minutes: clamp(Math.round(out.challenge.minutes / 10) * 10, MIN_CHALLENGE_MINUTES, MAX_CHALLENGE_MINUTES),
       due_days: clamp(out.challenge.due_days, 1, 7),
       skill_key: /^[a-z0-9-]{2,40}$/.test(out.challenge.skill_key) ? out.challenge.skill_key : ''
     },

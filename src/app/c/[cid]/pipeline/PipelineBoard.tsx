@@ -501,6 +501,15 @@ export function PipelineBoard({
                       <span className={`badge ${v[1]}`}>{v[0]}</span>
                       <span className={`badge ${st.tone}`}>{st.text}</span>
                     </span>
+                    {it.score_total !== null ? (
+                      // ใบผลงานย่อ: แถบคะแนนรวมแบบเดียวกับที่ผู้สมัครเห็น
+                      <span className="mini-score" aria-label={`คะแนนโจทย์ ${it.score_total} จาก 100`}>
+                        <span className="rubric-bar">
+                          <span style={{ width: `${Math.max(0, Math.min(100, it.score_total))}%` }} />
+                        </span>
+                        <b>{it.score_total}</b>
+                      </span>
+                    ) : null}
                     {d !== null ? (
                       <span className="tiny strong" style={{ color: d <= 2 ? 'var(--danger)' : 'var(--muted)' }}>
                         เหลือ {Math.max(d, 0)} วัน

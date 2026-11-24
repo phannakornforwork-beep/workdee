@@ -23,7 +23,7 @@ export default async function MyFeed({ searchParams }: { searchParams: Promise<J
     <>
       <PageTitle
         title="งานที่ตรงกับฉัน"
-        sub="เรียงตามความตรงกับโปรไฟล์ของคุณ"
+        sub="ตรงกับสกิลของคุณ พร้อมโจทย์ให้พิสูจน์ฝีมือ"
         search={<JobFilters action="/me" {...sp} matchSort />}
       />
       {!profile?.full_name ? (

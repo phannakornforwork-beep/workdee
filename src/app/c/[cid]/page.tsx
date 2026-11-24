@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { can, requireCompany } from '@/lib/auth';
 import { Alert, Badge, PageTitle, Progress, Stat } from '@/components/ui';
-import { STAGE, dueText, relative } from '@/lib/format';
+import { MIN_RESPONSE_SAMPLE, STAGE, dueText, hasResponseStat, relative } from '@/lib/format';
 
 type Home = {
   company: { id: string; name: string; status: string; review_note: string | null; has_certificate: boolean };
@@ -20,7 +20,14 @@ export default async function CompanyHome({ params, searchParams }: { params: Pr
   const { cid } = await params;
   const sp = await searchParams;
   const { supabase, access } = await requireCompany(cid);
-  const [{ data: home }, { data: work }] = await Promise.all([supabase.rpc('company_home', { p_company: cid }), supabase.rpc('team_work', { p_company: cid })]);
+  const [{ data: home }, { data: work }, { data: pub }] = await Promise.all([
+    supabase.rpc('company_home', { p_company: cid }),
+    supabase.rpc('team_work', { p_company: cid }),
+    supabase.from('public_companies').select('response_rate, response_sample').eq('id', cid).maybeSingle()
+  ]);
+  const rate = pub?.response_rate as number | null | undefined;
+  const sample = (pub?.response_sample as number | undefined) || 0;
+  const shownRate: number | null = hasResponseStat(rate, sample) ? (rate as number) : null;
   const h = home as Home;
   const w = (work || { tasks: [], leave_today: [] }) as Work;
   const base = `/c/${cid}`;
@@ -63,6 +70,28 @@ export default async function CompanyHome({ params, searchParams }: { params: Pr
           ) : null}
         </section>
       ) : null}
+
+      {/* สัญญา 7 วัน: ตัวเลขเดียวกับที่ผู้สมัครเห็นบนทุกประกาศของบริษัทนี้ */}
+      <section className={`card ${shownRate !== null && shownRate < 80 ? 'warn' : ''}`}>
+        <div className="row-between">
+          <div className="stack-sm">
+            <span className="eyebrow">สัญญา 7 วันกับผู้สมัคร</span>
+            <h2>
+              {shownRate !== null ? `ผู้สมัครเห็นว่าคุณตอบตรงเวลา ${shownRate}%` : 'ผู้สมัครเห็นว่าเป็น "บริษัทใหม่"'}
+            </h2>
+            <p className="small muted">
+              {shownRate !== null
+                ? 'คำนวณจากใบสมัคร 90 วันล่าสุด ใบที่ระบบต้องปิดแทนจะลดตัวเลขนี้'
+                : `ตัวเลขจะแสดงเมื่อมีใบสมัครครบ ${MIN_RESPONSE_SAMPLE} ใบ (ตอนนี้ ${sample})`}
+            </p>
+          </div>
+          {screener && h.due_soon ? (
+            <Link href={`${base}/pipeline`} className="btn">
+              ตอบ {h.due_soon} คนที่ใกล้ครบ 7 วัน
+            </Link>
+          ) : null}
+        </div>
+      </section>
 
       <div className="grid-sm">
         <Stat label="สมาชิก" value={`${h.members} คน`} href={`${base}/team`} />

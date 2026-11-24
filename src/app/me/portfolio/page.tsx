@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { requireUser } from '@/lib/auth';
 import { Badge, Empty, PageTitle, Stat } from '@/components/ui';
+import { ResultCard } from '@/components/Brand';
 import { PortfolioHideButton } from '@/components/ai/AiButtons';
 import { JOB_TYPE, thaiDate } from '@/lib/format';
 
@@ -57,9 +58,9 @@ export default async function PortfolioPage() {
 
   return (
     <>
-      <PageTitle title="แฟ้มผลงาน" sub="บันทึกอัตโนมัติ ซ่อนได้ แก้คะแนนไม่ได้" />
+      <PageTitle title="แฟ้มผลงาน" sub="ใบผลงานทุกใบที่คุณได้ บันทึกอัตโนมัติ ซ่อนได้ แต่แก้คะแนนไม่ได้" />
       <div className="grid-sm">
-        <Stat label="โจทย์ที่ได้คะแนน" value={p.stats.done} />
+        <Stat label="ใบผลงาน" value={p.stats.done} />
         <Stat label="คะแนนเฉลี่ย" value={p.stats.avg ?? '–'} />
         <Stat label="ผ่านเข้าสัมภาษณ์" value={p.stats.interviews} />
         <Stat label="ได้งาน" value={p.stats.hired} />
@@ -67,60 +68,54 @@ export default async function PortfolioPage() {
 
       {trend.length >= 2 ? (
         <section className="card">
-          <h2>พัฒนาการคะแนนโจทย์</h2>
+          <h2>พัฒนาการคะแนน</h2>
           <Trend points={trend} />
         </section>
       ) : null}
 
-      <section className="card">
-        <div className="row-between">
-          <h2>ประวัติงาน</h2>
-        </div>
+      <section className="stack">
+        <h2>ใบผลงานของฉัน</h2>
         {p.items.length === 0 ? (
           <Empty>
-            ยังไม่มีผลงาน <Link href="/me">หางาน</Link>
+            ยังไม่มีใบผลงาน สมัครงานที่มีโจทย์เพื่อเริ่มสะสม <Link href="/me">หางาน</Link>
           </Empty>
         ) : (
-          p.items.map((i) => (
-            <div key={i.application_id} className={`card soft tight ${i.hidden ? 'dim' : ''}`}>
-              <div className="row-between">
-                <span className="strong">
-                  {i.job_title} · {i.company_name}
-                </span>
-                <span className="chips">
-                  <Badge tone="teal">ยืนยันโดยระบบ</Badge>
-                  {i.stage === 'hired' ? <Badge tone="blue">ได้งาน</Badge> : null}
-                  {i.reused ? <Badge tone="gray">ใช้ผลเดิม</Badge> : null}
-                  {i.hidden ? <Badge tone="gray">ซ่อนอยู่</Badge> : null}
-                </span>
-              </div>
-              <div className="row-between">
-                <span className="muted">
-                  {JOB_TYPE[i.job_type] || i.job_type}
-                  {i.graded_at ? ` · ${thaiDate(i.graded_at)}` : ''}
-                </span>
-                {i.total !== null ? <span className="ai-total">{i.total}</span> : null}
-              </div>
-              {(i.scores || []).length || i.feedback ? (
-                <details className="disclosure">
-                  <summary>คะแนนรายเกณฑ์และคำติชม</summary>
-                  <div className="stack-sm">
-                    {(i.scores || []).map((s) => (
-                      <div key={s.name} className="row-between">
-                        <span>{s.name}</span>
-                        <span className="strong">
-                          {s.score}/{s.weight}
-                        </span>
-                      </div>
-                    ))}
-                    {i.skill_key ? <span className="small muted">สกิล {i.skill_key}</span> : null}
-                    {i.feedback ? <p className="prewrap">คำติชม: {i.feedback}</p> : null}
+          <div className="result-grid">
+            {p.items.map((i) =>
+              (i.scores || []).length && i.total !== null ? (
+                <div key={i.application_id} className={i.hidden ? 'dim' : ''}>
+                  <ResultCard
+                    inline
+                    tag={i.reused ? 'ใบผลงาน · ใช้ผลเดิม' : 'ใบผลงาน · ยืนยันโดยระบบ'}
+                    title={`${i.job_title} · ${i.company_name}`}
+                    scores={i.scores || []}
+                    total={i.total}
+                    note={i.feedback}
+                    noteLabel="คำแนะนำ:"
+                    foot={[
+                      `${JOB_TYPE[i.job_type] || i.job_type}${i.graded_at ? ` · ${thaiDate(i.graded_at)}` : ''}`,
+                      ...(i.stage === 'hired' ? ['ได้งานนี้'] : []),
+                      ...(i.hidden ? ['ซ่อนอยู่'] : [])
+                    ]}
+                  >
+                    <PortfolioHideButton appId={i.application_id} hidden={i.hidden} />
+                  </ResultCard>
+                </div>
+              ) : (
+                <div key={i.application_id} className={`card ${i.hidden ? 'dim' : ''}`}>
+                  <span className="strong">
+                    {i.job_title} · {i.company_name}
+                  </span>
+                  <div className="chips">
+                    <Badge tone="teal">ยืนยันโดยระบบ</Badge>
+                    {i.stage === 'hired' ? <Badge tone="blue">ได้งาน</Badge> : null}
+                    {i.hidden ? <Badge tone="gray">ซ่อนอยู่</Badge> : null}
                   </div>
-                </details>
-              ) : null}
-              <PortfolioHideButton appId={i.application_id} hidden={i.hidden} />
-            </div>
-          ))
+                  <PortfolioHideButton appId={i.application_id} hidden={i.hidden} />
+                </div>
+              )
+            )}
+          </div>
         )}
       </section>
     </>

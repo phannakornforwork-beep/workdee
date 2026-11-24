@@ -9,6 +9,7 @@ import { Alert, Avatar, Badge, PageTitle, StageBadge, VerifyBadge } from '@/comp
 import { ShowMore } from '@/components/ShowMore';
 import { mediaUrl } from '@/lib/env';
 import { GradeForm } from './GradeForm';
+import { ResultCard, RubricPreview } from '@/components/Brand';
 import { AiScorePanel, type AppAi } from '@/components/ai/AiScorePanel';
 import { aiEnabled } from '@/lib/ai/client';
 import {
@@ -255,22 +256,15 @@ export default async function ApplicantPage({ params }: { params: Promise<{ cid:
                 </ShowMore>
               </div>
               {d.score ? (
-                <div className="card tight">
-                  <div className="row-between">
-                    <span className="strong">คะแนน {d.score.reused ? '(ผลเดิม)' : `โดย ${d.score.graded_by_name}`}</span>
-                    <span className="score" style={{ fontSize: 20 }}>
-                      {d.score.total}/100
-                    </span>
-                  </div>
-                  {d.score.scores.map((s) => (
-                    <div key={s.name} className="row-between small">
-                      <span>{s.name}</span>
-                      <span>
-                        {s.score}/{s.weight}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+                <ResultCard
+                  inline
+                  tag={d.score.reused ? 'ใบผลงาน (ใช้ผลเดิม)' : 'ใบผลงานที่ผู้สมัครเห็น'}
+                  title={d.score.reused ? undefined : `ให้คะแนนโดย ${d.score.graded_by_name}`}
+                  scores={d.score.scores}
+                  total={d.score.total}
+                  note={d.score.feedback || null}
+                  noteLabel="คำแนะนำ"
+                />
               ) : null}
               {a.stage === 'challenge_submitted' && d.challenge && !d.score?.reused ? (
                 <details className="disclosure" open={!d.score}>
@@ -372,6 +366,8 @@ export default async function ApplicantPage({ params }: { params: Promise<{ cid:
                   <input type="hidden" name="company_id" value={cid} />
                   <input type="hidden" name="app_id" value={a.id} />
                   <span className="small muted">ที่นั่งรอบโจทย์เหลือ {Math.max(0, d.job.challenge_seats - d.job.seats_used)} จาก {d.job.challenge_seats}</span>
+                  <span className="label">เกณฑ์ที่ผู้สมัครจะเห็นก่อนทำ</span>
+                  <RubricPreview criteria={d.challenge.criteria} />
                   <textarea name="message" className="textarea" aria-label="ข้อความเชิญทำโจทย์" defaultValue={tpl('invite_challenge')} />
                   <SubmitButton className="btn small">เชิญเข้ารอบโจทย์</SubmitButton>
                 </ActionForm>

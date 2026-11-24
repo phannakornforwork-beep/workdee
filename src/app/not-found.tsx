@@ -6,8 +6,9 @@ export default function NotFound() {
     <main className="container page" style={{ maxWidth: 560 }}>
       <Logo />
       <div className="card stack">
+        <span className="eyebrow">404</span>
         <h1>ไม่พบหน้านี้</h1>
-        <p className="muted">ลิงก์อาจหมดอายุ หรือคุณไม่มีสิทธิ์</p>
+        <p className="muted">ลิงก์อาจหมดอายุ หรือประกาศนี้ปิดรับแล้ว ลองดูงานที่ยังเปิดรับอยู่</p>
         <div className="row">
           <Link href="/spaces" className="btn">
             ไปที่พื้นที่ของฉัน

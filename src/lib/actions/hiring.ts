@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/server';
 import { dispatchPending, dispatchSoon } from '@/lib/notify/dispatch';
 import { all, bool, done, errorMessage, fail, list, num, str } from '@/lib/actions/util';
 import type { ActionState } from '@/lib/types';
-import { MAX_CHALLENGE_MINUTES } from '@/lib/format';
+import { MAX_CHALLENGE_MINUTES, MIN_CHALLENGE_MINUTES } from '@/lib/format';
 
 async function db() {
   const supabase = await createClient();
@@ -70,8 +70,8 @@ export async function saveJobAction(_prev: ActionState, fd: FormData): Promise<A
   const fields = jobFields(fd);
   if (fields.title.length < 2) return fail({ message: 'ตั้งชื่อตำแหน่งงาน' });
   const minutes = Number(str(fd, 'ch_minutes') || 60);
-  if ((str(fd, 'ch_title') || str(fd, 'ch_brief')) && (!Number.isFinite(minutes) || minutes < 10 || minutes > MAX_CHALLENGE_MINUTES))
-    return fail({ message: `เวลาทำโจทย์ต้องอยู่ระหว่าง 10–${MAX_CHALLENGE_MINUTES} นาที ถ้างานใหญ่กว่านี้ ให้ตัดเหลือส่วนที่สำคัญที่สุด` });
+  if ((str(fd, 'ch_title') || str(fd, 'ch_brief')) && (!Number.isFinite(minutes) || minutes < MIN_CHALLENGE_MINUTES || minutes > MAX_CHALLENGE_MINUTES))
+    return fail({ message: `เวลาทำโจทย์ต้องอยู่ระหว่าง ${MIN_CHALLENGE_MINUTES}–${MAX_CHALLENGE_MINUTES} นาที ถ้างานใหญ่กว่านี้ ให้ตัดเหลือส่วนที่สำคัญที่สุด` });
   const { data, error } = await supabase.rpc('save_job', { p_company: cid, p_job: jobId, p_fields: fields });
   if (error) return fail(error);
   const id = data as string;

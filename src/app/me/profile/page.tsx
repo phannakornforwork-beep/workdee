@@ -106,9 +106,39 @@ export default async function ProfilePage() {
   const institutions = (insts || []) as { id: string; name: string }[];
   const prefTypes: string[] = cp?.pref_job_types || [];
   const prefProvinces: string[] = cp?.pref_provinces || [];
+  // ความพร้อมก่อนสมัคร: ภาษาภาพเดียวกับใบผลงาน (แถบ + ขั้น) บอกเฉพาะสิ่งที่ยังขาด
+  const eduList = (edus || []) as { verify_level?: string }[];
+  const ready: [string, boolean][] = [
+    ['ชื่อ-นามสกุล', Boolean(cp?.full_name)],
+    ['พาดหัวสั้นๆ', Boolean(cp?.headline)],
+    ['สกิลอย่างน้อย 3 อย่าง', ((cp?.skills as string[] | null) || []).length >= 3],
+    ['การศึกษา', eduList.length > 0],
+    ['วุฒิที่ยืนยันแล้ว', eduList.some((e) => e.verify_level === 'doc' || e.verify_level === 'inst')]
+  ];
+  const readyCount = ready.filter(([, ok]) => ok).length;
   return (
     <>
-      <PageTitle title="โปรไฟล์" sub="บริษัทเห็นเฉพาะตอนคุณกดสมัคร" />
+      <PageTitle title="โปรไฟล์" sub="ข้อมูลตั้งต้นก่อนใบผลงาน · บริษัทเห็นเมื่อคุณกดสมัคร" />
+      <section className="card">
+        <div className="row-between">
+          <h2>ความพร้อมก่อนสมัคร</h2>
+          <span className="strong">
+            {readyCount}/{ready.length}
+          </span>
+        </div>
+        <div className="steps" aria-label={`พร้อม ${readyCount} จาก ${ready.length}`}>
+          <div className="bars">
+            {ready.map(([k, ok]) => (
+              <span key={k} className={ok ? 'on' : ''} />
+            ))}
+          </div>
+        </div>
+        {readyCount < ready.length ? (
+          <p className="small muted">ยังขาด: {ready.filter(([, ok]) => !ok).map(([k]) => k).join(' · ')}</p>
+        ) : (
+          <p className="small ok-text">พร้อมสมัครแล้ว ผลงานของคุณจะพูดแทนประสบการณ์</p>
+        )}
+      </section>
       <div className="split">
         <div className="main">
           <CvScan />

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { requireUser } from '@/lib/auth';
 import { Empty, PageTitle, StageBadge } from '@/components/ui';
+import { StageSteps } from '@/components/Brand';
 import { CLOSED_STAGES, dueText, relative, shortDateTime } from '@/lib/format';
 
 export const metadata: Metadata = { title: 'ใบสมัครของฉัน' };
@@ -48,10 +49,11 @@ export default async function MyApplications() {
           </div>
           <StageBadge stage={a.stage} />
         </div>
+        <StageSteps stage={a.stage} closed={CLOSED_STAGES.includes(a.stage)} />
         <div className="row-between small">
           <span style={{ color: n.mine ? 'var(--accent-ink)' : undefined, fontWeight: n.mine ? 600 : 400 }}>{n.text}</span>
           <span className="muted">
-            {a.score_total !== null ? `คะแนนโจทย์ ${a.score_total}/100 · ` : ''}สมัคร {relative(a.created_at)}
+            {a.score_total !== null ? <span className="score-pill">ใบผลงาน {a.score_total}/100 · </span> : null}สมัคร {relative(a.created_at)}
           </span>
         </div>
       </Link>

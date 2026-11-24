@@ -7,6 +7,7 @@ import { FileUpload } from '@/components/FileUpload';
 import { ChatRoom, type ChatMessage } from '@/components/ChatRoom';
 import { afterChatSendAction } from '@/lib/actions/chat';
 import { Alert, Badge, PageTitle, StageBadge } from '@/components/ui';
+import { ResultCard, RubricPreview, StageSteps } from '@/components/Brand';
 import {
   bookInterviewAction, rescheduleAction, respondOfferAction, reuseChallengeAction, revokeAccessAction, startChallengeAction,
   submitChallengeAction, withdrawAction
@@ -83,6 +84,9 @@ export default async function ApplicationPage({ params, searchParams }: { params
         <Badge>{JOB_TYPE[d.job.job_type]}</Badge>
         <Badge>{salaryRange(d.job.salary_min, d.job.salary_max, d.job.pay_unit)}</Badge>
       </div>
+      <section className="card tight">
+        <StageSteps stage={a.stage} closed={closed} />
+      </section>
 
       {sp.applied ? (
         <Alert tone="success">ส่งใบสมัครแล้ว บริษัทต้องตอบภายใน {thaiDate(a.sla_due_at)}</Alert>
@@ -114,12 +118,7 @@ export default async function ApplicationPage({ params, searchParams }: { params
               ) : null}
               <div className="stack-sm">
                 <span className="label">เกณฑ์ให้คะแนน</span>
-                {ch.criteria.map((c) => (
-                  <div key={c.name} className="row-between small">
-                    <span>{c.name}</span>
-                    <span className="strong">{c.weight}%</span>
-                  </div>
-                ))}
+                <RubricPreview criteria={ch.criteria} />
               </div>
               <p className="small muted">
                 ประมาณ {ch.time_limit_minutes} นาที · {AI_POLICY[ch.ai_policy || 'allowed_declare']} · ผลงานเป็นของคุณ
@@ -203,23 +202,16 @@ export default async function ApplicationPage({ params, searchParams }: { params
               ) : null}
 
               {d.score ? (
-                <div className="card tight">
-                  <div className="row-between">
-                    <span className="strong">คะแนนโจทย์</span>
-                    <span className="score" style={{ fontSize: 20 }}>
-                      {d.score.total}/100
-                    </span>
-                  </div>
-                  {d.score.scores.map((s) => (
-                    <div key={s.name} className="row-between small">
-                      <span>{s.name}</span>
-                      <span>
-                        {s.score}/{s.weight}
-                      </span>
-                    </div>
-                  ))}
-                  {d.score.feedback ? <p className="small">ความเห็นจากบริษัท: {d.score.feedback}</p> : null}
-                </div>
+                <ResultCard
+                  inline
+                  tag={d.score.reused ? 'ใบผลงาน (ใช้ผลเดิม)' : 'ใบผลงานของคุณ'}
+                  title={ch.title}
+                  scores={d.score.scores}
+                  total={d.score.total}
+                  note={d.score.feedback}
+                  noteLabel="คำแนะนำจากบริษัท:"
+                  foot={['เก็บในแฟ้มผลงานแล้ว', 'ผลงานเป็นของคุณ']}
+                />
               ) : null}
             </section>
           ) : ch?.preview ? (

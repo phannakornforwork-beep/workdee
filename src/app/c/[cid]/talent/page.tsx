@@ -56,7 +56,7 @@ export default async function TalentPage({
 
   return (
     <>
-      <PageTitle title="ค้นหาผู้หางาน" sub="ไม่เห็นชื่อจนกว่าเขาจะกดสมัคร" />
+      <PageTitle title="ค้นหาผู้หางาน" sub="ดูจากใบผลงาน ไม่เห็นชื่อจนกว่าเขาจะกดสมัคร" />
 
       <form className="card talent-filters" method="get">
         <div className="field">
@@ -116,7 +116,7 @@ export default async function TalentPage({
                 <div className="chips">
                   {t.results.map((r) => (
                     <Badge key={r.skill} tone="dark wrap">
-                      ผลโจทย์ {r.title} · {r.total}/100
+                      ใบผลงาน {r.title} · {r.total}/100
                     </Badge>
                   ))}
                 </div>

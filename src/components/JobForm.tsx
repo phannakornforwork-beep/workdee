@@ -1,6 +1,7 @@
 import { ActionForm, SubmitButton } from '@/components/forms';
 import { saveJobAction } from '@/lib/actions/hiring';
-import { AI_POLICY, JOB_TYPE, MAX_CHALLENGE_MINUTES, PROVINCES, WORK_MODE } from '@/lib/format';
+import { AI_POLICY, JOB_TYPE, MAX_CHALLENGE_MINUTES, MIN_CHALLENGE_MINUTES, PROVINCES, WORK_MODE } from '@/lib/format';
+import { RubricPreview } from '@/components/Brand';
 import type { Criterion } from '@/lib/types';
 import { AiJobDesigner } from '@/components/ai/AiJobDesigner';
 
@@ -158,11 +159,18 @@ export function JobForm({
       </section>
 
       <section className="card">
-        <h2>โจทย์พิสูจน์สกิล</h2>
+        <span className="eyebrow">รับคนจากผลงาน</span>
+        <h2>โจทย์พิสูจน์ฝีมือ</h2>
         <p className="muted small">
           ใช้แบรนด์สมมติ ผลงานเป็นของผู้สมัคร
           {locked ? ' · มีคนส่งแล้ว เปลี่ยนเกณฑ์ไม่ได้' : ''}
         </p>
+        {challenge?.criteria?.length ? (
+          <div className="card soft tight">
+            <span className="label">ผู้สมัครเห็นเกณฑ์แบบนี้ก่อนเริ่มทำ</span>
+            <RubricPreview criteria={challenge.criteria} />
+          </div>
+        ) : null}
         <div className="field">
           <label htmlFor="ch_title">ชื่อโจทย์</label>
           <input id="ch_title" name="ch_title" className="input" defaultValue={v(challenge?.title)} maxLength={160} />
@@ -178,8 +186,8 @@ export function JobForm({
         <div className="form-row">
           <div className="field">
             <label htmlFor="ch_minutes">เวลาที่แนะนำ (นาที)</label>
-            <input id="ch_minutes" name="ch_minutes" className="input" type="number" min={10} max={MAX_CHALLENGE_MINUTES} step={5} defaultValue={v(challenge?.time_limit_minutes) || '60'} />
-            <span className="hint">ไม่เกิน {MAX_CHALLENGE_MINUTES} นาที</span>
+            <input id="ch_minutes" name="ch_minutes" className="input" type="number" min={MIN_CHALLENGE_MINUTES} max={MAX_CHALLENGE_MINUTES} step={5} defaultValue={v(challenge?.time_limit_minutes) || '60'} />
+            <span className="hint">{MIN_CHALLENGE_MINUTES}–{MAX_CHALLENGE_MINUTES} นาที</span>
           </div>
           <div className="field">
             <label htmlFor="ch_due_days">ส่งภายใน (วัน)</label>

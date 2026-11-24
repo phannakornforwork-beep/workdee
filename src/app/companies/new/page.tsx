@@ -26,7 +26,19 @@ export default async function NewCompanyPage() {
       <main className="container page">
         <div className="split">
           <div className="main">
-            <PageTitle plain title="สร้างพื้นที่บริษัท" sub="คุณจะเป็นเจ้าของพื้นที่นี้" />
+            <PageTitle plain title="สร้างพื้นที่บริษัท" sub="3 ขั้นถึงประกาศแรกที่รับคนจากผลงาน" />
+            <div className="steps" aria-label="ขั้นที่ 1 จาก 3: สร้างบริษัท">
+              <div className="bars">
+                <span className="on" />
+                <span />
+                <span />
+              </div>
+              <div className="step-labels" aria-hidden="true">
+                <small className="now">1 สร้างบริษัท</small>
+                <small>2 ยืนยันเอกสาร</small>
+                <small>3 ลงประกาศพร้อมโจทย์</small>
+              </div>
+            </div>
             <ActionForm action={createCompanyAction} className="card">
               <div className="field">
                 <label htmlFor="name">ชื่อบริษัท (ตามหนังสือรับรอง)</label>

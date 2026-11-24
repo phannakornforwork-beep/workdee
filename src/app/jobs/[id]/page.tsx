@@ -11,6 +11,7 @@ import { ActionForm, SubmitButton } from '@/components/forms';
 import { applyAction } from '@/lib/actions/candidate';
 import { AI_POLICY, JOB_TYPE, WORK_MODE, hasResponseStat, salaryRange, thaiDate } from '@/lib/format';
 import { SaveJobButton } from '@/components/SavedJobs';
+import { PromiseBar, RubricPreview } from '@/components/Brand';
 import type { Criterion } from '@/lib/types';
 
 type Job = {
@@ -128,29 +129,24 @@ export default async function JobDetail({ params }: { params: Promise<{ id: stri
               ) : null}
             </section>
             {job.has_challenge ? (
-              <section className="card">
-                <h2>โจทย์: {job.challenge_title}</h2>
-                <div className="kv">
-                  <dt>เวลาทำ</dt>
-                  <dd>ประมาณ {job.time_limit_minutes} นาที</dd>
-                  <dt>ส่งภายใน</dt>
-                  <dd>{job.due_days} วันหลังได้รับเชิญ</dd>
+              <section className="card proof-section">
+                <span className="eyebrow">พิสูจน์ฝีมือ · ไม่ต้องมีประสบการณ์</span>
+                <h2>{job.challenge_title}</h2>
+                <div className="chips">
+                  <span className="badge gray">ประมาณ {job.time_limit_minutes} นาที</span>
+                  <span className="badge gray">ส่งภายใน {job.due_days} วันหลังได้รับเชิญ</span>
+                  {job.accept_reuse ? <span className="badge teal">ใช้ผลโจทย์เดิมได้</span> : null}
                 </div>
                 <div className="stack-sm">
-                  <span className="label">เกณฑ์ให้คะแนน</span>
-                  {(job.challenge_criteria || []).map((c) => (
-                    <div key={c.name} className="row-between small">
-                      <span>{c.name}</span>
-                      <span className="strong">{c.weight}%</span>
-                    </div>
-                  ))}
+                  <span className="label">บริษัทจะให้คะแนนตามเกณฑ์นี้</span>
+                  <RubricPreview criteria={job.challenge_criteria || []} />
                 </div>
                 <p className="small muted">
-                  {AI_POLICY[job.ai_policy || 'allowed_declare']} · ผลงานเป็นของคุณ
-                  {job.accept_reuse ? ' · ใช้ผลโจทย์เดิมได้' : ''}
+                  {AI_POLICY[job.ai_policy || 'allowed_declare']} · ทำเสร็จได้ใบผลงานพร้อมคำแนะนำ · ผลงานเป็นของคุณ
                 </p>
               </section>
             ) : null}
+            <PromiseBar />
           </div>
           <aside className="side">
             <section className="card highlight">
