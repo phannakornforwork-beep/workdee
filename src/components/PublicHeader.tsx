@@ -14,10 +14,10 @@ export async function PublicHeader() {
         <Link href="/jobs" className="tlink">
           หางาน
         </Link>
-        <Link href="/saved" className="tlink">
+        <Link href="/saved" className="tlink hide-sm">
           งานที่บันทึก
         </Link>
-        <Link href="/#companies" className="tlink">
+        <Link href="/for-companies" className="tlink hide-sm">
           สำหรับบริษัท
         </Link>
         {user ? (
@@ -47,6 +47,8 @@ export function Footer() {
         <Link href="/privacy">นโยบายความเป็นส่วนตัว</Link>
         <Link href="/terms">ข้อตกลงการใช้งาน</Link>
         <Link href="/jobs">ประกาศงานทั้งหมด</Link>
+        <Link href="/saved">งานที่บันทึก</Link>
+        <Link href="/for-companies">สำหรับบริษัท</Link>
       </div>
     </footer>
   );

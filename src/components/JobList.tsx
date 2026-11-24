@@ -78,10 +78,9 @@ export function JobList({ jobs, base = '/jobs', showMatch = false }: { jobs: Job
           </span>
           <span className="job-company">{j.company_name}</span>
           <div className="job-body">
-            {j.has_challenge || j.applied || (showMatch && j.match_score !== null) ? (
+            {j.applied || (showMatch && j.match_score !== null) ? (
               <div className="chips">
                 {showMatch && j.match_score !== null ? <Badge tone="teal">ตรงกับคุณ {j.match_score}%</Badge> : null}
-                {j.has_challenge ? <Badge tone="blue">มีโจทย์{j.time_limit_minutes ? ` ${j.time_limit_minutes} นาที` : ''}</Badge> : null}
                 {j.applied ? <Badge tone="gray">สมัครแล้ว</Badge> : null}
               </div>
             ) : null}
@@ -89,12 +88,25 @@ export function JobList({ jobs, base = '/jobs', showMatch = false }: { jobs: Job
             <span>{j.work_mode === 'remote' ? WORK_MODE.remote : j.province || WORK_MODE[j.work_mode]}</span>
             <span className="strong">{salaryRange(j.salary_min, j.salary_max, j.pay_unit)}</span>
           </div>
-          {/* จุดต่างจาก JobsDB: สัญญาที่ผู้สมัครได้ทุกงาน เห็นตั้งแต่ในรายการ */}
-          <div className="job-promise">
-            <span>✓ ได้คำตอบใน 7 วัน</span>
-            {j.has_challenge ? <span>✓ เห็นเกณฑ์ก่อนทำโจทย์</span> : null}
-            {hasResponseStat(j.response_rate, j.response_sample) ? <span className={j.response_rate < 80 ? 'low' : ''}>บริษัทตอบตรงเวลา {j.response_rate}%</span> : <span>บริษัทใหม่</span>}
-          </div>
+          {/* คำสัญญาที่เหมือนกันทุกงานอยู่ใน PromiseBar ด้านบนครั้งเดียว
+              การ์ดแสดงเฉพาะสิ่งที่ต่างกันในแต่ละงาน: โจทย์ (ภาพประจำแบรนด์) และอัตราการตอบของบริษัทนั้น */}
+          {j.has_challenge || hasResponseStat(j.response_rate, j.response_sample) ? (
+            <div className="job-promise">
+              {j.has_challenge ? (
+                <span className="proof-chip">
+                  <span className="mini-rubric" aria-hidden="true">
+                    <i />
+                    <i />
+                    <i />
+                  </span>
+                  พิสูจน์ฝีมือ{j.time_limit_minutes ? ` ${j.time_limit_minutes} นาที` : ''} · เห็นเกณฑ์ก่อนทำ
+                </span>
+              ) : null}
+              {hasResponseStat(j.response_rate, j.response_sample) ? (
+                <span className={j.response_rate < 80 ? 'low' : ''}>บริษัทตอบตรงเวลา {j.response_rate}%</span>
+              ) : null}
+            </div>
+          ) : null}
           <div className="job-foot">
             <span>{relative(j.published_at)}</span>
           </div>

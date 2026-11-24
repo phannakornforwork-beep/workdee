@@ -181,7 +181,7 @@ main.page > .page-head:not(.plain):first-child, .page-anim > .page-head:not(.pla
 
 /* หัวข้อส่วน: ชื่อซ้าย ลิงก์ "ดูทั้งหมด" ขวา */
 .section-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; }
-.section-head .sub { color: var(--muted); font-size: 15px; width: 100%; margin-top: -4px; }
+.section-head .sub { color: var(--muted); font-size: 15px; flex-basis: 100%; max-width: none; margin-top: -4px; }
 
 /* ---------- Hero หน้าแรก (กรมท่า + ช่องค้นหา) ---------- */
 .hero { background: var(--navy); color: var(--on-navy); }
@@ -456,3 +456,110 @@ button, input, select, textarea, table { font-family: inherit; }
   .search-bar:has(.select) .btn { grid-column: 1 / -1; grid-row: auto; }
   .search-bar:has(.select) .clear-link { grid-column: 1 / -1; grid-row: auto; }
 }
+
+/* ===================================================================
+   ตัวตนของ WorkDee: "ผลงานพูดแทนประสบการณ์"
+   ภาพประจำแบรนด์ = ใบผลงาน (คะแนนรายเกณฑ์) ใช้ซ้ำในหน้าแรก หน้าบริษัท และการ์ดงาน
+   =================================================================== */
+.eyebrow { display: inline-block; font-size: 14px; font-weight: 600; letter-spacing: 0.04em; color: var(--brand-ink); }
+.hero .eyebrow { color: #7fe0d1; }
+
+/* hero 2 คอลัมน์: ข้อความซ้าย ใบผลงานขวา */
+.hero .container.hero-grid, .hero-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 40px; align-items: center; }
+.hero-grid > .stack { gap: 18px; }
+@media (max-width: 900px) { .hero .container.hero-grid, .hero-grid { grid-template-columns: 1fr; gap: 28px; } }
+
+/* ใบผลงาน */
+.result-card { margin: 0; background: #fff; color: #1b2232; border-radius: 16px; padding: 22px 24px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25); max-width: 440px; justify-self: end; width: 100%; }
+.result-head { display: flex; flex-direction: column; gap: 4px; }
+.result-tag { align-self: flex-start; font-size: 13px; font-weight: 600; color: #0b5f56; background: #e3f3ef; padding: 2px 10px; border-radius: 6px; }
+.result-title { font-weight: 600; font-size: 16px; }
+.result-total { display: flex; align-items: baseline; gap: 4px; }
+.result-total strong { font-size: 52px; line-height: 1; color: #0f7a6e; font-variant-numeric: tabular-nums; }
+.result-total span { color: #4d5668; font-size: 18px; }
+.rubric { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.rubric li { display: grid; grid-template-columns: minmax(0, 1fr) 90px 48px; gap: 10px; align-items: center; font-size: 15px; }
+.rubric-bar { height: 8px; background: #eceef2; border-radius: 999px; overflow: hidden; }
+.rubric-bar > span { display: block; height: 100%; background: #0f7a6e; border-radius: 999px; }
+.rubric-score { text-align: right; font-variant-numeric: tabular-nums; color: #4d5668; }
+.result-note { margin: 0; padding: 10px 12px; background: #f5f6f8; border-radius: 10px; font-size: 15px; color: #333c4e; }
+.result-foot { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 14px; font-weight: 600; color: #0b5f56; }
+@media (max-width: 900px) { .result-card { justify-self: stretch; max-width: none; } }
+
+/* แถบตัวเลขจริง */
+.proof-band { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); }
+.proof-band > div { display: flex; flex-direction: column; gap: 2px; padding: 18px 20px; border-left: 1px solid var(--line); }
+.proof-band > div:first-child { border-left: none; }
+.proof-band strong { font-size: 28px; line-height: 1.2; color: var(--ink); font-variant-numeric: tabular-nums; }
+.proof-band span { font-size: 15px; color: var(--muted); }
+@media (max-width: 640px) { .proof-band { grid-template-columns: repeat(2, minmax(0, 1fr)); } .proof-band > div:nth-child(3) { border-left: none; } .proof-band > div:nth-child(n+3) { border-top: 1px solid var(--line); } }
+
+/* ตารางเปรียบเทียบ */
+.diff-table { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.diff-row { display: grid; grid-template-columns: minmax(110px, 0.8fr) minmax(0, 1fr) minmax(0, 1.2fr); gap: 16px; padding: 14px 20px; border-top: 1px solid var(--line); align-items: center; }
+.diff-row:first-child { border-top: none; }
+.diff-headrow { background: var(--fill); font-size: 14px; font-weight: 700; color: var(--muted); padding-top: 10px; padding-bottom: 10px; }
+.diff-headrow span:last-child { color: var(--brand-ink); }
+.diff-row [role='rowheader'] { font-weight: 600; }
+.diff-old { color: var(--muted); }
+.diff-new { color: var(--ink); font-weight: 600; }
+.diff-new::before { content: '✓ '; color: var(--brand); }
+@media (max-width: 640px) {
+  .diff-row { grid-template-columns: 1fr 1fr; gap: 4px 12px; }
+  .diff-row [role='rowheader'] { grid-column: 1 / -1; }
+  .diff-headrow span:first-child { display: none; }
+}
+
+/* AI ที่ยุติธรรม */
+.fair-ai { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.fair-ai > div { background: var(--card); border: 1px solid var(--line); border-top: 3px solid var(--ai); border-radius: var(--radius); padding: 20px 22px; display: flex; flex-direction: column; gap: 6px; }
+.fair-n { width: 28px; height: 28px; border-radius: 50%; background: var(--ai-soft); color: var(--ai-ink); font-weight: 700; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; }
+@media (max-width: 760px) { .fair-ai { grid-template-columns: 1fr; } }
+
+/* ขั้นตอนแบบมีเส้นเชื่อม */
+.how { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; counter-reset: how; }
+.how > div { position: relative; padding: 20px 22px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); display: flex; flex-direction: column; gap: 6px; }
+.how > div::before { counter-increment: how; content: counter(how); width: 32px; height: 32px; border-radius: 50%; background: var(--navy); color: #fff; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+@media (max-width: 760px) { .how { grid-template-columns: 1fr; } }
+
+/* ภาพจำลองหน้าจอ (หน้าบริษัท) */
+.mock-window { background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: 0 20px 50px rgba(13, 29, 66, 0.12); }
+.mock-bar { display: flex; align-items: center; gap: 6px; padding: 10px 14px; background: var(--fill); border-bottom: 1px solid var(--line); }
+.mock-bar > span { width: 10px; height: 10px; border-radius: 50%; background: var(--line-2); }
+.mock-bar em { font-style: normal; font-size: 13px; color: var(--muted); margin-left: 8px; }
+.mock-board { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 14px; }
+.mock-col { background: var(--fill); border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+.mock-col b small { color: var(--muted); font-weight: 500; }
+.mock-card { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; }
+.mock-card small { color: var(--muted); font-size: 13px; }
+.mock-card small.due { color: var(--danger); font-weight: 600; }
+@media (max-width: 560px) { .mock-board { grid-template-columns: 1fr; } }
+
+/* สองคอลัมน์ ข้อความ + ภาพ */
+.feature-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 36px; align-items: center; }
+@media (max-width: 900px) { .feature-split { grid-template-columns: 1fr; } }
+.check-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.check-list li { padding-left: 28px; position: relative; }
+.check-list li::before { content: '✓'; position: absolute; left: 0; top: 0; width: 20px; height: 20px; border-radius: 50%; background: var(--brand-soft); color: var(--brand-ink); font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; margin-top: 4px; }
+
+/* แถบคำสัญญาครั้งเดียวต่อหน้า */
+.promise-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; padding: 12px 18px; border-radius: 12px; background: var(--brand-soft); color: var(--brand-ink); font-size: 15px; font-weight: 500; }
+.promise-bar strong { color: var(--ink); }
+.promise-bar a { margin-left: auto; font-size: 14px; }
+
+/* แถบเรียกให้ลงมือท้ายหน้า */
+.cta-band { background: var(--navy); color: #fff; border-radius: var(--radius); padding: 32px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+.cta-band h2 { color: #fff; }
+.cta-band p { color: var(--on-navy-2); }
+.section-gap { margin-top: 24px; }
+
+/* ไอคอนใบผลงานขนาดเล็กบนการ์ดงาน (แถบคะแนน 3 เส้น = ภาพประจำแบรนด์) */
+.proof-chip { display: inline-flex; align-items: center; gap: 8px; }
+.mini-rubric { display: inline-flex; flex-direction: column; gap: 2px; width: 18px; }
+.mini-rubric i { display: block; height: 3px; border-radius: 2px; background: currentColor; }
+.mini-rubric i:nth-child(2) { width: 75%; }
+.mini-rubric i:nth-child(3) { width: 55%; }
+
+.hero .result-card p.result-note { color: #333c4e; font-size: 15px; max-width: none; }
+.section-head h2 .badge { vertical-align: middle; margin-left: 6px; }
+@media (max-width: 640px) { .topbar a.tlink.hide-sm { display: none; } }
