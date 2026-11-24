@@ -1,0 +1,15 @@
+{"component":"api","level":"warning","msg":"DEPRECATION NOTICE: GOTRUE_JWT_ADMIN_GROUP_NAME not supported by Supabase's GoTrue, will be removed soon","time":"2026-11-24T09:10:02Z"}
+{"component":"api","level":"warning","msg":"DEPRECATION NOTICE: GOTRUE_JWT_DEFAULT_GROUP_NAME not supported by Supabase's GoTrue, will be removed soon","time":"2026-11-24T09:10:02Z"}
+gateway on http://127.0.0.1:54321
+24/Nov/2026:09:10:03 +0000: Starting PostgREST 12.2.3...
+24/Nov/2026:09:10:03 +0000: Listening on port 3001
+24/Nov/2026:09:10:03 +0000: Successfully connected to PostgreSQL 16.16 (Debian 16.16-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+24/Nov/2026:09:10:03 +0000: Listening for notifications on the "pgrst" channel
+24/Nov/2026:09:10:03 +0000: Config reloaded
+127.0.0.1 - anon [24/Nov/2026:09:10:03 +0000] "GET / HTTP/1.1" 503 - "" "node"
+24/Nov/2026:09:10:03 +0000: Schema cache queried in 8.7 milliseconds
+24/Nov/2026:09:10:03 +0000: Schema cache loaded 51 Relations, 81 Relationships, 158 Functions, 0 Domain Representations, 4 Media Type Handlers, 487 Timezones
+24/Nov/2026:09:10:03 +0000: Successfully connected to PostgreSQL 16.16 (Debian 16.16-1.pgdg13+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+24/Nov/2026:09:10:03 +0000: Config reloaded
+24/Nov/2026:09:10:03 +0000: Schema cache queried in 7.9 milliseconds
+24/Nov/2026:09:10:03 +0000: Schema cache loaded 51 Relations, 81 Relationships, 158 Functions, 0 Domain Representations, 4 Media Type Handlers, 487 Timezones
