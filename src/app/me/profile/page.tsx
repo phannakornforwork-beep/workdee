@@ -214,7 +214,7 @@ export default async function ProfilePage() {
         <aside className="side">
           <section className="card">
             <h2>การศึกษา</h2>
-            <p className="muted small">ป้ายวุฒิ 3 ระดับ: ยืนยันโดยสถาบัน (สถาบันพาร์ตเนอร์ยืนยันตรง) · ตรวจเอกสารแล้ว (ทีมงานตรวจใบรับรองผล) · ยังไม่ยืนยัน</p>
+            <p className="muted small">ป้ายวุฒิ: ยืนยันโดยสถาบัน · ตรวจเอกสารแล้ว · ยังไม่ยืนยัน</p>
             {((edus || []) as Edu[]).map((e) => (
               <div key={e.id} className="card soft tight">
                 <div className="row-between">

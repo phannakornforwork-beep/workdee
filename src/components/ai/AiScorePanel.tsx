@@ -34,37 +34,37 @@ export function AiScorePanel({
         <h2>
           คะแนน WorkDee และที่มา {ai?.model === 'demo' ? <span className="badge orange">โหมดสาธิต</span> : null}
         </h2>
-        <span className="score" style={{ fontSize: 26 }}>
+        <span className="ai-total">
           {total ?? '–'}
           <span className="small muted">/100</span>
         </span>
       </div>
       <div className="ai-parts">
         <div className="ai-part">
-          <span className="tiny muted">ตรงคุณสมบัติ × {SCORE_WEIGHTS.match}%</span>
+          <span className="small strong">ตรงคุณสมบัติ {SCORE_WEIGHTS.match}%</span>
           <span className="score">{match ?? '–'}</span>
-          <span className="tiny muted">{match === null ? 'ยังไม่ได้วิเคราะห์' : `ได้ ${(match * 0.3).toFixed(1)} แต้ม`}</span>
+          <span className="small muted">{match === null ? 'ยังไม่วิเคราะห์' : `= ${(match * 0.3).toFixed(1)} แต้ม`}</span>
         </div>
         <div className="ai-part">
-          <span className="tiny muted">ผลโจทย์ × {SCORE_WEIGHTS.task}%</span>
+          <span className="small strong">ผลโจทย์ {SCORE_WEIGHTS.task}%</span>
           <span className="score">{taskScore ?? '–'}</span>
-          <span className="tiny muted">{taskScore === null ? 'ยังไม่ได้ให้คะแนนโจทย์' : `ได้ ${(taskScore * 0.6).toFixed(1)} แต้ม`}</span>
+          <span className="small muted">{taskScore === null ? 'ยังไม่ให้คะแนน' : `= ${(taskScore * 0.6).toFixed(1)} แต้ม`}</span>
         </div>
         <div className="ai-part">
-          <span className="tiny muted">หลักฐานยืนยันแล้ว × {SCORE_WEIGHTS.verified}%</span>
+          <span className="small strong">หลักฐานยืนยันแล้ว {SCORE_WEIGHTS.verified}%</span>
           <span className="score">{ai ? verified : '–'}</span>
-          <span className="tiny muted">{ai ? `ได้ ${(verified * 0.1).toFixed(1)} แต้ม` : '-'}</span>
+          <span className="small muted">{ai ? `= ${(verified * 0.1).toFixed(1)} แต้ม` : '-'}</span>
         </div>
       </div>
 
       {ai?.missing_must?.length ? (
-        <p className="small error-text">ไม่พบคุณสมบัติที่ &ldquo;ต้องมี&rdquo;: {ai.missing_must.join(', ')} (ระบบไม่ตัดทิ้ง ให้คุณตัดสินใจ)</p>
+        <p className="error-text strong">ไม่พบข้อ &ldquo;ต้องมี&rdquo;: {ai.missing_must.join(', ')}</p>
       ) : null}
-      {ai?.summary ? <p className="small">{ai.summary}</p> : null}
+      {ai?.summary ? <p>{ai.summary}</p> : null}
 
       {ai?.matches?.length ? (
-        <details className="disclosure" open>
-          <summary>ตรงคุณสมบัติ: เจอที่ไหนในโปรไฟล์</summary>
+        <details className="disclosure">
+          <summary>ดูว่าเจอคุณสมบัติตรงไหนใน CV</summary>
           <div className="stack-sm">
             {ai.matches.map((m) => {
               const [label, tone] = LEVEL[String(m.level)] || LEVEL['0'];
@@ -72,12 +72,12 @@ export function AiScorePanel({
                 <div key={m.name} className="ai-evidence">
                   <div className="row-between">
                     <span>
-                      {m.must_have ? <Badge tone="red">ต้องมี</Badge> : null} {m.name} <span className="tiny muted">น้ำหนัก {m.weight}</span>
+                      {m.must_have ? <Badge tone="red">ต้องมี</Badge> : null} {m.name} <span className="small muted">น้ำหนัก {m.weight}</span>
                     </span>
                     <Badge tone={tone}>{label}</Badge>
                   </div>
                   {m.evidence ? <mark className="ai-quote">&ldquo;{m.evidence}&rdquo;</mark> : null}
-                  {m.note ? <span className="tiny muted">{m.note}</span> : null}
+                  {m.note ? <span className="small muted">{m.note}</span> : null}
                 </div>
               );
             })}
@@ -95,14 +95,15 @@ export function AiScorePanel({
               </span>
             ))}
             {!ai.verified_items.length ? <span className="small muted">ยังไม่มีหลักฐานที่ยืนยันได้ (ข้อมูลที่ผู้สมัครพิมพ์เองไม่นับ)</span> : null}
-            <span className="tiny muted">วุฒิยืนยันโดยสถาบัน 40 · ตรวจเอกสาร 28 · ผลโจทย์บน WorkDee งานละ 20 (สูงสุด 2 งาน) · ใบรับรองภาษายืนยันกับผู้จัดสอบ 20 · ตรวจเอกสาร 14</span>
+            <span className="small muted">วุฒิยืนยันโดยสถาบัน 40 · ตรวจเอกสาร 28 · ผลโจทย์บน WorkDee งานละ 20 (สูงสุด 2 งาน) · ใบรับรองภาษายืนยันกับผู้จัดสอบ 20 · ตรวจเอกสาร 14</span>
           </div>
         </details>
       ) : null}
 
       {certs.length ? (
-        <div className="stack-sm">
-          <span className="strong small">ใบรับรองภาษาที่ตรวจแล้ว</span>
+        <details className="disclosure">
+          <summary>ใบรับรองภาษาที่ตรวจแล้ว ({certs.length})</summary>
+          <div className="stack-sm">
           {certs.map((c, i) => (
             <span key={i} className="small">
               <Badge tone={LANG_TRUST[c.trust]?.tone || 'gray'}>{LANG_TRUST[c.trust]?.label || c.trust}</Badge> {c.exam} {c.score}
@@ -117,7 +118,8 @@ export function AiScorePanel({
               ) : null}
             </span>
           ))}
-        </div>
+          </div>
+        </details>
       ) : null}
 
       {enabled ? (
@@ -125,9 +127,9 @@ export function AiScorePanel({
       ) : (
         <span className="small muted">ยังไม่ได้เปิดใช้ AI (ผู้ดูแลต้องใส่ ANTHROPIC_API_KEY)</span>
       )}
-      <span className="tiny muted">
-        {ai?.screened_at ? `${ai.model === 'demo' ? 'วิเคราะห์ด้วยโหมดสาธิต (จับคำพ้องความหมาย ยังไม่ได้เชื่อม AI จริง)' : 'AI วิเคราะห์'}เมื่อ ${thaiDateTime(ai.screened_at)} · ` : ''}
-        ไม่ใช้ชื่อ อายุ เพศ รูป หรือชื่อสถาบันในการคิดคะแนน · AI แนะนำ คนตัดสิน
+      <span className="small muted">
+        AI แนะนำ คนตัดสิน · ไม่ใช้ชื่อ อายุ เพศ รูป หรือสถาบันคิดคะแนน
+        {ai?.screened_at ? ` · ${ai.model === 'demo' ? 'โหมดสาธิต' : 'วิเคราะห์'} ${thaiDateTime(ai.screened_at)}` : ''}
       </span>
     </section>
   );

@@ -195,54 +195,55 @@ export function CvScan() {
   return (
     <section className="card ai-card">
       <div className="row-between">
-        <h2>สแกน CV กรอกโปรไฟล์อัตโนมัติ</h2>
+        <h2>สแกน CV กรอกโปรไฟล์ให้</h2>
         <span className="badge ai">สแกน</span>
       </div>
-      <p className="muted small">
-        แนบ CV (PDF, Word, หรือรูปถ่าย) ระบบอ่านไฟล์ในเครื่องของคุณ แยกการศึกษา ทักษะ ประสบการณ์ และผลงานลงช่องให้ตรวจก่อนบันทึก ไฟล์ไม่ถูกอัปโหลดขึ้นเซิร์ฟเวอร์
-      </p>
+      <p className="muted">แนบ CV แล้วระบบกรอกช่องให้ คุณแค่ตรวจก่อนบันทึก</p>
       <div className="field">
-        <label htmlFor="cv_file">ไฟล์ CV</label>
+        <label htmlFor="cv_file">ไฟล์ CV (PDF, Word หรือรูปถ่าย)</label>
         <input id="cv_file" type="file" className="input" accept="application/pdf,.docx,image/jpeg,image/png,.txt" onChange={onFile} disabled={Boolean(stage)} />
       </div>
-      {stage ? <p className="small" role="status">{stage}</p> : null}
-      {error ? <p className="small error-text" role="alert">{error}</p> : null}
+      {stage ? <p role="status">{stage}</p> : null}
+      {error ? <p className="error-text" role="alert">{error}</p> : null}
       {data ? (
-        <div className="stack-sm">
+        <div className="stack">
           <div className="row-between">
-            <span className="strong">อ่านได้ {data.found.length} จาก 6 ส่วน · {method}</span>
+            <span className="strong">อ่านได้ {data.found.length} จาก 6 ส่วน</span>
             {data.missing.length ? <span className="badge orange">ไม่พบ: {data.missing.join(', ')}</span> : null}
           </div>
-          <dl className="kv small">
+          <dl className="kv">
             {data.headline ? (<><dt>พาดหัว</dt><dd>{data.headline}</dd></>) : null}
             <dt>ทักษะ</dt>
-            <dd>{data.skills.join(', ') || '-'}</dd>
-            <dt>เครื่องมือ</dt>
-            <dd>{data.tools.join(', ') || '-'}</dd>
+            <dd>{[...data.skills, ...data.tools].join(', ') || '-'}</dd>
             <dt>ประสบการณ์</dt>
-            <dd className="stack-sm">{data.experiences.length ? data.experiences.map((x, i) => <span key={i}>{x.title}{x.detail ? ` · ${x.detail}` : ''}</span>) : '-'}</dd>
-            <dt>ผลงาน</dt>
-            <dd className="stack-sm">{data.projects.length ? data.projects.map((x, i) => <span key={i}>{x.title}{x.detail ? ` · ${x.detail}` : ''}</span>) : '-'}</dd>
+            <dd className="stack-sm">{data.experiences.length ? data.experiences.map((x, i) => <span key={i}>{x.title}</span>) : '-'}</dd>
             <dt>การศึกษา</dt>
             <dd className="stack-sm">
-              {data.educations.length ? data.educations.map((x, i) => <span key={i}>{[x.institution_name, x.major, x.year_label, x.gpa ? `GPA ${x.gpa}` : ''].filter(Boolean).join(' · ')}</span>) : '-'}
+              {data.educations.length ? data.educations.map((x, i) => <span key={i}>{[x.institution_name, x.major, x.year_label].filter(Boolean).join(' · ')}</span>) : '-'}
             </dd>
-            {data.languages.length ? (<><dt>ภาษา</dt><dd>{lines(data.languages).replace(/\n/g, ' · ')}</dd></>) : null}
           </dl>
-          {data.normalized.length ? (
-            <p className="tiny muted">แปลงคำใน CV เป็นทักษะมาตรฐาน: {data.normalized.slice(0, 6).map((n) => `"${n.as_written}" → ${n.skill}`).join(' · ')}</p>
-          ) : null}
+          <details className="disclosure">
+            <summary>ดูรายละเอียดทั้งหมด</summary>
+            <dl className="kv">
+              <dt>วิธีอ่าน</dt>
+              <dd>{method}</dd>
+              <dt>ผลงาน</dt>
+              <dd className="stack-sm">{data.projects.length ? data.projects.map((x, i) => <span key={i}>{x.title}{x.detail ? ` · ${x.detail}` : ''}</span>) : '-'}</dd>
+              {data.languages.length ? (<><dt>ภาษา</dt><dd>{lines(data.languages).replace(/\n/g, ' · ')}</dd></>) : null}
+              {data.normalized.length ? (<><dt>แปลงคำ</dt><dd>{data.normalized.slice(0, 6).map((n) => `"${n.as_written}" → ${n.skill}`).join(' · ')}</dd></>) : null}
+            </dl>
+            <p className="small muted">ไฟล์ไม่ถูกอัปโหลดขึ้นเซิร์ฟเวอร์ · ข้อมูลจาก CV แสดงเป็น &ldquo;ระบุเอง&rdquo;</p>
+          </details>
           <label className="check">
             <input type="checkbox" checked={replace} onChange={(e) => setReplace(e.target.checked)} />
-            <span>แทนที่ข้อมูลเดิมในฟอร์ม (ไม่เลือก = เติมเฉพาะช่องว่างและเพิ่มทักษะใหม่ต่อท้าย)</span>
+            <span>แทนที่ข้อมูลเดิมในฟอร์ม</span>
           </label>
           <div className="row">
             <button type="button" className="btn ai" onClick={fill}>
-              เติมลงฟอร์มโปรไฟล์
+              เติมลงโปรไฟล์
             </button>
-            {applied ? <span className="small ok-text" role="status">เติมแล้ว ตรวจแล้วกด &ldquo;บันทึกโปรไฟล์&rdquo; (การศึกษา กด &ldquo;เพิ่ม&rdquo; ทางขวา)</span> : null}
+            {applied ? <span className="ok-text" role="status">เติมแล้ว ตรวจแล้วกด &ldquo;บันทึกโปรไฟล์&rdquo;</span> : null}
           </div>
-          <span className="tiny muted">ข้อมูลจาก CV แสดงเป็น &ldquo;ระบุเอง&rdquo; ส่วนที่ยืนยันได้ (วุฒิ ใบรับรองภาษา ผลโจทย์) มีป้ายของตัวเอง</span>
         </div>
       ) : null}
     </section>

@@ -52,15 +52,17 @@ export function LanguageCerts({ userId, certs }: { userId: string; certs: LangCe
         <h2>ใบรับรองภาษาที่ตรวจสอบได้</h2>
         <span className="badge ai">AI</span>
       </div>
-      <p className="muted small">
-        คะแนนที่พิมพ์เองในช่อง &ldquo;ภาษา&rdquo; ไม่นับในคะแนนคัดกรอง แนบผลสอบ (IELTS, TOEIC, CU-TEP, JLPT ฯลฯ) ให้ AI อ่านและตรวจชื่อ วันหมดอายุ เลขที่ผลสอบ แล้วทีมงานยืนยัน
-      </p>
+      <p className="muted">คะแนนที่พิมพ์เองไม่นับ แนบผลสอบให้ AI ตรวจ แล้วทีมงานยืนยัน</p>
+      <details className="disclosure">
+        <summary>AI ตรวจอะไรบ้าง</summary>
+        <p className="small">อ่านคะแนน เลขที่ผลสอบ วันสอบ และชื่อ แล้วตรวจว่าชื่อตรงกับบัญชีและยังไม่หมดอายุ รองรับ IELTS, TOEIC, CU-TEP, JLPT ฯลฯ</p>
+      </details>
       <div className="field">
-        <label htmlFor="lang_file">แนบผลสอบ (PDF/รูป ไม่เกิน 8 MB)</label>
+        <label htmlFor="lang_file">แนบผลสอบ (PDF หรือรูป)</label>
         <input id="lang_file" type="file" className="input" accept="application/pdf,image/jpeg,image/png" onChange={onFile} disabled={busy || pending} />
       </div>
-      {busy || pending ? <p className="small" role="status">{busy ? 'กำลังอัปโหลด…' : 'AI กำลังอ่านผลสอบ…'}</p> : null}
-      {msg ? <p className={`small ${msg.ok ? 'ok-text' : 'error-text'}`} role="status">{msg.text}</p> : null}
+      {busy || pending ? <p role="status">{busy ? 'กำลังอัปโหลด…' : 'AI กำลังอ่านผลสอบ…'}</p> : null}
+      {msg ? <p className={msg.ok ? 'ok-text' : 'error-text'} role="status">{msg.text}</p> : null}
       {certs.map((c) => {
         const t = TRUST[c.trust] || TRUST.self;
         const failed = Object.entries(c.checks || {}).filter(([k, v]) => !v && CHECK[k]);
@@ -74,7 +76,7 @@ export function LanguageCerts({ userId, certs }: { userId: string; certs: LangCe
             </div>
             <span className="small muted">
               {c.exam_date ? `สอบ ${c.exam_date}` : 'ไม่พบวันสอบ'}
-              {c.expires_on ? ` · ใช้ได้ถึง ${c.expires_on}` : ''} · {t.note}
+              {c.expires_on ? ` · ใช้ได้ถึง ${c.expires_on}` : ''}
             </span>
             {failed.length ? <span className="small error-text">ตรวจไม่ผ่าน: {failed.map(([k]) => CHECK[k]).join(', ')}</span> : null}
             {c.review_note ? <span className="small">หมายเหตุทีมงาน: {c.review_note}</span> : null}

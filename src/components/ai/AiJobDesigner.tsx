@@ -89,10 +89,7 @@ export function AiJobDesigner({
         <h2>ให้ AI คิดโจทย์และคุณสมบัติ</h2>
         <span className="badge ai">AI</span>
       </div>
-      <p className="muted small">
-        เล่าเป็นภาษาธรรมดาว่าอยากได้คนแบบไหน ทำงานอะไร AI จะเสนอคุณสมบัติ &ldquo;ต้องมี / มีแล้วดี&rdquo; พร้อมน้ำหนัก และโจทย์พร้อมเกณฑ์ให้คะแนน 5 แบบให้เลือก
-        คุณแก้ได้ทุกช่อง
-      </p>
+      <p className="muted">เล่าแบบพูดปกติ AI เสนอคุณสมบัติและโจทย์ให้ แก้ได้ทุกช่อง</p>
       <div className="field">
         <label htmlFor="ai_objective">อยากได้คนแบบไหน</label>
         <textarea
@@ -102,25 +99,25 @@ export function AiJobDesigner({
           maxLength={3000}
           value={objective}
           onChange={(e) => setObjective(e.target.value)}
-          placeholder="เช่น อยากได้คนดูแลเพจร้านกาแฟ 3 สาขา ยิงแอดเป็น เขียนโพสต์ได้ ดูตัวเลขแล้วปรับงบได้ งบแอดเดือนละ 30,000 บาท ถ้าตัดคลิปสั้นได้ด้วยจะดีมาก"
+          placeholder="เช่น ดูแลเพจร้านกาแฟ 3 สาขา ยิงแอดเป็น เขียนโพสต์ได้ ตัดคลิปได้ยิ่งดี"
         />
       </div>
       <div className="row">
         <button type="button" className="btn ai" onClick={run} disabled={pending || !objective.trim()}>
           {pending ? 'AI กำลังคิดโจทย์…' : picks.length ? 'ให้ AI คิดใหม่' : 'ให้ AI คิดโจทย์'}
         </button>
-        {msg ? <span className={`small ${msg.ok ? 'ok-text' : 'error-text'}`} role="status">{msg.text}</span> : null}
+        {msg ? <span className={msg.ok ? 'ok-text' : 'error-text'} role="status">{msg.text}</span> : null}
       </div>
 
       {quals.length ? (
-        <div className="stack-sm">
+        <div className="stack">
           <div className="row-between">
-            <span className="strong">คุณสมบัติที่ใช้คัดกรอง (คิดเป็น 30% ของคะแนนรวม)</span>
-            <span className={`small ${sum === 100 ? 'muted' : 'error-text'}`}>น้ำหนักรวม {sum}/100</span>
+            <span className="strong">คุณสมบัติ (30% ของคะแนน)</span>
+            <span className={`strong ${sum === 100 ? 'ok-text' : 'error-text'}`}>รวม {sum}/100</span>
           </div>
           {quals.map((q, i) => (
             <div key={i} className="ai-qual">
-              <input className="input" aria-label={`คุณสมบัติข้อ ${i + 1}`} value={q.name} onChange={(e) => update(i, { name: e.target.value })} />
+              <input className="input" aria-label={`คุณสมบัติข้อ ${i + 1}`} title={q.description || undefined} value={q.name} onChange={(e) => update(i, { name: e.target.value })} />
               <select className="select" aria-label={`ประเภทคุณสมบัติข้อ ${i + 1}`} value={q.must_have ? '1' : '0'} onChange={(e) => update(i, { must_have: e.target.value === '1' })}>
                 <option value="1">ต้องมี</option>
                 <option value="0">มีแล้วดี</option>
@@ -135,7 +132,6 @@ export function AiJobDesigner({
               <button type="button" className="btn small ghost" onClick={() => setQuals((qs) => qs.filter((_, j) => j !== i))} aria-label={`ลบคุณสมบัติข้อ ${i + 1}`}>
                 ลบ
               </button>
-              {q.description ? <span className="tiny muted ai-qual-desc">{q.description}</span> : null}
             </div>
           ))}
           {quals.length < 8 ? (
@@ -143,19 +139,27 @@ export function AiJobDesigner({
               + เพิ่มคุณสมบัติ
             </button>
           ) : null}
-          <span className="tiny muted">ข้อ &ldquo;ต้องมี&rdquo; ที่ผู้สมัครไม่มี จะขึ้นธงเตือนให้ HR ดู ระบบไม่ตัดผู้สมัครทิ้งเอง</span>
+          <details className="disclosure">
+            <summary>ระบบใช้คุณสมบัติอย่างไร</summary>
+            <div className="stack-sm">
+              {quals.filter((q) => q.description).map((q, i) => (
+                <p key={i} className="small"><span className="strong">{q.name}:</span> {q.description}</p>
+              ))}
+              <p className="small muted">ข้อ &ldquo;ต้องมี&rdquo; ที่ผู้สมัครไม่มีจะขึ้นธงเตือน ระบบไม่ตัดผู้สมัครทิ้งเอง</p>
+            </div>
+          </details>
         </div>
       ) : null}
       {picks.length && !locked ? (
-        <div className="stack-sm">
-          <span className="strong">โจทย์ที่ AI เสนอ ({picks.length} แบบ)</span>
+        <div className="stack">
+          <span className="strong">เลือกโจทย์ ({picks.length} แบบ)</span>
           <div className="challenge-picks">
             {picks.map((c, i) => (
               <div key={c.title} className={`card soft tight challenge-pick ${chosen === i ? 'on' : ''}`}>
                 <span className="strong">{c.title}</span>
-                <span className="small prewrap">{c.brief.length > 220 ? `${c.brief.slice(0, 220)}…` : c.brief}</span>
-                <span className="tiny muted">
-                  ส่ง: {c.deliverable} · {c.minutes} นาที · ภายใน {c.due_days} วัน
+                <span className="prewrap">{c.brief.length > 120 ? `${c.brief.slice(0, 120)}…` : c.brief}</span>
+                <span className="small muted">
+                  {c.minutes} นาที · ส่งภายใน {c.due_days} วัน
                 </span>
                 <span className="chips">
                   {c.criteria.map((cr) => (
